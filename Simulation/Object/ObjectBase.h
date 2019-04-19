@@ -1,0 +1,75 @@
+// Copyright 2018 BJTU.
+// License: Private
+// Author: Wenguo Hou
+// This is a framework for neurosurgical sululation.
+// 
+// ObjectBase is the basic interface of a simulated object, such as rigid body, instrument,
+// or soft object, such as brain tissue.
+// It also contains functions for simulation steps, collision detection, and information about
+// pos of object in the world coordinate system.
+#ifndef OBJECTBASE_H_
+#define OBJECTBASE_H_
+
+#include"MyMath.h"
+#include<memory>
+#include<vector>
+#include<stdint.h>
+
+class GenericCollision;
+class MyCollision;
+class CollisionRecorder;
+
+struct Mesh
+{
+	int numVertices = 0;
+	int numFaces = 0;
+	int numTets = 0;
+
+	float* mVertices = nullptr;
+	float* mNormals = nullptr;
+	float* mTBNs = nullptr;
+	float* mUV0 = nullptr;
+	float* mUV1 = nullptr;
+
+	int* mFaces = nullptr;
+	int* mTets = nullptr;
+
+	Vector3d m_localPos;		// 对象体的实时位置
+	MyMatrix4d m_localOriant;		// 对象体的旋转矩阵
+};
+
+
+class ObjectBase
+{
+	// 友元：访问到的变量/函数有：
+	// 
+	friend MyCollision;
+
+public:
+	ObjectBase() {};
+	virtual ~ObjectBase() {};
+
+
+	// 仿真步骤相关
+	virtual void timeStep(float time) {};
+
+
+	// 碰撞检测相关
+	GenericCollision* getCollisionObject() { return m_collision; }
+	virtual void collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder) {};
+
+	Vector3d getLocalPos() { return m_mesh.m_localPos; }
+	MyMatrix4d getLocalOriant() { return m_mesh.m_localOriant; }
+	Mesh getMesh() { return m_mesh; }
+
+protected:
+	bool initialized = false;	// 是否初始化
+	Mesh m_mesh;				// 网格数据
+
+	GenericCollision* m_collision = nullptr;	// 碰撞对象
+	bool isPerformCollisionDetection = true;	// 是否参与碰撞检测
+};
+
+
+#endif // !OBJECTBASE_H_
+

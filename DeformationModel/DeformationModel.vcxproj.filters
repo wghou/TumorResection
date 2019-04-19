@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{2371800f-189f-4155-ad03-c32f628d04e8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\DeformationModelBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DeformationModelGPU.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DMForces.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\BMP_IO.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\CUDA_HYPER_TET_MESH.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\CUDA_MATH.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\DISTANCE.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\HYPER_TET_MESH.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\INTERSECTION.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\IO_FUNC.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\MESH.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\MY_GLSL.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\MY_MATH.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\PROGRESSING_BAR.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\svd3_cuda.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\TET_MESH.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lib\TIMER.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\DeformationModelBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DMForces.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\DeformationModelGPU.cu">
+      <Filter>源文件</Filter>
+    </None>
+  </ItemGroup>
+</Project>

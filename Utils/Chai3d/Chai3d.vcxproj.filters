@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="chai3d.h" />
+    <ClInclude Include="devices\CDeltaDevices.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\CGenericDevice.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\CGenericHapticDevice.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\CHapticDeviceHandler.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\CLeapDevices.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\CMyCustomDevice.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\CPhantomDevices.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\CSixenseDevices.h">
+      <Filter>devices</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CBezier.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CConstants.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CGeometry.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CMarchingCubes.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CMaths.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CMatrix3d.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CPolySolver.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CQuaternion.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CTransform.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CVector3d.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="system\CGenericType.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="system\CGlobals.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="system\CMutex.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="system\CString.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="system\CThread.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="timers\CFrequencyCounter.h">
+      <Filter>timers</Filter>
+    </ClInclude>
+    <ClInclude Include="timers\CPrecisionClock.h">
+      <Filter>timers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="devices">
+      <UniqueIdentifier>{73a4be4c-19a2-4e6d-b8d0-efa7e7f1fabb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{718b2242-1b82-498d-add5-d5af22ecd17c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="system">
+      <UniqueIdentifier>{b030b5a0-4183-405e-b3c8-d5bb8b59e21d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="timers">
+      <UniqueIdentifier>{1408ce45-586c-4680-955d-0a2490d4bbe8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="devices\CDeltaDevices.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\CGenericDevice.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\CGenericHapticDevice.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\CHapticDeviceHandler.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\CLeapDevices.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\CMyCustomDevice.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\CPhantomDevices.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\CSixenseDevices.cpp">
+      <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="system\CGlobals.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="system\CMutex.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="system\CString.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="system\CThread.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="timers\CFrequencyCounter.cpp">
+      <Filter>timers</Filter>
+    </ClCompile>
+    <ClCompile Include="timers\CPrecisionClock.cpp">
+      <Filter>timers</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

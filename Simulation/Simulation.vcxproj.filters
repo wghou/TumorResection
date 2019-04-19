@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Object">
+      <UniqueIdentifier>{c2ec9257-0d11-44d0-8d78-72cee9606a38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collision">
+      <UniqueIdentifier>{25f6bcae-5ce9-46f2-a148-a67e403986e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interaction">
+      <UniqueIdentifier>{55d96f04-31b7-4f5a-a8ed-1d058c9fb25e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SimulationScene">
+      <UniqueIdentifier>{b0ee10fb-6928-48ed-8966-ece8f3c75093}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Object\Drill.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Knife.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\PhantomDevice.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\RigidObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\SoftObjectGPU.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\GenericCollision.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\MyCollision.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Interaction\InteractionTraction.cpp">
+      <Filter>Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="Interaction\MyInteraction.cpp">
+      <Filter>Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="SimulationScene\SimulationSceneC.cpp">
+      <Filter>SimulationScene</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Object\Drill.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Knife.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Object.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\ObjectBase.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\PhantomDevice.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\RigidObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\SoftObjectGPU.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionBasic.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\GenericCollision.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\MyCollision.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Interaction\InteractioBase.h">
+      <Filter>Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="Interaction\InteractionTraction.h">
+      <Filter>Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="Interaction\MyInteraction.h">
+      <Filter>Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="SimulationScene\SimulationSceneC.h">
+      <Filter>SimulationScene</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
