@@ -276,20 +276,20 @@ void RenderableObject::genRenderable(Scene* scene, int numVert, float *mVert, fl
 {
 	mVertexBuffer = VertexBuffer::Builder()
 		.vertexCount(numVert)
-		.bufferCount(1)
+		.bufferCount(3)
 		.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3)
-		//.attribute(VertexAttribute::TANGENTS, 1, VertexBuffer::AttributeType::FLOAT4)
-		//.normalized(VertexAttribute::TANGENTS)
-		//.attribute(VertexAttribute::UV0, 2, VertexBuffer::AttributeType::FLOAT2)
-		//.normalized(VertexAttribute::UV0)
+		.attribute(VertexAttribute::TANGENTS, 1, VertexBuffer::AttributeType::FLOAT4)
+		.normalized(VertexAttribute::TANGENTS)
+		.attribute(VertexAttribute::UV0, 2, VertexBuffer::AttributeType::FLOAT2)
+		.normalized(VertexAttribute::UV0)
 		.build(mEngine);
 
 	mVertexBuffer->setBufferAt(mEngine, 0,
 		VertexBuffer::BufferDescriptor(mVert, numVert * 3 * sizeof(float), nullptr));
-	//mVertexBuffer->setBufferAt(mEngine, 1,
-	//	VertexBuffer::BufferDescriptor(mTBNs, numVert * 4 * sizeof(float), nullptr));
-	//mVertexBuffer->setBufferAt(mEngine, 2,
-	//	VertexBuffer::BufferDescriptor(mUVs, numVert * 2 * sizeof(float), nullptr));
+	mVertexBuffer->setBufferAt(mEngine, 1,
+		VertexBuffer::BufferDescriptor(mTBNs, numVert * 4 * sizeof(float), nullptr));
+	mVertexBuffer->setBufferAt(mEngine, 2,
+		VertexBuffer::BufferDescriptor(mUVs, numVert * 2 * sizeof(float), nullptr));
 
 	mIndexBuffer = IndexBuffer::Builder()
 		.indexCount(numFaces * 3)
@@ -321,7 +321,7 @@ void RenderableObject::genRenderable(Scene* scene, int numVert, float *mVert, fl
 	RenderableManager::Builder(1)
 		.boundingBox({ {-1.f, -1.f, -1.f}, {1.f, 1.f, 1.f} })
 		.geometry(0, RenderableManager::PrimitiveType::TRIANGLES, mVertexBuffer, mIndexBuffer, 0, numFaces * 3)
-		//.material(0,g_materialInstances[AI_DEFAULT_MATERIAL_NAME])
+		.material(0, g_materialInstances[AI_DEFAULT_MATERIAL_NAME])
 		.build(mEngine, *renderable);
 
 

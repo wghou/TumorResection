@@ -7,6 +7,16 @@
 #include"TBN.h"
 
 
+ElementLoader::~ElementLoader()
+{
+	if (mVertices)	delete[] mVertices;
+	if (mUVs)		delete[] mUVs;
+	if (mNormals)	delete[] mNormals;
+	if (mTBNs)		delete[] mTBNs;
+	if (mFaces)		delete[] mFaces;
+	if (mTets)		delete[] mTets;
+}
+
 template<class T> __forceinline
 void Swap(T &a, T &b)
 {
@@ -88,10 +98,14 @@ void ElementLoader::loadElement(const string fileName)
 	}
 
 	stringstream num_stream(line_stream);
-	int numV = 0;
-	num_stream >> numV;
+	num_stream >> numVertices;
+	if (numVertices <= 0) {
+		cerr << "Error." << endl;
+		return;
+	}
 
-	for (int i = 0; i < numV; i++)
+	mVertices = new float[numVertices * 3];
+	for (int i = 0; i < numVertices; i++)
 	{
 		if (!getline(fileStream1, line_stream)) {
 			cerr << "error" << endl;
@@ -102,7 +116,10 @@ void ElementLoader::loadElement(const string fileName)
 		stringstream str_stream(line_stream);
 		str_stream >> temp >> x >> y >> z;
 		tVertices.push_back({ x, y, z });
-		mVertices.push_back(x); mVertices.push_back(y); mVertices.push_back(z);
+		mVertices[i * 3 + 0] = x;
+		mVertices[i * 3 + 1] = x;
+		mVertices[i * 3 + 2] = x;
+		tVertices.push_back({ x,y,z });
 	}
 
 	fileStream1.close();
@@ -126,10 +143,14 @@ void ElementLoader::loadElement(const string fileName)
 	}
 
 	stringstream num2_stream(line_stream);
-	int numT = 0;
-	num2_stream >> numT;
+	num2_stream >> numTets;
+	if (numTets <= 0) {
+		cerr << "Error." << endl;
+		return;
+	}
 
-	for (int i = 0; i < numT; i++)
+	mTets = new uint16_t[numTets * 4];
+	for (int i = 0; i < numTets; i++)
 	{
 		if (!getline(fileStream2, line_stream)) {
 			cerr << "error" << endl;
@@ -139,54 +160,58 @@ void ElementLoader::loadElement(const string fileName)
 		uint16_t temp, v0, v1, v2, v3;
 		stringstream str_stream(line_stream);
 		str_stream >> temp >> v0 >> v1 >> v2 >> v3;
-		mTets.push_back({ v0, v1, v2, v3 });
+		mTets[i * 4 + 0] = v0;
+		mTets[i * 4 + 1] = v1;
+		mTets[i * 4 + 2] = v2;
+		mTets[i * 4 + 3] = v3;
 	}
 
 	fileStream2.close();
+
+
 
 	////////  生成表面网格  ////////
 	Build_Boundary_Triangles();
 
 	////////  计算法向量  ////////
-	TBN::buildVns(mFaces.size() / 3, mFaces.data(), mVertices.size() / 3, mVertices.data(), mNormals.data());
+	TBN::buildVns(numFaces, mFaces, numVertices, mVertices, mNormals);
 
 	////////  初始化纹理坐标  ////////
-	mUVs.resize(mVertices.size() / 3 * 2, 0);
+	mUVs = new float[numVertices * 2];
 }
 
 void ElementLoader::Build_Boundary_Triangles()
 {
-	int tet_number = mTets.size();
-	if (tet_number == 0) {
+	if (numTets == 0) {
 		cerr << "There is no tetradedron." << endl;
 		return;
 	}
 
-	int *temp_T = new int[tet_number * 4 * 4];
-	for (int i = 0; i < tet_number; i++)
+	int *temp_T = new int[numTets * 4 * 4];
+	for (int i = 0; i < numTets; i++)
 	{
-		temp_T[i * 16 + 0] = mTets[i].v0;
-		temp_T[i * 16 + 1] = mTets[i].v1;
-		temp_T[i * 16 + 2] = mTets[i].v2;
+		temp_T[i * 16 + 0] = mTets[i * 4 + 0];
+		temp_T[i * 16 + 1] = mTets[i * 4 + 1];
+		temp_T[i * 16 + 2] = mTets[i * 4 + 2];
 		temp_T[i * 16 + 3] = 1;
 
-		temp_T[i * 16 + 4] = mTets[i].v0;
-		temp_T[i * 16 + 5] = mTets[i].v2;
-		temp_T[i * 16 + 6] = mTets[i].v3;
+		temp_T[i * 16 + 4] = mTets[i * 4 + 0];
+		temp_T[i * 16 + 5] = mTets[i * 4 + 2];
+		temp_T[i * 16 + 6] = mTets[i * 4 + 3];
 		temp_T[i * 16 + 7] = 1;
 
-		temp_T[i * 16 + 8] = mTets[i].v0;
-		temp_T[i * 16 + 9] = mTets[i].v3;
-		temp_T[i * 16 + 10] = mTets[i].v1;
+		temp_T[i * 16 + 8] = mTets[i * 4 + 0];
+		temp_T[i * 16 + 9] = mTets[i * 4 + 3];
+		temp_T[i * 16 + 10] = mTets[i * 4 + 1];
 		temp_T[i * 16 + 11] = 1;
 
-		temp_T[i * 16 + 12] = mTets[i].v1;
-		temp_T[i * 16 + 13] = mTets[i].v3;
-		temp_T[i * 16 + 14] = mTets[i].v2;
+		temp_T[i * 16 + 12] = mTets[i * 4 + 1];
+		temp_T[i * 16 + 13] = mTets[i * 4 + 3];
+		temp_T[i * 16 + 14] = mTets[i * 4 + 2];
 		temp_T[i * 16 + 15] = 1;
 	}
 
-	for (int i = 0; i < tet_number * 4; i++)
+	for (int i = 0; i < numTets * 4; i++)
 	{
 		if (temp_T[i * 4 + 1] < temp_T[i * 4 + 0])
 		{
@@ -205,11 +230,11 @@ void ElementLoader::Build_Boundary_Triangles()
 		}
 	}
 
-	QuickSort(temp_T, 0, tet_number * 4 - 1);
+	QuickSort(temp_T, 0, numTets * 4 - 1);
 
-	for (int i = 0; i < tet_number * 4; i++)
+	for (int i = 0; i < numTets * 4; i++)
 	{
-		if (i != tet_number * 4 - 1 && temp_T[i * 4 + 0] == temp_T[i * 4 + 4] && temp_T[i * 4 + 1] == temp_T[i * 4 + 5] && temp_T[i * 4 + 2] == temp_T[i * 4 + 6])
+		if (i != numTets * 4 - 1 && temp_T[i * 4 + 0] == temp_T[i * 4 + 4] && temp_T[i * 4 + 1] == temp_T[i * 4 + 5] && temp_T[i * 4 + 2] == temp_T[i * 4 + 6])
 		{
 			i++;
 			continue;
@@ -217,15 +242,15 @@ void ElementLoader::Build_Boundary_Triangles()
 
 		if (temp_T[i * 4 + 3] == 1)
 		{
-			mFaces.push_back(temp_T[i * 4 + 0]);
-			mFaces.push_back(temp_T[i * 4 + 1]);
-			mFaces.push_back(temp_T[i * 4 + 2]);
+			mFaces[i * 3 + 0] = temp_T[i * 4 + 0];
+			mFaces[i * 3 + 1] = temp_T[i * 4 + 1];
+			mFaces[i * 3 + 2] = temp_T[i * 4 + 2];
 		}
 		else
 		{
-			mFaces.push_back(temp_T[i * 4 + 1]);
-			mFaces.push_back(temp_T[i * 4 + 0]);
-			mFaces.push_back(temp_T[i * 4 + 2]);
+			mFaces[i * 3 + 0] = temp_T[i * 4 + 1];
+			mFaces[i * 3 + 1] = temp_T[i * 4 + 0];
+			mFaces[i * 3 + 2] = temp_T[i * 4 + 2];
 		}
 	}
 
@@ -431,5 +456,5 @@ void ElementLoader::loadTextureCoord(const string fileName)
 	delete tagV;
 
 	// 生成法向量 Tangent biTangent Normal
-	TBN::updateTBNs(mNormals, mTBNs);
+	//TBN::updateTBNs(mNormals, mTBNs);
 }

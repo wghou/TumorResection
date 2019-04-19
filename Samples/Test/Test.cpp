@@ -42,8 +42,6 @@ static Config g_config;
 static RenderableObject *obj = nullptr;
 static ObjLoader *loader;
 
-static ElementLoader *eleloader;
-
 static void cleanup(Engine* engine, View*, Scene*) {
 
 	for (auto& i : g_params.materialInstance) {
@@ -57,6 +55,9 @@ static void cleanup(Engine* engine, View*, Scene*) {
 	engine->destroy(g_params.light);
 	EntityManager& em = EntityManager::get();
 	em.destroy(g_params.light);
+
+	delete obj;
+	delete loader;
 }
 
 static void setup(Engine* engine, View* view, Scene* scene) {
@@ -69,9 +70,9 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	loader->loadObj("../assets/models/monkey/monkey.obj");
 
 	obj->genMaterial("../assets/models/monkey");
-	obj->genRenderable(scene, loader->getNumVertices(), loader->getVertices().data(),
-		loader->getTBNs().data(), loader->getUVs().data(), loader->getNumFaceVertices(),
-		loader->getFaces().data());
+	obj->genRenderable(scene, loader->getNumVertices(), loader->getVertices(),
+		loader->getTBNs(), loader->getUVs(), loader->getNumFaceVertices(),
+		loader->getFaces());
 
 	obj->genLight(scene);
 	return;
@@ -92,7 +93,7 @@ int main(int argc, char *argv[]) {
 
 	g_config.scale = 1.0f;
 	g_config.title = "Material Sandbox";
-	//g_config.iblDirectory = "../envs/pillars";
+	g_config.iblDirectory = "../envs/pillars";
 
 	FilamentApp& filamentApp = FilamentApp::get();
 	filamentApp.animate(animate);

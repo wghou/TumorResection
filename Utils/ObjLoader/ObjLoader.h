@@ -18,10 +18,10 @@ public:
 
 	int getNumVertices() { return numVertices; }
 	int getNumFaceVertices() { return numFaces; }
-	vector<float> getVertices() { return mVertices; }
-	vector<float> getUVs() { return mUVs; }
-	vector<float> getTBNs() { return mTBNs; }
-	vector<uint16_t> getFaces() { return mFaces; }
+	float* getVertices() { return mVertices; }
+	float* getUVs() { return mUVs; }
+	float* getTBNs() { return mTBNs; }
+	uint16_t* getFaces() { return mFaces; }
 
 protected:
 	void optimMesh();
@@ -34,11 +34,11 @@ private:
 	vector<FaceVertex> tFaces;
 
 
-	vector<float> mVertices;
-	vector<float> mUVs;
-	vector<float> mNormals;
-	vector<float> mTBNs;
-	vector<uint16_t> mFaces;
+	float* mVertices = nullptr;
+	float* mUVs = nullptr;
+	float* mNormals = nullptr;
+	float* mTBNs = nullptr;
+	uint16_t* mFaces = nullptr;
 
 
 	int numVertices = 0;

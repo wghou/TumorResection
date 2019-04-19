@@ -16,7 +16,11 @@ using namespace std;
 
 ObjLoader::~ObjLoader()
 {
-	
+	if (mVertices)	delete[] mVertices;
+	if (mUVs)		delete[] mUVs;
+	if (mNormals)	delete[] mNormals;
+	if (mTBNs)		delete[] mTBNs;
+	if (mFaces)		delete[] mFaces;
 }
 
 vector<string> split(const string &s, const string &seperator) {
@@ -133,9 +137,6 @@ void ObjLoader::loadObj(const std::string fileName)
 	// 优化网格
 	optimMesh();
 
-	// 生成法向量 Tangent biTangent Normal
-	//TBN::updateTBNs(mNormals, mTBNs);
-
 	return;
 }
 
@@ -170,13 +171,13 @@ void ObjLoader::optimMesh()
 
 	// allocate new copy for mesh information
 	numVertices = countV;
-	mVertices.resize(numVertices * 3, 0);
+	mVertices = new float[numVertices * 3];
 	int *tagV = new int[numVertices];
 	memset(tagV, 0, numVertices * sizeof(int));
-	mUVs.resize(numVertices * 2, 0);
-	mNormals.resize(numVertices * 3, 0);
-	mFaces.resize(tFaces.size(), 0);
-
+	mUVs = new float[numVertices * 2];
+	mNormals = new float[numVertices * 3];
+	mTBNs = new float[numVertices * 4];
+	mFaces = new uint16_t[tFaces.size()];
 
 	int newIndex = tVertices.size();
 	for (int i = 0; i < tFaces.size(); i++)
@@ -226,6 +227,9 @@ void ObjLoader::optimMesh()
 	}
 
 	delete tagV;
+
+	// 生成 TBNs
+	TBN::updateTBNs(numVertices, mNormals, mTBNs);
 
 	return;
 }

@@ -11,35 +11,30 @@
 using namespace filament::math;
 using namespace filament::math::details;
 
-bool TBN::updateTBNs(vector<float> &vn, vector<float> &tbn)
+bool TBN::updateTBNs(int numVert, float* vn, float* tbn)
 {
-	
-
-	tbn.clear();
-
-	int numVert = vn.size() / 3;
 	// calculate the tangents
 	for (int i = 0; i < numVert; i++)
 	{
-		float3 normal = float3{ vn[i * 3 + 0], vn[i * 3 + 1], vn[i * 3 + 2] };
+		float3 normal = float3( vn[i * 3 + 0], vn[i * 3 + 1], vn[i * 3 + 2] );
 		float3 tangent;
 		float3 bitangent;
 
 		// calculate tangent
-		bitangent = normalize(cross(normal, float3{ 1.0, 0.0, 0.0 }));
+		bitangent = normalize(cross(normal, float3(1.0, 0.0, 0.0)));
 		tangent = normalize(cross(normal, bitangent));
 
 		// calculate the quaternion
 		//quatf q = filament::math::details::TMat33<float>::packTangentFrame({ tangent, bitangent, normal });
 		//short4 qs4 = packSnorm16(q.xyzw);
 
-		short4 qs4 = filament::math::packSnorm16(mat3f::packTangentFrame(mat3f{ tangent,bitangent, normal }).xyzw);
+		short4 qs4 = filament::math::packSnorm16(mat3f::packTangentFrame(mat3f(tangent,bitangent, normal)).xyzw);
 
 		// store
-		tbn.push_back(qs4.x);
-		tbn.push_back(qs4.y);
-		tbn.push_back(qs4.z);
-		tbn.push_back(qs4.w);
+		tbn[i * 4 + 0] = qs4.x;
+		tbn[i * 4 + 1] = qs4.y;
+		tbn[i * 4 + 2] = qs4.z;
+		tbn[i * 4 + 3] = qs4.w;
 	}
 	return true;
 }

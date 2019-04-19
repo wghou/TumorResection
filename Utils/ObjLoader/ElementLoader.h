@@ -9,6 +9,7 @@ using namespace std;
 class ElementLoader
 {
 public:
+	~ElementLoader();
 
 	void loadElement(const string fileName);
 	void loadTextureCoord(const string fileName);
@@ -23,12 +24,16 @@ private:
 	vector<FaceVertex> tFaces;
 	
 
-	vector<float> mVertices;
-	vector<float> mUVs;
-	vector<float> mNormals;
-	vector<float> mTBNs;
-	vector<uint16_t> mFaces;
-	vector<Tetrahedron> mTets;
+	float* mVertices = nullptr;
+	float* mUVs = nullptr;
+	float* mNormals = nullptr;
+	float* mTBNs = nullptr;
+	uint16_t* mFaces = nullptr;
+	uint16_t* mTets = nullptr;
+
+	int numVertices = 0;
+	int numFaces = 0;
+	int numTets = 0;
 
 };
 #endif // !ELEMENT_LOADER_H
