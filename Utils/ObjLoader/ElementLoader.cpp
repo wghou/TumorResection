@@ -3,6 +3,7 @@
 #include<fstream>
 #include<iostream>
 #include<vector>
+#include<memory>
 
 #include"TBN.h"
 
@@ -17,65 +18,6 @@ ElementLoader::~ElementLoader()
 	if (mTets)		delete[] mTets;
 }
 
-template<class T> __forceinline
-void Swap(T &a, T &b)
-{
-	T c = a; a = b; b = c;
-}
-
-int QuickSort_Partition(int a[], int l, int r)
-{
-	int pivot[4], i, j, t[4];
-	pivot[0] = a[l * 4 + 0];
-	pivot[1] = a[l * 4 + 1];
-	pivot[2] = a[l * 4 + 2];
-	pivot[3] = a[l * 4 + 3];
-	i = l; j = r + 1;
-
-	while (1)
-	{
-		do ++i; while ((a[i * 4 + 0] < pivot[0] || a[i * 4 + 0] == pivot[0] && a[i * 4 + 1] < pivot[1] || a[i * 4 + 0] == pivot[0] && a[i * 4 + 1] == pivot[1] && a[i * 4 + 2] <= pivot[2]) && i <= r);
-		do --j; while (a[j * 4 + 0] > pivot[0] || a[j * 4 + 0] == pivot[0] && a[j * 4 + 1] > pivot[1] || a[j * 4 + 0] == pivot[0] && a[j * 4 + 1] == pivot[1] && a[j * 4 + 2] > pivot[2]);
-		if (i >= j) break;
-		//Swap i and j
-		t[0] = a[i * 4 + 0];
-		t[1] = a[i * 4 + 1];
-		t[2] = a[i * 4 + 2];
-		t[3] = a[i * 4 + 3];
-		a[i * 4 + 0] = a[j * 4 + 0];
-		a[i * 4 + 1] = a[j * 4 + 1];
-		a[i * 4 + 2] = a[j * 4 + 2];
-		a[i * 4 + 3] = a[j * 4 + 3];
-		a[j * 4 + 0] = t[0];
-		a[j * 4 + 1] = t[1];
-		a[j * 4 + 2] = t[2];
-		a[j * 4 + 3] = t[3];
-	}
-	//Swap l and j
-	t[0] = a[l * 4 + 0];
-	t[1] = a[l * 4 + 1];
-	t[2] = a[l * 4 + 2];
-	t[3] = a[l * 4 + 3];
-	a[l * 4 + 0] = a[j * 4 + 0];
-	a[l * 4 + 1] = a[j * 4 + 1];
-	a[l * 4 + 2] = a[j * 4 + 2];
-	a[l * 4 + 3] = a[j * 4 + 3];
-	a[j * 4 + 0] = t[0];
-	a[j * 4 + 1] = t[1];
-	a[j * 4 + 2] = t[2];
-	a[j * 4 + 3] = t[3];
-	return j;
-}
-
-void QuickSort(int a[], int l, int r)
-{
-	if (l < r)
-	{
-		int j = QuickSort_Partition(a, l, r);
-		QuickSort(a, l, j - 1);
-		QuickSort(a, j + 1, r);
-	}
-}
 
 void ElementLoader::loadElement(const string fileName)
 {
@@ -104,7 +46,6 @@ void ElementLoader::loadElement(const string fileName)
 		return;
 	}
 
-	mVertices = new float[numVertices * 3];
 	for (int i = 0; i < numVertices; i++)
 	{
 		if (!getline(fileStream1, line_stream)) {
@@ -116,10 +57,6 @@ void ElementLoader::loadElement(const string fileName)
 		stringstream str_stream(line_stream);
 		str_stream >> temp >> x >> y >> z;
 		tVertices.push_back({ x, y, z });
-		mVertices[i * 3 + 0] = x;
-		mVertices[i * 3 + 1] = x;
-		mVertices[i * 3 + 2] = x;
-		tVertices.push_back({ x,y,z });
 	}
 
 	fileStream1.close();
@@ -169,93 +106,12 @@ void ElementLoader::loadElement(const string fileName)
 	fileStream2.close();
 
 
-
-	////////  生成表面网格  ////////
-	Build_Boundary_Triangles();
-
-	////////  计算法向量  ////////
-	TBN::buildVns(numFaces, mFaces, numVertices, mVertices, mNormals);
-
-	////////  初始化纹理坐标  ////////
-	mUVs = new float[numVertices * 2];
+	///////// obj File  //////////
+	string objFile = fileName + ".obj";
+	loadFaceVertices(objFile);
 }
 
-void ElementLoader::Build_Boundary_Triangles()
-{
-	if (numTets == 0) {
-		cerr << "There is no tetradedron." << endl;
-		return;
-	}
 
-	int *temp_T = new int[numTets * 4 * 4];
-	for (int i = 0; i < numTets; i++)
-	{
-		temp_T[i * 16 + 0] = mTets[i * 4 + 0];
-		temp_T[i * 16 + 1] = mTets[i * 4 + 1];
-		temp_T[i * 16 + 2] = mTets[i * 4 + 2];
-		temp_T[i * 16 + 3] = 1;
-
-		temp_T[i * 16 + 4] = mTets[i * 4 + 0];
-		temp_T[i * 16 + 5] = mTets[i * 4 + 2];
-		temp_T[i * 16 + 6] = mTets[i * 4 + 3];
-		temp_T[i * 16 + 7] = 1;
-
-		temp_T[i * 16 + 8] = mTets[i * 4 + 0];
-		temp_T[i * 16 + 9] = mTets[i * 4 + 3];
-		temp_T[i * 16 + 10] = mTets[i * 4 + 1];
-		temp_T[i * 16 + 11] = 1;
-
-		temp_T[i * 16 + 12] = mTets[i * 4 + 1];
-		temp_T[i * 16 + 13] = mTets[i * 4 + 3];
-		temp_T[i * 16 + 14] = mTets[i * 4 + 2];
-		temp_T[i * 16 + 15] = 1;
-	}
-
-	for (int i = 0; i < numTets * 4; i++)
-	{
-		if (temp_T[i * 4 + 1] < temp_T[i * 4 + 0])
-		{
-			Swap(temp_T[i * 4 + 0], temp_T[i * 4 + 1]);
-			temp_T[i * 4 + 3] = (temp_T[i * 4 + 3] + 1) % 2;
-		}
-		if (temp_T[i * 4 + 2] < temp_T[i * 4 + 0])
-		{
-			Swap(temp_T[i * 4 + 0], temp_T[i * 4 + 2]);
-			temp_T[i * 4 + 3] = (temp_T[i * 4 + 3] + 1) % 2;
-		}
-		if (temp_T[i * 4 + 2] < temp_T[i * 4 + 1])
-		{
-			Swap(temp_T[i * 4 + 1], temp_T[i * 4 + 2]);
-			temp_T[i * 4 + 3] = (temp_T[i * 4 + 3] + 1) % 2;
-		}
-	}
-
-	QuickSort(temp_T, 0, numTets * 4 - 1);
-
-	for (int i = 0; i < numTets * 4; i++)
-	{
-		if (i != numTets * 4 - 1 && temp_T[i * 4 + 0] == temp_T[i * 4 + 4] && temp_T[i * 4 + 1] == temp_T[i * 4 + 5] && temp_T[i * 4 + 2] == temp_T[i * 4 + 6])
-		{
-			i++;
-			continue;
-		}
-
-		if (temp_T[i * 4 + 3] == 1)
-		{
-			mFaces[i * 3 + 0] = temp_T[i * 4 + 0];
-			mFaces[i * 3 + 1] = temp_T[i * 4 + 1];
-			mFaces[i * 3 + 2] = temp_T[i * 4 + 2];
-		}
-		else
-		{
-			mFaces[i * 3 + 0] = temp_T[i * 4 + 1];
-			mFaces[i * 3 + 1] = temp_T[i * 4 + 0];
-			mFaces[i * 3 + 2] = temp_T[i * 4 + 2];
-		}
-	}
-
-	delete[]temp_T;
-}
 
 
 
@@ -298,7 +154,7 @@ vector<string> split(const string &s, const string &seperator) {
 }
 
 
-void ElementLoader::loadTextureCoord(const string fileName)
+void ElementLoader::loadFaceVertices(const string fileName)
 {
 	cout << "Loading " << fileName << endl;
 
@@ -313,7 +169,8 @@ void ElementLoader::loadTextureCoord(const string fileName)
 	string line_stream;
 	uint16_t faceVertexindex = 0;
 
-	tVTs.clear(); tVNs.clear(); tFaces.clear();
+	tVTs.clear(); tFaces.clear();
+	int objVert = 0;
 	while (getline(fileStream, line_stream))
 	{
 		stringstream str_stream(line_stream);
@@ -323,6 +180,7 @@ void ElementLoader::loadTextureCoord(const string fileName)
 		if (type_str == "v")
 		{
 			// 节点坐标
+			objVert++;
 		}
 		else if (type_str == "vt")
 		{
@@ -334,9 +192,6 @@ void ElementLoader::loadTextureCoord(const string fileName)
 		else if (type_str == "vn")
 		{
 			// 节点法向量
-			float temp1, temp2, temp3;
-			str_stream >> temp1 >> temp2 >> temp3;
-			tVNs.push_back(Normal{ temp1,temp2,temp3 });
 		}
 		else if (type_str == "f")
 		{
@@ -365,13 +220,14 @@ void ElementLoader::loadTextureCoord(const string fileName)
 			}
 		}
 	}
+	fileStream.close();
 
+	numFaces = faceVertexindex / 3;
 
 	if (tVertices.size() == 0 || tVTs.size() == 0 || tVNs.size() == 0 || tFaces.size() == 0) {
 		cerr << "There is no mesh." << endl;
 		return;
 	}
-
 
 	// optimization
 	// identify the vertex exculsively
@@ -394,14 +250,15 @@ void ElementLoader::loadTextureCoord(const string fileName)
 		}
 	}
 
-	// 默认已经载入四面体网格信息了
-	int numVertices = countV - tVertices.size() + mVertices.size() / 3;
-	int numFaces = tFaces.size();
+	// allocate new copy for mesh information
+	numVertices = numVertices + countV - objVert;
+	mVertices = new float[numVertices * 3];
 	int *tagV = new int[numVertices];
 	memset(tagV, 0, numVertices * sizeof(int));
-	mUVs.resize(numVertices * 2, 0);
-	mNormals.resize(numVertices * 3, 0);
-	mFaces.resize(numFaces, 0);
+	mUVs = new float[numVertices * 2];
+	mNormals = new float[numVertices * 3];
+	mTBNs = new float[numVertices * 4];
+	mFaces = new uint16_t[tFaces.size()];
 
 	int newIndex = tVertices.size();
 	for (int i = 0; i < tFaces.size(); i++)
@@ -412,9 +269,9 @@ void ElementLoader::loadTextureCoord(const string fileName)
 		if (fv.index == i) {
 			if (tagV[fv.v] == 0) {
 				// 拷贝顶点到 sVertices 中
-				//mVertices[fv.v * 3 + 0] = tVertices[fv.v].x;
-				//mVertices[fv.v * 3 + 1] = tVertices[fv.v].y;
-				//mVertices[fv.v * 3 + 2] = tVertices[fv.v].z;
+				mVertices[fv.v * 3 + 0] = tVertices[fv.v].x;
+				mVertices[fv.v * 3 + 1] = tVertices[fv.v].y;
+				mVertices[fv.v * 3 + 2] = tVertices[fv.v].z;
 				mUVs[fv.v * 2 + 0] = tVTs[fv.vt].x;
 				mUVs[fv.v * 2 + 1] = tVTs[fv.vt].y;
 				mNormals[fv.v * 3 + 0] = tVNs[fv.vn].u;
@@ -428,12 +285,9 @@ void ElementLoader::loadTextureCoord(const string fileName)
 			}
 			// 需要新建顶点
 			else {
-				mVertices.push_back(tVertices[fv.v].x);
-				mVertices.push_back(tVertices[fv.v].y);
-				mVertices.push_back(tVertices[fv.v].z);
-				//mVertices[newIndex * 3 + 0] = tVertices[fv.v].x;
-				//mVertices[newIndex * 3 + 1] = tVertices[fv.v].y;
-				//mVertices[newIndex * 3 + 2] = tVertices[fv.v].z;
+				mVertices[newIndex * 3 + 0] = tVertices[fv.v].x;
+				mVertices[newIndex * 3 + 1] = tVertices[fv.v].y;
+				mVertices[newIndex * 3 + 2] = tVertices[fv.v].z;
 				mUVs[newIndex * 2 + 0] = tVTs[fv.vt].x;
 				mUVs[newIndex * 2 + 1] = tVTs[fv.vt].y;
 				mNormals[newIndex * 3 + 0] = tVNs[fv.vn].u;
@@ -456,5 +310,5 @@ void ElementLoader::loadTextureCoord(const string fileName)
 	delete tagV;
 
 	// 生成法向量 Tangent biTangent Normal
-	//TBN::updateTBNs(mNormals, mTBNs);
+	TBN::updateTBNs(numVertices, mNormals, mTBNs);
 }

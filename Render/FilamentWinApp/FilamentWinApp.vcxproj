@@ -131,7 +131,6 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="FilamentApp.h" />
     <ClInclude Include="IBL.h" />
-    <ClInclude Include="RenderableObj.h" />
     <ClInclude Include="RenderableObject.h" />
   </ItemGroup>
   <ItemGroup>
@@ -142,7 +141,6 @@
     <ClCompile Include="FilamentApp.cpp" />
     <ClCompile Include="IBL.cpp" />
     <ClCompile Include="NativeWindowHelperWindows.cpp" />
-    <ClCompile Include="RenderableObj.cpp" />
     <ClCompile Include="RenderableObject.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

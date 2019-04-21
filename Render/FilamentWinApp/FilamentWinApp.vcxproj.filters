@@ -33,9 +33,6 @@
     <ClInclude Include="..\filament\include\resources\resources.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableObj.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="RenderableObject.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -60,9 +57,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\filament\include\resources\resources.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderableObj.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RenderableObject.cpp">

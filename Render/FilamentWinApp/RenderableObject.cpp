@@ -22,8 +22,8 @@ using namespace filament;
 using namespace filamat;
 using namespace utils;
 
-static Entity *rootEntity = new Entity();
-static Entity *g_light = new Entity();
+static Entity rootEntity;
+static Entity g_light;
 
 RenderableObject::RenderableObject(Engine &engine) : mEngine(engine)
 {
@@ -310,12 +310,12 @@ void RenderableObject::genRenderable(Scene* scene, int numVert, float *mVert, fl
 	renderable = new Entity();
 	EntityManager::get().create(1, renderable);
 
-	if (rootEntity->isNull()) {
-		EntityManager::get().create(1, rootEntity);
+	if (rootEntity.isNull()) {
+		EntityManager::get().create(1, &rootEntity);
 
 		TransformManager& tcm = mEngine.getTransformManager();
 		//Add root instance
-		tcm.create(*rootEntity, TransformManager::Instance{}, mat4f());
+		tcm.create(rootEntity, TransformManager::Instance{}, mat4f());
 	}
 
 	RenderableManager::Builder(1)
@@ -327,20 +327,20 @@ void RenderableObject::genRenderable(Scene* scene, int numVert, float *mVert, fl
 
 	// 其实还不太懂，这里设置 parent 是什么意思
 	TransformManager& tcm2 = mEngine.getTransformManager();
-	TransformManager::Instance parent(tcm2.getInstance(*rootEntity));
+	TransformManager::Instance parent(tcm2.getInstance(rootEntity));
 	tcm2.create(*renderable, parent, mat4f());
 	scene->addEntity(*renderable);
 }
 
 void RenderableObject::genLight(Scene *scene)
 {
-	if (!g_light->isNull()) return;
+	if (!g_light.isNull()) return;
 
-	*g_light = EntityManager::get().create();
+	g_light = EntityManager::get().create();
 	LightManager::Builder(LightManager::Type::DIRECTIONAL)
 		.color(Color::toLinear<ACCURATE>({ 0.98f, 0.92f, 0.89f }))
 		.intensity(110000)
 		.direction({ 0.6, -1, -0.8 })
-		.build(mEngine, *g_light);
-	scene->addEntity(*g_light);
+		.build(mEngine, g_light);
+	scene->addEntity(g_light);
 }

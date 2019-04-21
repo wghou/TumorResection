@@ -12,10 +12,9 @@ public:
 	~ElementLoader();
 
 	void loadElement(const string fileName);
-	void loadTextureCoord(const string fileName);
-
+	
 protected:
-	void Build_Boundary_Triangles();
+	void loadFaceVertices(const string fileName);
 
 private:
 	vector<Vertex> tVertices;

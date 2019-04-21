@@ -4,12 +4,6 @@
 #include<iostream>
 #include<vector>
 
-#include <math/norm.h>
-#include <math/vec3.h>
-#include <math/quat.h>
-#include <math/mat3.h>
-#include <math/TVecHelpers.h>
-
 #include "TBN.h"
 
 using namespace std;
