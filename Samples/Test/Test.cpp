@@ -42,6 +42,9 @@ static Config g_config;
 static RenderableObject *obj = nullptr;
 static ObjLoader *loader;
 
+static RenderableObject *ele = nullptr;
+static ElementLoader *eleLoader = nullptr;
+
 static void cleanup(Engine* engine, View*, Scene*) {
 
 	for (auto& i : g_params.materialInstance) {
@@ -58,23 +61,35 @@ static void cleanup(Engine* engine, View*, Scene*) {
 
 	delete obj;
 	delete loader;
+	delete eleLoader;
 }
 
 static void setup(Engine* engine, View* view, Scene* scene) {
 
 	//view->setClearColor({ 0.1, 0.125, 0.25, 1.0 });
 
-	obj = new RenderableObject(*engine);
-	loader = new ObjLoader();
+	ele = new RenderableObject(*engine);
+	eleLoader = new ElementLoader();
+	eleLoader->loadElement("../assets/models/liver/myLiver");
+	ele->genRenderable(scene, eleLoader->getNumVertices(), eleLoader->getVertices(),
+		eleLoader->getTBNs(), eleLoader->getUVs(), eleLoader->getNumFaceVertices(),
+		eleLoader->getFaces());
 
-	loader->loadObj("../assets/models/monkey/monkey.obj");
+	ele->genLight(scene);
 
-	obj->genMaterial("../assets/models/monkey");
-	obj->genRenderable(scene, loader->getNumVertices(), loader->getVertices(),
-		loader->getTBNs(), loader->getUVs(), loader->getNumFaceVertices(),
-		loader->getFaces());
 
-	obj->genLight(scene);
+
+	//obj = new RenderableObject(*engine);
+	//loader = new ObjLoader();
+
+	//loader->loadObj("../assets/models/monkey/monkey.obj");
+
+	//obj->genMaterial("../assets/models/monkey");
+	//obj->genRenderable(scene, loader->getNumVertices(), loader->getVertices(),
+	//	loader->getTBNs(), loader->getUVs(), loader->getNumFaceVertices(),
+	//	loader->getFaces());
+
+	//obj->genLight(scene);
 	return;
 }
 

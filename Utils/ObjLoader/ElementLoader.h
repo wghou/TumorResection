@@ -12,14 +12,18 @@ public:
 	~ElementLoader();
 
 	void loadElement(const string fileName);
-	
-protected:
-	void loadFaceVertices(const string fileName);
+
+	int getNumVertices() { return numVertices; }
+	int getNumFaceVertices() { return numFaces; }
+	float* getVertices() { return mVertices; }
+	float* getUVs() { return mUVs; }
+	float* getTBNs() { return mTBNs; }
+	uint16_t* getFaces() { return mFaces; }
 
 private:
-	vector<Vertex> tVertices;
-	vector<TxtCord> tVTs;
-	vector<Normal> tVNs;
+	vector<float> tVertices;
+	vector<float> tVTs;
+	vector<float> tVNs;
 	vector<FaceVertex> tFaces;
 	
 

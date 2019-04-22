@@ -28,9 +28,9 @@ protected:
 
 private:
 	// Êý¾Ý»º´æ
-	vector<Vertex> tVertices;
-	vector<TxtCord> tVTs;
-	vector<Normal> tVNs;
+	vector<float> tVertices;
+	vector<float> tVTs;
+	vector<float> tVNs;
 	vector<FaceVertex> tFaces;
 
 

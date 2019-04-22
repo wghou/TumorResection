@@ -163,6 +163,7 @@
     <ClInclude Include="ElementLoader.h" />
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="TBN.h" />
+    <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
