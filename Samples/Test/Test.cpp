@@ -36,30 +36,16 @@ using namespace filament::math;
 using namespace filament;
 using namespace utils;
 
-static SandboxParameters g_params;
 static Config g_config;
 
-static RenderableObject *obj = nullptr;
 static ObjLoader *loader;
-
-static RenderableObject *ele = nullptr;
 static ElementLoader *eleLoader = nullptr;
 
-static void cleanup(Engine* engine, View*, Scene*) {
 
-	for (auto& i : g_params.materialInstance) {
-		engine->destroy(i);
-	}
+static void cleanup(Engine* engine, View*, Scene* secne) {
 
-	for (auto& i : g_params.material) {
-		engine->destroy(i);
-	}
+	RenderableObject::get(engine, secne).cleanUp();
 
-	engine->destroy(g_params.light);
-	EntityManager& em = EntityManager::get();
-	em.destroy(g_params.light);
-
-	delete obj;
 	delete loader;
 	delete eleLoader;
 }
@@ -68,35 +54,36 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 
 	//view->setClearColor({ 0.1, 0.125, 0.25, 1.0 });
 
-	ele = new RenderableObject(*engine);
-	eleLoader = new ElementLoader();
-	eleLoader->loadElement("../assets/models/liver/myLiver");
-	ele->genRenderable(scene, eleLoader->getNumVertices(), eleLoader->getVertices(),
-		eleLoader->getTBNs(), eleLoader->getUVs(), eleLoader->getNumFaceVertices(),
-		eleLoader->getFaces());
+	//ele = new RenderableObject(*engine);
+	//eleLoader = new ElementLoader();
+	//eleLoader->loadElement("../assets/models/liver/myLiver");
+	//ele->genRenderable(scene, eleLoader->getNumVertices(), eleLoader->getVertices(),
+	//	eleLoader->getTBNs(), eleLoader->getUVs(), eleLoader->getNumFaceVertices(),
+	//	eleLoader->getFaces());
 
-	ele->genLight(scene);
+	//ele->genLight(scene);
 
 
 
-	//obj = new RenderableObject(*engine);
-	//loader = new ObjLoader();
+	loader = new ObjLoader();
+	loader->loadObj("../assets/models/monkey/monkey.obj");
 
-	//loader->loadObj("../assets/models/monkey/monkey.obj");
+	RenderableObject& objRef = RenderableObject::get(engine, scene);
 
-	//obj->genMaterial("../assets/models/monkey");
-	//obj->genRenderable(scene, loader->getNumVertices(), loader->getVertices(),
-	//	loader->getTBNs(), loader->getUVs(), loader->getNumFaceVertices(),
-	//	loader->getFaces());
+	objRef.genMaterial("../assets/models/monkey");
+	objRef.genRenderable("monkey", loader->getNumVertices(), loader->getVertices(),
+			loader->getTBNs(), loader->getUVs(), loader->getNumFaceVertices(),
+			loader->getFaces());
 
-	//obj->genLight(scene);
+	objRef.genLight("light1");
+
 	return;
 }
 
 static void preRender(filament::Engine*, filament::View* view, filament::Scene*, filament::Renderer*) {
-	view->setAntiAliasing(g_params.fxaa ? View::AntiAliasing::FXAA : View::AntiAliasing::NONE);
-	view->setDithering(g_params.dithering ? View::Dithering::TEMPORAL : View::Dithering::NONE);
-	view->setSampleCount((uint8_t)(g_params.msaa ? 4 : 1));
+	//view->setAntiAliasing(g_params.fxaa ? View::AntiAliasing::FXAA : View::AntiAliasing::NONE);
+	//view->setDithering(g_params.dithering ? View::Dithering::TEMPORAL : View::Dithering::NONE);
+	//view->setSampleCount((uint8_t)(g_params.msaa ? 4 : 1));
 }
  
 static void animate(Engine* engine, View* view, double now)
@@ -106,14 +93,14 @@ static void animate(Engine* engine, View* view, double now)
 	auto& rcm = engine->getRenderableManager();
 	auto& tcm = engine->getTransformManager();
 
-	Entity *renderable = obj->renderable;
+	/*Entity *renderable = obj->renderable;
 	if (rcm.hasComponent(*renderable)) {
 		auto ti = tcm.getInstance(*renderable);
 		tcm.setTransform(ti, filament::math::mat4f::rotation(now, filament::math::float3{ 0, 1, 0 }) *
 			mat4f {
 			mat3f(g_config.scale), float3(0.0f, 0.0f, 0.0f)
 		});
-	}
+	}*/
 }
 
 int main(int argc, char *argv[]) {

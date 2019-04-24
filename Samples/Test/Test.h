@@ -27,9 +27,9 @@ constexpr uint8_t MATERIAL_TRANSPARENT = 4;
 constexpr uint8_t MATERIAL_FADE = 5;
 constexpr uint8_t MATERIAL_COUNT = 6;
 
-constexpr uint8_t BLENDING_OPAQUE = 0;
-constexpr uint8_t BLENDING_TRANSPARENT = 1;
-constexpr uint8_t BLENDING_FADE = 2;
+//constexpr uint8_t BLENDING_OPAQUE = 0;
+//constexpr uint8_t BLENDING_TRANSPARENT = 1;
+//constexpr uint8_t BLENDING_FADE = 2;
 
 struct SandboxParameters {
 	const filament::Material* material[MATERIAL_COUNT];
