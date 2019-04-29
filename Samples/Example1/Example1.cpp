@@ -146,7 +146,7 @@ static void animate(Engine* engine, View* view, double now)
 						obj_dirll->getLocalOriant().m[1][0], obj_dirll->getLocalOriant().m[1][1], obj_dirll->getLocalOriant().m[1][2], obj_dirll->getLocalOriant().m[1][3],
 						obj_dirll->getLocalOriant().m[2][0], obj_dirll->getLocalOriant().m[2][1], obj_dirll->getLocalOriant().m[2][2], obj_dirll->getLocalOriant().m[2][3],
 						obj_dirll->getLocalOriant().m[3][0], obj_dirll->getLocalOriant().m[3][1], obj_dirll->getLocalOriant().m[3][2], obj_dirll->getLocalOriant().m[3][3] };
-	Vector3d pos = obj_dirll->getLocalPos();
+	Vector3f pos = obj_dirll->getLocalPos();
 	
 	// set transform
 	auto& tcm = engine->getTransformManager();

@@ -16,6 +16,8 @@
 
 #include"PhantomDevice.h"
 
+#include"FilamentWinApp/RenderableObject.h"
+
 
 Drill::Drill(char* fileName) : RigidObject(fileName)
 {
@@ -46,6 +48,13 @@ Drill::~Drill()
 }
 
 
+bool Drill::createRenderableObject(RenderableObject* rdFactory, std::string objName)
+{
+	bool rlt = RigidObject::createRenderableObject(rdFactory, objName);
+
+	return rlt;
+}
+
 void Drill::timeStep(float time)
 {
 	// Î´³õÊ¼»¯
@@ -55,9 +64,16 @@ void Drill::timeStep(float time)
 	m_phDevice->updateDeviceStatus();
 
 	m_mesh.m_localPos = 
-		Vector3d(10 * m_phDevice->getPhantomPostion().x + 0.45, 
+		Vector3f(10 * m_phDevice->getPhantomPostion().x + 0.45, 
 		10 * m_phDevice->getPhantomPostion().y, 
 		10 * m_phDevice->getPhantomPostion().z + 0.6);
 	
 	m_mesh.m_localOriant = m_phDevice->getPhantomTransform();
+
+	float pos[3];
+	pos[0] = m_mesh.m_localPos.x;
+	pos[1] = m_mesh.m_localPos.y;
+	pos[2] = m_mesh.m_localPos.z;
+
+	m_rdFactory->updateObjectOriant("Drill", pos, &m_mesh.m_localOriant.m[0][0]);
 }

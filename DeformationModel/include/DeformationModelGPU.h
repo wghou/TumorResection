@@ -44,8 +44,8 @@ public:
 	virtual float* getVel();
 	virtual float* getVN();				// 获取顶点法向量
 	virtual int getTriNumber();
-	virtual int* getTriIndex();
-	virtual int* getTet();				// 获取四面体单元格顶点编号
+	virtual uint16_t* getTriIndex();
+	virtual uint16_t* getTet();				// 获取四面体单元格顶点编号
 	virtual int getTetNumber();			// 获取四面体单元格顶点个数
 
 

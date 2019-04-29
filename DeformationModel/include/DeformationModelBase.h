@@ -49,8 +49,8 @@ protected:
 	virtual float* getVel() = 0;			// 网格节点的速度
 	virtual float* getVN() = 0;				// 获取顶点法向量
 	virtual int getTriNumber() = 0;			// 获取表面网格三角形面片顶点个数
-	virtual int* getTriIndex() = 0;			// 获取表面网格三角形面片顶点编号
-	virtual int* getTet() = 0;				// 获取四面体单元格顶点编号
+	virtual uint16_t* getTriIndex() = 0;			// 获取表面网格三角形面片顶点编号
+	virtual uint16_t* getTet() = 0;				// 获取四面体单元格顶点编号
 	virtual int getTetNumber() = 0;			// 获取四面体单元格顶点个数
 };
 

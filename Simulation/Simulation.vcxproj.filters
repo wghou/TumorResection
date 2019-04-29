@@ -27,9 +27,6 @@
     <ClCompile Include="Object\RigidObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="Object\SoftObjectGPU.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="Collision\GenericCollision.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
@@ -44,6 +41,9 @@
     </ClCompile>
     <ClCompile Include="SimulationScene\SimulationSceneC.cpp">
       <Filter>SimulationScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\SoftObjectGPU.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,9 +63,6 @@
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Object\RigidObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\SoftObjectGPU.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Collision\CollisionBasic.h">
@@ -88,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="SimulationScene\SimulationSceneC.h">
       <Filter>SimulationScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\SoftObjectGPU.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

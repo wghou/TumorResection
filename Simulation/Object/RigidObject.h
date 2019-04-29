@@ -10,7 +10,6 @@
 #include"Object\ObjectBase.h"
 
 
-class OBJLoader;
 class SurfaceMeshBase;
 
 class RigidObject : public ObjectBase
@@ -22,15 +21,13 @@ public:
 
 
 	// 仿真步骤相关
+	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName);
 	virtual void timeStep(float time);
 
 
 	// 碰撞检测相关
 	virtual void collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder);
 
-
-private:
-	OBJLoader *m_loader = nullptr;				// OBJ 模型
 };
 
 #endif // !INSTRUMENT_H_

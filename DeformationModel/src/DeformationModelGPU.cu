@@ -159,9 +159,9 @@ float* DeformationModelGPU::getVN() { return m_model->VN; }
 
 int DeformationModelGPU::getTriNumber() { return m_model->t_number; }
 
-int* DeformationModelGPU::getTriIndex() { return m_model->T; }
+uint16_t* DeformationModelGPU::getTriIndex() { return m_model->T; }
 
-int* DeformationModelGPU::getTet() { return m_model->Tet; }
+uint16_t* DeformationModelGPU::getTet() { return m_model->Tet; }
 
 int DeformationModelGPU::getTetNumber() { return m_model->tet_number; }
 

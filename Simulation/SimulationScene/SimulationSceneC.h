@@ -22,11 +22,13 @@ public:
 
 	void stepSimulation(float deltaTime);	// 仿真步
 
-	void addObject(ObjectBase* object) { m_Objects.push_back(object); }
+	void addSoftObject(ObjectBase* object) { m_SftObjects.push_back(object); }
+	void addRigidObject(ObjectBase* object) { m_RgdObjects.push_back(object); }
 	void addInteractions(InteractionBase* interaction) { m_interactions.push_back(interaction); }
 
 private:
-	vector<ObjectBase*> m_Objects;				// 所有对象，软体/刚体，每个对象包含了各自的 render
+	vector<ObjectBase*> m_SftObjects;			// 软体对象
+	vector<ObjectBase*> m_RgdObjects;			// 刚体对象
 	vector<InteractionBase*> m_interactions;	// 不同物体对象之间的交互
 };
 

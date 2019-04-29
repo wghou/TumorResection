@@ -12,7 +12,7 @@ DMForces::~DMForces()
 	if (forcesModelB) delete[] forcesModelB;
 }
 
-void DMForces::intiDMForces(int nodeNum, std::vector<int> &ndA, std::vector<int> &ndB, DeformationModelGPU *mdA, DeformationModelGPU *mdB)
+void DMForces::intiDMForces(int nodeNum, std::vector<uint16_t> &ndA, std::vector<uint16_t> &ndB, DeformationModelGPU *mdA, DeformationModelGPU *mdB)
 {
 	nodeNumber = nodeNum;
 
@@ -47,9 +47,9 @@ void DMForces::calcuateForces(float k, float damp)
 	memset(forcesModelA, 0, sizeof(float)*modelA->getNodeNumber() * 3);
 	memset(forcesModelB, 0, sizeof(float)*modelB->getNodeNumber() * 3);
 
-	std::list<int>::iterator itB = nodesB.begin();
+	std::list<uint16_t>::iterator itB = nodesB.begin();
 	std::list<float>::iterator itLen = len0.begin();
-	for (std::list<int>::iterator itA = nodesA.begin(); itA != nodesA.end(); itA++)
+	for (std::list<uint16_t>::iterator itA = nodesA.begin(); itA != nodesA.end(); itA++)
 	{
 
 		float distance[3];
@@ -82,9 +82,9 @@ void DMForces::calcuateForces(float k, float damp)
 
 void DMForces::disconnectSpring(float mul)
 {
-	std::list<int>::iterator itB = nodesB.begin();
+	std::list<uint16_t>::iterator itB = nodesB.begin();
 	std::list<float>::iterator itLen = len0.begin();
-	for (std::list<int>::iterator itA = nodesA.begin(); itA != nodesA.end();)
+	for (std::list<uint16_t>::iterator itA = nodesA.begin(); itA != nodesA.end();)
 	{
 
 		float distance[3];

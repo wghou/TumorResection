@@ -33,9 +33,9 @@ public:
 	bool getUserSwitchPressedEvent_1() { return userSwitchPressed_1; }
 	bool getUserSwitchUnpressedEvent_1() { return userSwitchUnpressed_1; }
 
-	Vector3d getPhantomPostion();
+	Vector3f getPhantomPostion();
 	//Matrix3D getPhantomRotation();
-	MyMatrix4d getPhantomTransform();
+	MyMatrix4f getPhantomTransform();
 
 private:
 	// Phantom ฯเนุ

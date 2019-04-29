@@ -21,7 +21,7 @@ public:
 	TYPE*	X;
 	TYPE*	M;
 
-	int*	Tet;
+	uint16_t*	Tet;
 	int		tet_number;
 	TYPE*	Dm;
 	TYPE*	inv_Dm;
@@ -30,7 +30,7 @@ public:
 	
 	// triangles for rendering purpose
 	int			t_number;
-	int*		T;
+	uint16_t*	T;
 	TYPE*		VN;		//Vertex Normal
 	TYPE*		TN;		//Triangle Normal
 
@@ -43,11 +43,11 @@ public:
 		max_number	= 500000;
 		X			= new TYPE	[max_number*3];
 		M			= new TYPE	[max_number  ];
-		Tet			= new int	[max_number*4];
+		Tet			= new uint16_t[max_number*4];
 		Dm			= new TYPE	[max_number*9];
 		inv_Dm		= new TYPE	[max_number*9];
 		Vol			= new TYPE	[max_number  ];
-		T			= new int	[max_number*3];
+		T			= new uint16_t[max_number*3];
 		VN			= new TYPE	[max_number*3];
 		TN			= new TYPE	[max_number*3];
 		v_map		= new int	[max_number  ];
@@ -136,14 +136,14 @@ public:
 		for (int j = 0; j < ny; j++)
 		for (int k = 0; k < nz; k++)
 		{
-			int v0 = (i  )*(ny + 1)*(nz + 1) + (j  )*(nz + 1) + (k  );
-			int v1 = (i  )*(ny + 1)*(nz + 1) + (j  )*(nz + 1) + (k+1);
-			int v2 = (i  )*(ny + 1)*(nz + 1) + (j+1)*(nz + 1) + (k  );
-			int v3 = (i  )*(ny + 1)*(nz + 1) + (j+1)*(nz + 1) + (k+1);
-			int v4 = (i+1)*(ny + 1)*(nz + 1) + (j  )*(nz + 1) + (k  );
-			int v5 = (i+1)*(ny + 1)*(nz + 1) + (j  )*(nz + 1) + (k+1);
-			int v6 = (i+1)*(ny + 1)*(nz + 1) + (j+1)*(nz + 1) + (k  );
-			int v7 = (i+1)*(ny + 1)*(nz + 1) + (j+1)*(nz + 1) + (k+1);
+			uint16_t v0 = (i  )*(ny + 1)*(nz + 1) + (j  )*(nz + 1) + (k  );
+			uint16_t v1 = (i  )*(ny + 1)*(nz + 1) + (j  )*(nz + 1) + (k+1);
+			uint16_t v2 = (i  )*(ny + 1)*(nz + 1) + (j+1)*(nz + 1) + (k  );
+			uint16_t v3 = (i  )*(ny + 1)*(nz + 1) + (j+1)*(nz + 1) + (k+1);
+			uint16_t v4 = (i+1)*(ny + 1)*(nz + 1) + (j  )*(nz + 1) + (k  );
+			uint16_t v5 = (i+1)*(ny + 1)*(nz + 1) + (j  )*(nz + 1) + (k+1);
+			uint16_t v6 = (i+1)*(ny + 1)*(nz + 1) + (j+1)*(nz + 1) + (k  );
+			uint16_t v7 = (i+1)*(ny + 1)*(nz + 1) + (j+1)*(nz + 1) + (k+1);
 
 			Tet[tet_number * 4 +  0] = v0;
 			Tet[tet_number * 4 +  1] = v1;

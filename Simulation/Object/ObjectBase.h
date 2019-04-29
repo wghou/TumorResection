@@ -18,6 +18,7 @@
 class GenericCollision;
 class MyCollision;
 class CollisionRecorder;
+class RenderableObject;
 
 struct Mesh
 {
@@ -31,11 +32,11 @@ struct Mesh
 	float* mUV0 = nullptr;
 	float* mUV1 = nullptr;
 
-	int* mFaces = nullptr;
+	uint16_t* mFaces = nullptr;
 	int* mTets = nullptr;
 
-	Vector3d m_localPos;		// 对象体的实时位置
-	MyMatrix4d m_localOriant;		// 对象体的旋转矩阵
+	Vector3f m_localPos;		// 对象体的实时位置
+	MyMatrix4f m_localOriant;		// 对象体的旋转矩阵
 };
 
 
@@ -51,6 +52,7 @@ public:
 
 
 	// 仿真步骤相关
+	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName) {};
 	virtual void timeStep(float time) {};
 
 
@@ -58,13 +60,14 @@ public:
 	GenericCollision* getCollisionObject() { return m_collision; }
 	virtual void collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder) {};
 
-	Vector3d getLocalPos() { return m_mesh.m_localPos; }
-	MyMatrix4d getLocalOriant() { return m_mesh.m_localOriant; }
+	Vector3f getLocalPos() { return m_mesh.m_localPos; }
+	MyMatrix4f getLocalOriant() { return m_mesh.m_localOriant; }
 	Mesh getMesh() { return m_mesh; }
 
 protected:
 	bool initialized = false;	// 是否初始化
 	Mesh m_mesh;				// 网格数据
+	RenderableObject* m_rdFactory = nullptr;
 
 	GenericCollision* m_collision = nullptr;	// 碰撞对象
 	bool isPerformCollisionDetection = true;	// 是否参与碰撞检测

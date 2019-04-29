@@ -3,43 +3,43 @@
 
 #include<iostream>
 
-struct Vector3d
+struct Vector3f
 {
-	double x;
-	double y;
-	double z;
+	float x;
+	float y;
+	float z;
 
-	Vector3d() { x = y = z = 0; }
+	Vector3f() { x = y = z = 0; }
 
-	Vector3d(double _x, double _y, double _z)
+	Vector3f(float _x, float _y, float _z)
 	{
 		x = _x;
 		y = _y;
 		z = _z;
 	}
 
-	Vector3d(const double* pdouble)
+	Vector3f(const double* pdouble)
 	{
 		x = pdouble[0];
 		y = pdouble[0];
 		z = pdouble[0];
 	}
 
-	Vector3d(const float* pfloat)
+	Vector3f(const float* pfloat)
 	{
 		x = pfloat[0];
 		y = pfloat[0];
 		z = pfloat[0];
 	}
 
-	Vector3d(double f)
+	Vector3f(float f)
 	{
 		x = y = z = f;
 	}
 
 
 
-	Vector3d& operator+=(const Vector3d& r)
+	Vector3f& operator+=(const Vector3f& r)
 	{
 		x += r.x;
 		y += r.y;
@@ -48,7 +48,7 @@ struct Vector3d
 		return *this;
 	}
 
-	Vector3d& operator-=(const Vector3d& r)
+	Vector3f& operator-=(const Vector3f& r)
 	{
 		x -= r.x;
 		y -= r.y;
@@ -57,7 +57,7 @@ struct Vector3d
 		return *this;
 	}
 
-	Vector3d& operator*=(double f)
+	Vector3f& operator*=(double f)
 	{
 		x *= f;
 		y *= f;
@@ -66,7 +66,7 @@ struct Vector3d
 		return *this;
 	}
 
-	Vector3d& operator=(const Vector3d& r)
+	Vector3f& operator=(const Vector3f& r)
 	{
 		x = r.x;
 		y = r.y;
@@ -76,27 +76,27 @@ struct Vector3d
 	}
 
 
-	Vector3d operator+( const Vector3d &rhs)
+	Vector3f operator+( const Vector3f &rhs)
 	{
-		Vector3d sum;
+		Vector3f sum;
 		sum.x = this->x + rhs.x;
 		sum.y = this->y + rhs.y;
 		sum.z = this->z + rhs.z;
 		return sum;
 	}
 
-	Vector3d operator-(const Vector3d& rhs)
+	Vector3f operator-(const Vector3f& rhs)
 	{
-		Vector3d sub;
+		Vector3f sub;
 		sub.x = this->x - rhs.x;
 		sub.y = this->y - rhs.y;
 		sub.z = this->z - rhs.z;
 		return sub;
 	}
 
-	Vector3d operator*(double f)
+	Vector3f operator*(double f)
 	{
-		Vector3d rlt;
+		Vector3f rlt;
 		rlt.x = x*f;
 		rlt.y = y*f;
 		rlt.z = z*f;
@@ -104,9 +104,9 @@ struct Vector3d
 		return rlt;
 	}
 
-	Vector3d Cross(const Vector3d& v) const;
+	Vector3f Cross(const Vector3f& v) const;
 
-	Vector3d& Normalize();
+	Vector3f& Normalize();
 
 	void Print() const
 	{
@@ -115,18 +115,18 @@ struct Vector3d
 };
 
 
-class MyMatrix4d
+class MyMatrix4f
 {
 public:
-	double m[4][4];
+	float m[4][4];
 
-	MyMatrix4d()
+	MyMatrix4f()
 	{
 		InitIdentity();
 	}
 
 	// constructor from Assimp matrix
-	MyMatrix4d(double a00, double a01, double a02, double a03,
+	MyMatrix4f(double a00, double a01, double a02, double a03,
 		double a10, double a11, double a12, double a13,
 		double a20, double a21, double a22, double a23,
 		double a30, double a31, double a32, double a33)
@@ -142,9 +142,9 @@ public:
 		memset(m, 0, sizeof(m));
 	}
 
-	MyMatrix4d Transpose() const
+	MyMatrix4f Transpose() const
 	{
-		MyMatrix4d n;
+		MyMatrix4f n;
 
 		for (unsigned int i = 0; i < 4; i++) {
 			for (unsigned int j = 0; j < 4; j++) {
@@ -164,9 +164,9 @@ public:
 		m[3][0] = 0.0f; m[3][1] = 0.0f; m[3][2] = 0.0f; m[3][3] = 1.0f;
 	}
 
-	inline MyMatrix4d operator*(const MyMatrix4d& Right) const
+	inline MyMatrix4f operator*(const MyMatrix4f& Right) const
 	{
-		MyMatrix4d Ret;
+		MyMatrix4f Ret;
 
 		for (unsigned int i = 0; i < 4; i++) {
 			for (unsigned int j = 0; j < 4; j++) {
@@ -180,14 +180,14 @@ public:
 		return Ret;
 	}
 
-	operator const double*() const
+	operator const float*() const
 	{
 		return &(m[0][0]);
 	}
 
-	inline MyMatrix4d operator*(const MyMatrix4d& Right)
+	inline MyMatrix4f operator*(const MyMatrix4f& Right)
 	{
-		memcpy(m, Right.m, sizeof(double) * 16);
+		memcpy(m, Right.m, sizeof(float) * 16);
 
 		return *this;
 	}

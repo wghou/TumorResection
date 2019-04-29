@@ -40,6 +40,8 @@ public:
 	bool genRenderable(std::string objName, int numVert, float *mVert, float *mTBNs, float *mUVs, int numFaces, uint16_t* mFaces);
 	bool genLight(std::string lightName);
 
+	void updateObjectOriant(std::string objName, float* pos, float* ori);
+
 	void cleanUp();
 
 protected:
@@ -50,7 +52,6 @@ private:
 	Texture* createOneByOneTexture(uint32_t pixel);
 
 	struct Object {
-		std::string objName;
 		Entity renderable;
 		VertexBuffer* mVertexBuffer = nullptr;
 		IndexBuffer* mIndexBuffer = nullptr;
@@ -80,7 +81,6 @@ private:
 	std::map<std::string, Mtl> mMtls;
 
 	std::map<std::string, Entity> mLights;
-	std::map<std::string, Entity> mRenderables;
-	std::vector<Object> mObjects;
+	std::map<std::string, Object> mRenderables;
 };
 #endif // !RENDERABLE_OBJECT_H

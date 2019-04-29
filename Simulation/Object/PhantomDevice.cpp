@@ -121,18 +121,18 @@ bool PhantomDevice::updateDeviceStatus()
 	return true;
 }
 
-Vector3d PhantomDevice::getPhantomPostion()
+Vector3f PhantomDevice::getPhantomPostion()
 {
-	return Vector3d(m_phantomPosition.x(), m_phantomPosition.y(), m_phantomPosition.z());
+	return Vector3f(m_phantomPosition.x(), m_phantomPosition.y(), m_phantomPosition.z());
 }
 
 //Matrix3D getPhantomRotation();
 
 // wghou 20181108
 // debug
-MyMatrix4d PhantomDevice::getPhantomTransform()
+MyMatrix4f PhantomDevice::getPhantomTransform()
 {
-	return MyMatrix4d(
+	return MyMatrix4f(
 		m_phantomRotation(0, 0), m_phantomRotation(1, 0), m_phantomRotation(2, 0), 0.0,
 		m_phantomRotation(0, 1), m_phantomRotation(1, 1), m_phantomRotation(2, 1), 0.0,
 		m_phantomRotation(0, 2), m_phantomRotation(1, 2), m_phantomRotation(2, 2), 0.0,

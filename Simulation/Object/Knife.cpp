@@ -46,7 +46,7 @@ void Knife::timeStep(float time)
 
 	// ´Ó phantomDevice ¶ÁÈ¡Î»ÖÃ
 	m_mesh.m_localPos =
-		Vector3d(10 * m_phDevice->getPhantomPostion().x + 0.45,
+		Vector3f(10 * m_phDevice->getPhantomPostion().x + 0.45,
 			10 * m_phDevice->getPhantomPostion().y,
 			10 * m_phDevice->getPhantomPostion().z + 0.6);
 

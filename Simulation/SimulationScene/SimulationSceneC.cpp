@@ -31,7 +31,11 @@ void SimulationSceneC::stepSimulation(float deltaTime)
 
 
 	// 2 - 软组织形变 / 刚体位移
-	for (vector<ObjectBase*>::iterator it = m_Objects.begin(); it != m_Objects.end(); it++)
+	for (vector<ObjectBase*>::iterator it = m_RgdObjects.begin(); it != m_RgdObjects.end(); it++)
+	{
+		(*it)->timeStep(deltaTime);
+	}
+	for (vector<ObjectBase*>::iterator it = m_SftObjects.begin(); it != m_SftObjects.end(); it++)
 	{
 		(*it)->timeStep(deltaTime);
 	}

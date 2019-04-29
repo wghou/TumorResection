@@ -7,39 +7,44 @@
 
 #include"RigidObject.h"
 
-#include"OBJLoader.h"
+#include"ObjLoader.h"
 #include"Logger.h"
 #include <iostream>
 #include <fstream>
 
-#include"Collision\MyCollision.h"
-#include"Object\SoftObjectGPU.h"
+#include"Collision/MyCollision.h"
+#include"Object/SoftObjectGPU.h"
+
+#include"FilamentWinApp/RenderableObject.h"
 
 
 
 RigidObject::RigidObject(char* fileName)
 {
-	m_loader = new OBJLoader();
+	ObjLoader m_loader;
 
-	m_loader->loadObj(fileName);
-	m_mesh.numVertices = m_loader->getNumVertices();
-	if (m_loader->getNumVertices() != 0)
+
+	m_loader.loadObj(fileName);
+	m_mesh.numVertices = m_loader.getNumVertices();
+	if (m_loader.getNumVertices() != 0)
 	{
-		m_mesh.mVertices = new float[m_loader->getVertices().size()];
-		memcpy(m_mesh.mVertices, m_loader->getVertices().data(), sizeof(float)*m_loader->getVertices().size());
+		m_mesh.mVertices = new float[m_mesh.numVertices * 3];
+		memcpy(m_mesh.mVertices, m_loader.getVertices(), sizeof(float)*m_mesh.numVertices * 3);
 
-		m_mesh.mNormals = new float[m_loader->getNormals().size()];
-		memcpy(m_mesh.mNormals, m_loader->getNormals().data(), sizeof(float)*m_loader->getNormals().size());
+		m_mesh.mTBNs = new float[m_mesh.numVertices * 4];
+		memcpy(m_mesh.mTBNs, m_loader.getTBNs(), sizeof(float)*m_mesh.numVertices * 4);
 
-		m_mesh.mTBNs = new float[m_loader->getTBNs().size()];
-		memcpy(m_mesh.mTBNs, m_loader->getTBNs().data(), sizeof(float)*m_loader->getTBNs().size());
+		if (m_loader.getUVs() != nullptr) {
+			m_mesh.mUV0 = new float[m_mesh.numVertices * 2];
+			memcpy(m_mesh.mUV0, m_loader.getUVs(), m_mesh.numVertices * 2);
+		}
 	}
 	
-	m_mesh.numFaces = m_loader->getNumFaces();
-	if (m_loader->getNumFaces() != 0)
+	m_mesh.numFaces = m_loader.getNumFaces();
+	if (m_mesh.numFaces != 0)
 	{
-		m_mesh.mFaces = new int[m_loader->getFaces().size()];
-		memcpy(m_mesh.mFaces, m_loader->getFaces().data(), sizeof(float)*m_loader->getFaces().size());
+		m_mesh.mFaces = new uint16_t[m_mesh.numFaces * 3];
+		memcpy(m_mesh.mFaces, m_loader.getFaces(), sizeof(float)*m_mesh.numFaces * 3);
 	}
 
 	// 初始化成功
@@ -55,10 +60,17 @@ RigidObject::~RigidObject()
 	if (m_mesh.mUV0) delete[] m_mesh.mUV0;
 	if (m_mesh.mUV1) delete[] m_mesh.mUV1;
 
-	if (m_loader) delete m_loader;
 	if (m_collision) delete m_collision;
 }
 
+bool RigidObject::createRenderableObject(RenderableObject* rdFactory, std::string objName)
+{
+	m_rdFactory = rdFactory;
+
+	bool rlt = rdFactory->genRenderable(objName, m_mesh.numVertices, m_mesh.mVertices,
+		m_mesh.mTBNs, m_mesh.mUV0, m_mesh.numFaces, m_mesh.mFaces);
+	return rlt;
+}
 
 void RigidObject::timeStep(float time)
 {

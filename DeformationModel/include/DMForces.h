@@ -13,7 +13,7 @@ class DMForces
 public:
 	~DMForces();
 
-	void intiDMForces(int nodeNum, std::vector<int> &ndA, std::vector<int> &ndB, DeformationModelGPU *mdA, DeformationModelGPU *mdB);
+	void intiDMForces(int nodeNum, std::vector<uint16_t> &ndA, std::vector<uint16_t> &ndB, DeformationModelGPU *mdA, DeformationModelGPU *mdB);
 	void calcuateForces(float k, float damp);
 	void disconnectSpring(float mul);
 
@@ -22,14 +22,14 @@ public:
 
 	DeformationModelGPU* getModelA() { return modelA; }
 	DeformationModelGPU* getModelB() { return modelB; }
-	std::list<int> & getNodesA() { return nodesA; }
-	std::list<int> & getNodesB() { return nodesB; }
+	std::list<uint16_t> & getNodesA() { return nodesA; }
+	std::list<uint16_t> & getNodesB() { return nodesB; }
 
 
 private:
 	int nodeNumber = 0;			// 模型中连接点的个数
-	std::list<int> nodesA;		// 模型A中的连接点编号
-	std::list<int> nodesB;		// 模型B中的连接点编号
+	std::list<uint16_t> nodesA;		// 模型A中的连接点编号
+	std::list<uint16_t> nodesB;		// 模型B中的连接点编号
 	std::list<float> len0;		// 连接点之间的初始长度
 
 	DeformationModelGPU *modelA;	// 模型A指针

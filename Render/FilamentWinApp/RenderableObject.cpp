@@ -13,6 +13,11 @@
 #include <filament/LightManager.h>
 #include <utils/EntityManager.h>
 
+#include <math/mat3.h>
+#include <math/mat4.h>
+#include <math/vec4.h>
+#include <math/norm.h>
+
 #include <utils/Path.h>
 #include <stb/stb_image.h>
 #include "resources/resources.h"
@@ -61,10 +66,10 @@ void RenderableObject::cleanUp()
 	mEngine->destroy(mDefaultNormalMap);
 	mEngine->destroy(mDefaultMap);
 
-	for (auto& obj : mObjects) {
-		mEngine->destroy(obj.mtlInstance);
-		mEngine->destroy(obj.mVertexBuffer);
-		mEngine->destroy(obj.mIndexBuffer);
+	for (auto& obj : mRenderables) {
+		mEngine->destroy(obj.second.mtlInstance);
+		mEngine->destroy(obj.second.mVertexBuffer);
+		mEngine->destroy(obj.second.mIndexBuffer);
 	}
 
 	for (auto mtl : mMtls) {
@@ -77,9 +82,9 @@ void RenderableObject::cleanUp()
 	}
 
 	EntityManager& em = EntityManager::get();
-	for (auto obj : mObjects) {
-		mEngine->destroy(obj.renderable);
-		em.destroy(obj.renderable);
+	for (auto obj : mRenderables) {
+		mEngine->destroy(obj.second.renderable);
+		em.destroy(obj.second.renderable);
 	}
 
 	for (auto lt : mLights) {
@@ -389,8 +394,7 @@ bool RenderableObject::genRenderable(std::string objName, int numVert, float *mV
 	tcm2.create(obj.renderable, parent, mat4f());
 	mScene->addEntity(obj.renderable);
 
-	mRenderables[objName] = obj.renderable;
-	mObjects.push_back(obj);
+	mRenderables[objName] = obj;
 	return true;
 }
 
@@ -409,4 +413,23 @@ bool RenderableObject::genLight(std::string lightName)
 
 	mLights[lightName] = g_light;
 	return true;
+}
+
+void RenderableObject::updateObjectOriant(std::string objName, float* pos, float* ori)
+{
+	if (mRenderables.find(objName) == mRenderables.end()) {
+		std::cerr << "there is no object " << objName << " when update the oriant." << std::endl;
+		return;
+	}
+
+	Entity &renderable = mRenderables[objName].renderable;
+
+	auto& rcm = mEngine->getRenderableManager();
+	auto& tcm = mEngine->getTransformManager();
+
+	
+	if (rcm.hasComponent(renderable)) {
+		auto ti = tcm.getInstance(renderable);
+		tcm.setTransform(ti, mat4f{});
+	}
 }

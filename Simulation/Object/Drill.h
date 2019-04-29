@@ -23,6 +23,7 @@ public:
 
 
 	// 仿真步骤相关
+	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName = "Drill");
 	virtual void timeStep(float time);
 
 

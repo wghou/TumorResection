@@ -72,7 +72,7 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 
 	objRef.genMaterial("../assets/models/monkey");
 	objRef.genRenderable("monkey", loader->getNumVertices(), loader->getVertices(),
-			loader->getTBNs(), loader->getUVs(), loader->getNumFaceVertices(),
+			loader->getTBNs(), loader->getUVs(), loader->getNumFaces(),
 			loader->getFaces());
 
 	objRef.genLight("light1");

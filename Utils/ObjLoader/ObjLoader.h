@@ -17,7 +17,7 @@ public:
 
 
 	int getNumVertices() { return numVertices; }
-	int getNumFaceVertices() { return numFaces; }
+	int getNumFaces() { return numFaces; }
 	float* getVertices() { return mVertices; }
 	float* getUVs() { return mUVs; }
 	float* getTBNs() { return mTBNs; }
