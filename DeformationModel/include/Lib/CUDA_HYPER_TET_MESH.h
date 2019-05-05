@@ -454,9 +454,9 @@ __global__ void Constraint_1_Kernel(const float* M, const float* X, const float*
 
 	// Get Force
 	float error[3];
-	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 3.5*V[i * 3 + 0]) * M[i];
-	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 3.5*V[i * 3 + 1]) * M[i];
-	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 3.5*V[i * 3 + 2]) * M[i] + gravity*M[i];
+	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 0*V[i * 3 + 0]) * M[i];
+	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 0*V[i * 3 + 1]) * M[i];
+	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 0*V[i * 3 + 2]) * M[i] + gravity*M[i];
 
 	// Update Energy
 	float energy = 0;
@@ -814,7 +814,8 @@ public:
 		cudaMemset(dev_P,     0, sizeof(TYPE)*number  );
 		Compute_FM_Kernel << <tet_blocksPerGrid, tet_threadsPerBlock>> >(dev_X, dev_Tet, dev_inv_Dm, dev_Vol, dev_lambda, dev_F, dev_C, dev_ext_C, dev_E,
 			model, stiffness_0, stiffness_1, stiffness_2, stiffness_3, stiffness_p, tet_number, lower_bound, upper_bound, update_C);		
-		Constraint_1_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_M, dev_X, dev_prev_X, dev_V, dev_E, dev_G, dev_P, dev_S, dev_next_X, dev_fixed, dev_more_fixed, dev_fixed_X, dev_F, dev_C, dev_ext_C, stepping, number, t, 1/t, gravity, dev_externalForce);
+		Constraint_1_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_M, dev_X, dev_prev_X, dev_V, dev_E, dev_G, dev_P, dev_S, dev_next_X, dev_fixed, 
+			dev_more_fixed, dev_fixed_X, dev_F, dev_C, dev_ext_C, stepping, number, t, 1/t, gravity, dev_externalForce);
 	}
 
 	float Get_Gradient_Magnitude()
@@ -927,6 +928,7 @@ public:
 		// End the update
 		Constraint_3_Kernel<< <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_S, dev_V, dev_prev_V, dev_fixed, dev_more_fixed, t, 1/t, number);		
 		cudaMemcpy(X, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToHost);
+
 		// wghou
 		// «Â≥˝Õ‚¡¶
 		cudaMemset(dev_externalForce, 0, sizeof(TYPE)*number * 3);

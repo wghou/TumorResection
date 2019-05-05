@@ -41,6 +41,7 @@ public:
 	bool genLight(std::string lightName);
 
 	void updateObjectOriant(std::string objName, float* pos, float* ori);
+	void updateVertexBuffer(std::string objName);
 
 	void cleanUp();
 
@@ -53,6 +54,9 @@ private:
 
 	struct Object {
 		Entity renderable;
+		int numVert = 0;
+		float* mVert = nullptr;
+		float* mTBNs = nullptr;
 		VertexBuffer* mVertexBuffer = nullptr;
 		IndexBuffer* mIndexBuffer = nullptr;
 		MaterialInstance* mtlInstance = nullptr;

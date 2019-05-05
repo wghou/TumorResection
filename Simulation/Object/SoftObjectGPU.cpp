@@ -15,12 +15,20 @@
 #include"Collision\MyCollision.h"
 
 #include"FilamentWinApp/RenderableObject.h"
+#include"utils/Path.h"
 #include"ElementLoader.h"
 #include"TBN.h"
 
 
 SoftObjectGPU::SoftObjectGPU(char* fileName)
 {
+	Path filePath(fileName);
+	//if (!filePath.exists()) {
+	//	Logger::getMainLogger().log(Logger::Level::Error, "The file " + filePath.getName() + " doesnt exist.", "SoftObjectGPU::SoftObjectGPU");
+	//	initialized = false;
+	//	return;
+	//}
+
 	ElementLoader m_loader;
 	m_loader.loadElement(fileName);
 
@@ -57,6 +65,7 @@ SoftObjectGPU::SoftObjectGPU(char* fileName)
 	// collision
 	m_collision = new MyCollision(this);
 	
+	m_objName = filePath.getName();
 	initialized = true;
 	return;
 }
@@ -96,7 +105,7 @@ void SoftObjectGPU::timeStep(float time)
 	TBN::buildVns(m_mesh.numFaces, m_mesh.mFaces, m_mesh.numVertices, m_mesh.mVertices, m_mesh.mNormals);
 	TBN::updateTBNs(m_mesh.numVertices, m_mesh.mNormals, m_mesh.mTBNs);
 
-	//
+	m_rdFactory->updateVertexBuffer(m_objName);
 }
 
 

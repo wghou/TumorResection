@@ -396,6 +396,10 @@ bool RenderableObject::genRenderable(std::string objName, int numVert, float *mV
 	tcm2.create(obj.renderable, parent, mat4f());
 	mScene->addEntity(obj.renderable);
 
+
+	obj.numVert = numVert;
+	obj.mVert = mVert;
+	obj.mTBNs = mTBNs;
 	mRenderables[objName] = obj;
 	return true;
 }
@@ -431,9 +435,30 @@ void RenderableObject::updateObjectOriant(std::string objName, float* pos, float
 	auto& rcm = mEngine->getRenderableManager();
 	auto& tcm = mEngine->getTransformManager();
 
-	
+	mat4f oriant4f = mat4f{ ori[0], ori[1], ori[2], ori[3],
+							ori[4], ori[5], ori[6], ori[7],
+							ori[8], ori[9], ori[10], ori[11],
+							ori[12], ori[13], ori[14], ori[15] };
 	if (rcm.hasComponent(renderable)) {
 		auto ti = tcm.getInstance(renderable);
-		tcm.setTransform(ti, mat4f::translation(float3{pos[0], pos[1], pos[2]}));
+		tcm.setTransform(ti, oriant4f * mat4f::translation(float3{ pos[0], pos[1], pos[2] }));
 	}
+}
+
+void RenderableObject::updateVertexBuffer(std::string objName)
+{
+	if (mRenderables.find(objName) == mRenderables.end()) {
+		Logger::getMainLogger().log(Logger::Level::Warning, "There is no renderable object " + objName + " when update the vertex buffer.", "RenderableObject::updateVertexBuffer");
+		return;
+	}
+
+	Object &obj = mRenderables[objName];
+
+	// bug 05/05/2019
+	// must make sure the size of the vertex buffer unchange.
+	obj.mVertexBuffer->setBufferAt(*mEngine, 0,
+		VertexBuffer::BufferDescriptor(obj.mVert, obj.numVert * 3 * sizeof(float), nullptr));
+	obj.mVertexBuffer->setBufferAt(*mEngine, 1,
+		VertexBuffer::BufferDescriptor(obj.mTBNs, obj.numVert * 4 * sizeof(float), nullptr));
+
 }

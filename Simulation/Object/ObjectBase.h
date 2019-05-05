@@ -63,9 +63,11 @@ public:
 	Vector3f getLocalPos() { return m_mesh.m_localPos; }
 	MyMatrix4f getLocalOriant() { return m_mesh.m_localOriant; }
 	Mesh getMesh() { return m_mesh; }
+	std::string getObjectName() { return m_objName; }
 
 protected:
 	bool initialized = false;	// 是否初始化
+	std::string m_objName = "ObjectBase";
 	Mesh m_mesh;				// 网格数据
 	RenderableObject* m_rdFactory = nullptr;
 

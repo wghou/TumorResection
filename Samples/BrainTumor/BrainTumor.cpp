@@ -53,12 +53,12 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	
 	RenderableObject& objRef = RenderableObject::get(engine, scene);
 
-	ObjectBase* obj_drill = new Drill();
-	obj_drill->createRenderableObject(&objRef, "Drill");
-	simulator.addRigidObject(obj_drill);
+	//ObjectBase* obj_drill = new Drill();
+	//obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
+	//simulator.addRigidObject(obj_drill);
 
 	ObjectBase* obj_liver = new SoftObjectGPU("../assets/models/liver/myLiver");
-	obj_liver->createRenderableObject(&objRef, "Liver");
+	obj_liver->createRenderableObject(&objRef, obj_liver->getObjectName());
 	simulator.addSoftObject(obj_liver);
 
 	return;

@@ -75,5 +75,5 @@ void Drill::timeStep(float time)
 	pos[1] = m_mesh.m_localPos.y;
 	pos[2] = m_mesh.m_localPos.z;
 
-	m_rdFactory->updateObjectOriant("Drill", pos, &m_mesh.m_localOriant.m[0][0]);
+	m_rdFactory->updateObjectOriant(m_objName, pos, &m_mesh.m_localOriant.m[0][0]);
 }

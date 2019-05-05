@@ -16,6 +16,7 @@
 #include"Object/SoftObjectGPU.h"
 
 #include"FilamentWinApp/RenderableObject.h"
+#include"utils/Path.h"
 
 
 
@@ -23,6 +24,12 @@ RigidObject::RigidObject(char* fileName)
 {
 	ObjLoader m_loader;
 
+	Path filePath(fileName);
+	if (!filePath.exists()) {
+		Logger::getMainLogger().log(Logger::Level::Error, "The file " + filePath.getName() + " doesnt exist.", "RigidObject::RigidObject");
+		initialized = false;
+		return;
+	}
 
 	m_loader.loadObj(fileName);
 	m_mesh.numVertices = m_loader.getNumVertices();
@@ -57,6 +64,7 @@ RigidObject::RigidObject(char* fileName)
 		return;
 	}
 
+	m_objName = filePath.getName();
 	// 初始化成功
 	initialized = true;
 	return;
