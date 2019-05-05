@@ -14,20 +14,39 @@
 #include"DeformationModelGPU.h"
 #include"Collision\MyCollision.h"
 
+#include"FilamentWinApp/RenderableObject.h"
+#include"ElementLoader.h"
+#include"TBN.h"
+
 
 SoftObjectGPU::SoftObjectGPU(char* fileName)
 {
+	ElementLoader m_loader;
+	m_loader.loadElement(fileName);
+
 	DfModel_Config config;
+	config.numVertex = m_loader.getNumVertices();
+	config.mVertices = m_loader.getVertices();
+	config.numTet = m_loader.getNumTets();
+	config.mTets = m_loader.getTets();
+
 	m_deformationModel = new DeformationModelGPU();
 	m_deformationModel->Initialize(config);
 
-	m_mesh.numVertices = m_deformationModel->getNodeNumber();
-	m_mesh.numFaces = m_deformationModel->getTriNumber();
-	m_mesh.numTets = m_deformationModel->getTetNumber();
-	
+	m_mesh.numVertices = m_loader.getNumVertices();
 	m_mesh.mVertices = m_deformationModel->getX();
-	m_mesh.mNormals = m_deformationModel->getVN();
-	m_mesh.mFaces = m_deformationModel->getTriIndex();
+	m_mesh.mNormals = new float[m_mesh.numVertices * 3];
+	m_mesh.mTBNs = new float[m_mesh.numVertices * 4];
+	m_mesh.mUV0 = new float[m_mesh.numVertices * 2];
+	memcpy(m_mesh.mUV0, m_loader.getUVs(), m_mesh.numVertices * sizeof(float) * 2);
+
+	// surface mesh
+	m_mesh.numFaces = m_loader.getNumFaceVertices();
+	m_mesh.mFaces = new uint16_t[m_mesh.numFaces * 3];
+	memcpy(m_mesh.mFaces, m_loader.getFaces(), sizeof(uint16_t)*m_mesh.numFaces * 3);
+
+	TBN::buildVns(m_mesh.numFaces, m_mesh.mFaces, m_mesh.numVertices, m_mesh.mVertices, m_mesh.mNormals);
+	TBN::updateTBNs(m_mesh.numVertices, m_mesh.mNormals, m_mesh.mTBNs);
 
 	// collision
 	m_collision = new MyCollision(this);
@@ -41,7 +60,24 @@ SoftObjectGPU::~SoftObjectGPU()
 	if (m_deformationModel) delete m_deformationModel;
 
 	if (m_collision) delete m_collision;
+
+	// delete mesh buffer
+	if (m_mesh.mFaces) delete[] m_mesh.mFaces;
+	if (m_mesh.mNormals) delete[] m_mesh.mNormals;
+	if (m_mesh.mTBNs) delete[] m_mesh.mTBNs;
+	if (m_mesh.mUV0) delete[] m_mesh.mUV0;
 }
+
+
+bool SoftObjectGPU::createRenderableObject(RenderableObject* rdFactory, std::string objName)
+{
+	m_rdFactory = rdFactory;
+
+	bool rlt = rdFactory->genRenderable(objName, m_mesh.numVertices, m_mesh.mVertices,
+		m_mesh.mTBNs, m_mesh.mUV0, m_mesh.numFaces, m_mesh.mFaces);
+	return rlt;
+}
+
 
 void SoftObjectGPU::timeStep(float time)
 {
@@ -50,8 +86,11 @@ void SoftObjectGPU::timeStep(float time)
 
 	m_deformationModel->Reset_More_Fixed(more_fixed, dir);
 	m_deformationModel->timeStep(time);
-	//m_deformationModel->Update(time, 96, dir);
-	m_deformationModel->Rotate_Z(0.01);
+
+	TBN::buildVns(m_mesh.numFaces, m_mesh.mFaces, m_mesh.numVertices, m_mesh.mVertices, m_mesh.mNormals);
+	TBN::updateTBNs(m_mesh.numVertices, m_mesh.mNormals, m_mesh.mTBNs);
+
+	//
 }
 
 

@@ -27,37 +27,13 @@
     <ClInclude Include="include\DMForces.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\Lib\BMP_IO.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
     <ClInclude Include="include\Lib\CUDA_HYPER_TET_MESH.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="include\Lib\CUDA_MATH.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="include\Lib\DISTANCE.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Lib\HYPER_TET_MESH.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Lib\INTERSECTION.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Lib\IO_FUNC.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Lib\MESH.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Lib\MY_GLSL.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
     <ClInclude Include="include\Lib\MY_MATH.h">
-      <Filter>Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Lib\PROGRESSING_BAR.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="include\Lib\svd3_cuda.h">
@@ -79,8 +55,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\DeformationModelGPU.cu">
+    <CudaCompile Include="src\DeformationModelGPU.cu">
       <Filter>源文件</Filter>
-    </None>
+    </CudaCompile>
   </ItemGroup>
 </Project>

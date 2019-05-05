@@ -33,7 +33,7 @@ void MyInteraction::processAfterTimeStep()
 void MyInteraction::init(SoftObjectGPU *obA, SoftObjectGPU *obB, float distance)
 {
 	int number = 0; 
-	std::vector<int> ndA, ndB;
+	std::vector<uint16_t> ndA, ndB;
 
 	DeformationModelGPU* dmA = obA->getDeformationModel();
 	DeformationModelGPU* dmB = obB->getDeformationModel();

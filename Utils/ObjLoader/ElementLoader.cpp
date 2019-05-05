@@ -5,7 +5,7 @@
 #include<vector>
 #include<memory>
 
-#define TINYOBJLOADER_IMPLEMENTATION
+//#define TINYOBJLOADER_IMPLEMENTATION
 #include"tiny_obj_loader.h"
 
 #include"TBN.h"

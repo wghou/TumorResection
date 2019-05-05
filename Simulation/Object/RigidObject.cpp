@@ -44,7 +44,7 @@ RigidObject::RigidObject(char* fileName)
 	if (m_mesh.numFaces != 0)
 	{
 		m_mesh.mFaces = new uint16_t[m_mesh.numFaces * 3];
-		memcpy(m_mesh.mFaces, m_loader.getFaces(), sizeof(float)*m_mesh.numFaces * 3);
+		memcpy(m_mesh.mFaces, m_loader.getFaces(), sizeof(uint16_t)*m_mesh.numFaces * 3);
 	}
 
 	// 初始化成功

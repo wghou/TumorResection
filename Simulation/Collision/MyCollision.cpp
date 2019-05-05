@@ -31,10 +31,10 @@ MyCollision::MyCollision(ObjectBase* obj_self)
 		
 		X_index.clear();
 		int triangleNum = dynamic_cast<SoftObjectGPU*>(obj_self)->m_mesh.numFaces;
-		int *T = dynamic_cast<SoftObjectGPU*>(obj_self)->m_mesh.mFaces;
+		uint16_t *T = dynamic_cast<SoftObjectGPU*>(obj_self)->m_mesh.mFaces;
 		for (int i = 0; i < triangleNum * 3; i++)
 		{
-			int v = T[i];
+			uint16_t v = T[i];
 			std::vector<int>::iterator it;
 			it = std::find(X_index.begin(), X_index.end(), v);
 			if (it == X_index.end()) X_index.push_back(v);

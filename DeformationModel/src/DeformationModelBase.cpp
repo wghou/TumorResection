@@ -7,13 +7,3 @@
 //
 
 #include"DeformationModelBase.h"
-
-void DeformationModelBase::Scale(float s)
-{
-
-}
-
-void DeformationModelBase::Translate(float x, float y, float z)
-{
-
-}

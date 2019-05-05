@@ -33,6 +33,7 @@
 #include "TET_MESH.h"
 #include "CUDA_MATH.h"
 
+#include<stdint.h>
 #include"cuda_runtime.h"
 #include"device_launch_parameters.h"
 
@@ -101,7 +102,7 @@ __global__ void Update_Kernel(float* X, float* V, const float* prev_V, float* S,
 //  Tet Constraint Kernel
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-__global__ void Compute_FM_Kernel(const float* X, const int* Tet, const float* inv_Dm, const float* Vol, float* lambda, float* Force, float* C, float* ext_C, float *E,
+__global__ void Compute_FM_Kernel(const float* X, const uint16_t* Tet, const float* inv_Dm, const float* Vol, float* lambda, float* Force, float* C, float* ext_C, float *E,
 	const int model, float stiffness_0, float stiffness_1, float stiffness_2, float stiffness_3, float stiffness_p, const int tet_number, const float lower_bound, const float upper_bound, const bool update_C=true)
 {
 	int t = blockDim.x * blockIdx.x + threadIdx.x;
@@ -111,10 +112,10 @@ __global__ void Compute_FM_Kernel(const float* X, const int* Tet, const float* i
     stiffness_1=-Vol[t]*stiffness_1;
     stiffness_2=-Vol[t]*stiffness_2;
     //No velocity access in this function
-    int p0=Tet[t*4+0]*3;
-    int p1=Tet[t*4+1]*3;
-    int p2=Tet[t*4+2]*3;
-    int p3=Tet[t*4+3]*3;
+	uint16_t p0=Tet[t*4+0]*3;
+	uint16_t p1=Tet[t*4+1]*3;
+	uint16_t p2=Tet[t*4+2]*3;
+	uint16_t p3=Tet[t*4+3]*3;
 
 
     float Ds[9];
@@ -568,7 +569,7 @@ public:
 
 	TYPE*	dev_inv_Dm;
 	TYPE*	dev_Vol;
-	int*	dev_Tet;
+	uint16_t*	dev_Tet;
 		
 	TYPE*	dev_lambda;
 	TYPE*	dev_last_lambda;
@@ -728,8 +729,8 @@ public:
 	void Allocate_GPU_Memory()
 	{
 		//Allocate CUDA memory
-		cudaMalloc((void**)&dev_M,			sizeof(int )*number  );
-		cudaMalloc((void**)&dev_X,			sizeof(int )*number*3);
+		cudaMalloc((void**)&dev_M,			sizeof(TYPE )*number  );
+		cudaMalloc((void**)&dev_X,			sizeof(TYPE)*number*3);
 		cudaMalloc((void**)&dev_V,			sizeof(TYPE)*number*3);
 		cudaMalloc((void**)&dev_prev_V,		sizeof(TYPE)*number*3);
 		cudaMalloc((void**)&dev_F,			sizeof(TYPE)*number*3);
@@ -749,8 +750,8 @@ public:
 		cudaMemset(dev_externalForce, 0, sizeof(TYPE)*number * 3);
 
 		cudaMalloc((void**)&dev_inv_Dm,		sizeof(TYPE)*tet_number*9);
-		cudaMalloc((void**)&dev_Vol,		sizeof(int )*tet_number  );
-		cudaMalloc((void**)&dev_Tet,		sizeof(int )*tet_number*4);
+		cudaMalloc((void**)&dev_Vol,		sizeof(TYPE)*tet_number  );
+		cudaMalloc((void**)&dev_Tet,		sizeof(uint16_t )*tet_number*4);
 		
 		cudaMalloc((void**)&dev_lambda,		sizeof(TYPE)*tet_number  );
 		cudaMalloc((void**)&dev_last_lambda,sizeof(TYPE)*tet_number	 );
@@ -772,9 +773,9 @@ public:
 
 		cudaMemcpy(dev_fixed_X,		X,			sizeof(TYPE)*3*number,		cudaMemcpyHostToDevice);
 		
-		cudaMemcpy(dev_inv_Dm,		inv_Dm,		sizeof(int)*tet_number*9,	cudaMemcpyHostToDevice);
-		cudaMemcpy(dev_Vol,			Vol,		sizeof(int)*tet_number,		cudaMemcpyHostToDevice);
-		cudaMemcpy(dev_Tet,			Tet,		sizeof(int)*tet_number*4,	cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_inv_Dm,		inv_Dm,		sizeof(TYPE)*tet_number*9,	cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_Vol,			Vol,		sizeof(TYPE)*tet_number,		cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_Tet,			Tet,		sizeof(uint16_t)*tet_number*4,	cudaMemcpyHostToDevice);
 
 	}
 
@@ -940,42 +941,6 @@ public:
 		fps=64.0/fps;
 		
 		return 0;
-	}
-
-
-	void Write(std::fstream &output)
-	{
-		cudaMemcpy(X, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToHost);
-		cudaMemcpy(V, dev_V, sizeof(TYPE)*3*number, cudaMemcpyDeviceToHost);
-
-		Write_Binaries(output, X, number*3);
-		Write_Binaries(output, V, number*3);
-	}
-
-	bool Write_File(const char *file_name)
-	{
-		std::fstream output; 
-		output.open(file_name,std::ios::out|std::ios::binary);
-		if(!output.is_open())	{printf("Error, file not open.\n"); return false;}
-		Write(output);
-		output.close();
-		return true;
-	}
-	
-	void Read(std::fstream &input)
-	{
-		Read_Binaries(input, X, number*3);
-		Read_Binaries(input, V, number*3);
-	}
-
-	bool Read_File(const char *file_name)
-	{
-		std::fstream input; 
-		input.open(file_name,std::ios::in|std::ios::binary);
-		if(!input.is_open())	{printf("Error, file not open.\n");	return false;}
-		Read(input);
-		input.close();
-		return true;
 	}
 };
 

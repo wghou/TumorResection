@@ -15,10 +15,12 @@ public:
 
 	int getNumVertices() { return numVertices; }
 	int getNumFaceVertices() { return numFaces; }
+	int getNumTets() { return numTets; }
 	float* getVertices() { return mVertices; }
 	float* getUVs() { return mUVs; }
 	float* getTBNs() { return mTBNs; }
 	uint16_t* getFaces() { return mFaces; }
+	uint16_t* getTets() { return mTets; }
 
 private:
 	vector<float> tVertices;

@@ -31,20 +31,11 @@ public:
 	void Reset_More_Fixed(int select_v, float dir[]);
 	void SetExternalForce(float* externalForce);
 
-	virtual void Scale(float s);
-	virtual void Translate(float x, float y, float z);
-	virtual void Rotate_X(float angle);
-	virtual void Rotate_Y(float angle);
-	virtual void Rotate_Z(float angle);
-
 
 public:
 	virtual int getNodeNumber();
 	virtual float* getX();
 	virtual float* getVel();
-	virtual float* getVN();				// 获取顶点法向量
-	virtual int getTriNumber();
-	virtual uint16_t* getTriIndex();
 	virtual uint16_t* getTet();				// 获取四面体单元格顶点编号
 	virtual int getTetNumber();			// 获取四面体单元格顶点个数
 

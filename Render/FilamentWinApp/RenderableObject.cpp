@@ -61,11 +61,6 @@ RenderableObject::RenderableObject(Engine *engine, Scene* scene) : mEngine(engin
 
 void RenderableObject::cleanUp()
 {
-	mEngine->destroy(mDefaultColorMaterial);
-	mEngine->destroy(mDefaultTransparentColorMaterial);
-	mEngine->destroy(mDefaultNormalMap);
-	mEngine->destroy(mDefaultMap);
-
 	for (auto& obj : mRenderables) {
 		mEngine->destroy(obj.second.mtlInstance);
 		mEngine->destroy(obj.second.mVertexBuffer);
@@ -91,6 +86,11 @@ void RenderableObject::cleanUp()
 		mEngine->destroy(lt.second);
 		em.destroy(lt.second);
 	}
+
+	mEngine->destroy(mDefaultColorMaterial);
+	mEngine->destroy(mDefaultTransparentColorMaterial);
+	mEngine->destroy(mDefaultNormalMap);
+	mEngine->destroy(mDefaultMap);
 }
 
 Texture* RenderableObject::createOneByOneTexture(uint32_t pixel) {
@@ -151,7 +151,7 @@ bool RenderableObject::genMaterial(std::string mtFile)
 	Path path(mtFile);
 	std::string name(path.getName());
 
-	if (mMtls.find(name) != mMtls.end()) {
+	if (mMtls.find(name) == mMtls.end()) {
 		std::cerr << "material " << name << " already exist." << std::endl;
 		return false;
 	}
@@ -401,8 +401,10 @@ bool RenderableObject::genRenderable(std::string objName, int numVert, float *mV
 bool RenderableObject::genLight(std::string lightName)
 {
 	if (mLights.find(lightName) != mLights.end()) {
+		std::cerr << "Light with name: " << lightName << " was already existed." << std::endl;
 		return false;
 	}
+
 	Entity g_light = EntityManager::get().create();
 	LightManager::Builder(LightManager::Type::DIRECTIONAL)
 		.color(Color::toLinear<ACCURATE>({ 0.98f, 0.92f, 0.89f }))
@@ -430,6 +432,6 @@ void RenderableObject::updateObjectOriant(std::string objName, float* pos, float
 	
 	if (rcm.hasComponent(renderable)) {
 		auto ti = tcm.getInstance(renderable);
-		tcm.setTransform(ti, mat4f{});
+		tcm.setTransform(ti, mat4f::translation(float3{pos[0], pos[1], pos[2]}));
 	}
 }

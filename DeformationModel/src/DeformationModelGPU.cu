@@ -92,18 +92,10 @@ DeformationModelGPU::~DeformationModelGPU()
 
 void DeformationModelGPU::Initialize(DfModel_Config & config)
 {
-	// read node coordinate frome file
-	// trans -> rotate -> scale
-	m_model->Read_Original_File(config.fileName.c_str(), config.indexDec);
-
-	if(config.centralize) m_model->Centralize();
-	else m_model->Translate(config.trans[0], config.trans[1], config.trans[2]);
-
-	m_model->Rotate_X(config.rote[0] * 3.14159);
-	m_model->Rotate_Y(config.rote[1] * 3.14159);
-	m_model->Rotate_Z(config.rote[2] * 3.14159);
-
-	m_model->Scale(config.scale);
+	m_model->number = config.numVertex;
+	memcpy(m_model->X, config.mVertices, sizeof(float) * 3 * config.numVertex);
+	m_model->tet_number = config.numTet;
+	memcpy(m_model->Tet, config.mTets, sizeof(uint16_t) * 4 * config.numTet);
 
 
 	// 当 fixedXYZ == 0 时，不固定
@@ -118,19 +110,13 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 			m_model->fixed[i] = 100000;	
 	}
 
-	Logger::getMainLogger().log(Logger::Level::Info, "vertex number: " + std::to_string(m_model->number) + "   tetrahedron number: " + std::to_string(m_model->tet_number), "");
-	//printf("N: %d, %d\n", m_model->number, m_model->tet_number);
-
 	m_model->Initialize(1.0f);
-
-	m_model->Build_VN();
 }
 
 
 void DeformationModelGPU::timeStep(float time)
 {
 	m_model->Update(time, 97, vertexDir);
-	m_model->Build_VN();
 }
 
 
@@ -155,38 +141,6 @@ float* DeformationModelGPU::getX() { return m_model->X; }
 
 float* DeformationModelGPU::getVel() { return m_model->V; }
 
-float* DeformationModelGPU::getVN() { return m_model->VN; }
-
-int DeformationModelGPU::getTriNumber() { return m_model->t_number; }
-
-uint16_t* DeformationModelGPU::getTriIndex() { return m_model->T; }
-
 uint16_t* DeformationModelGPU::getTet() { return m_model->Tet; }
 
 int DeformationModelGPU::getTetNumber() { return m_model->tet_number; }
-
-
-void DeformationModelGPU::Scale(float s)
-{
-	m_model->Scale(s);
-}
-
-void DeformationModelGPU::Translate(float x, float y, float z)
-{
-	m_model->Translate(x, y, z);
-}
-
-void DeformationModelGPU::Rotate_X(float angle)
-{
-	m_model->Rotate_X(angle);
-}
-
-void DeformationModelGPU::Rotate_Y(float angle)
-{
-	m_model->Rotate_Y(angle);
-}
-
-void DeformationModelGPU::Rotate_Z(float angle)
-{
-	m_model->Rotate_Z(angle);
-}

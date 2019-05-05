@@ -78,6 +78,17 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)DeformationModel\Include\;$(SolutionDir)Utils\Logger\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+    <CudaLink>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </CudaLink>
+    <Lib>
+      <AdditionalDependencies>cuda.lib;cudart.lib;cudadevrt.lib;cudart_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(CUDA_LIB_PATH);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -117,17 +128,9 @@
     <ClInclude Include="include\DeformationModelBase.h" />
     <ClInclude Include="include\DeformationModelGPU.h" />
     <ClInclude Include="include\DMForces.h" />
-    <ClInclude Include="include\Lib\BMP_IO.h" />
     <ClInclude Include="include\Lib\CUDA_HYPER_TET_MESH.h" />
     <ClInclude Include="include\Lib\CUDA_MATH.h" />
-    <ClInclude Include="include\Lib\DISTANCE.h" />
-    <ClInclude Include="include\Lib\HYPER_TET_MESH.h" />
-    <ClInclude Include="include\Lib\INTERSECTION.h" />
-    <ClInclude Include="include\Lib\IO_FUNC.h" />
-    <ClInclude Include="include\Lib\MESH.h" />
-    <ClInclude Include="include\Lib\MY_GLSL.h" />
     <ClInclude Include="include\Lib\MY_MATH.h" />
-    <ClInclude Include="include\Lib\PROGRESSING_BAR.h" />
     <ClInclude Include="include\Lib\svd3_cuda.h" />
     <ClInclude Include="include\Lib\TET_MESH.h" />
     <ClInclude Include="include\Lib\TIMER.h" />
@@ -137,7 +140,9 @@
     <ClCompile Include="src\DMForces.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\DeformationModelGPU.cu" />
+    <CudaCompile Include="src\DeformationModelGPU.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

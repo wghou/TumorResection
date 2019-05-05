@@ -1,4 +1,4 @@
-﻿// Example2.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// BrainTumor.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include "pch.h"
@@ -33,77 +33,44 @@
 #include"Object/Object.h"
 #include"SimulationScene/SimulationSceneC.h"
 
-#include "Test.h"
+#include "BrainTumor.h"
 
 using namespace filament::math;
 using namespace filament;
 using namespace utils;
 
 static Config g_config;
-
-static ObjLoader *loader;
-static ElementLoader *eleLoader = nullptr;
+static SimulationSceneC simulator;
 
 
 static void cleanup(Engine* engine, View*, Scene* secne) {
 
+	simulator.cleanUp();
 	RenderableObject::get(engine, secne).cleanUp();
-
-	delete loader;
-	delete eleLoader;
 }
 
 static void setup(Engine* engine, View* view, Scene* scene) {
-
-	//view->setClearColor({ 0.1, 0.125, 0.25, 1.0 });
-
-	//ele = new RenderableObject(*engine);
-	//eleLoader = new ElementLoader();
-	//eleLoader->loadElement("../assets/models/liver/myLiver");
-	//ele->genRenderable(scene, eleLoader->getNumVertices(), eleLoader->getVertices(),
-	//	eleLoader->getTBNs(), eleLoader->getUVs(), eleLoader->getNumFaceVertices(),
-	//	eleLoader->getFaces());
-
-	//ele->genLight(scene);
-
-
-
-	loader = new ObjLoader();
-	loader->loadObj("../assets/models/sphere2.obj");
-
+	
 	RenderableObject& objRef = RenderableObject::get(engine, scene);
 
-	objRef.genMaterial("../assets/models/monkey");
-	objRef.genRenderable("monkey", loader->getNumVertices(), loader->getVertices(),
-			loader->getTBNs(), loader->getUVs(), loader->getNumFaces(),
-			loader->getFaces());
+	ObjectBase* obj_drill = new Drill();
+	obj_drill->createRenderableObject(&objRef, "Drill");
+	simulator.addRigidObject(obj_drill);
 
-	objRef.genLight("light1");
+	ObjectBase* obj_liver = new SoftObjectGPU("../assets/models/liver/myLiver");
+	obj_liver->createRenderableObject(&objRef, "Liver");
+	simulator.addSoftObject(obj_liver);
 
 	return;
 }
 
 static void preRender(filament::Engine*, filament::View* view, filament::Scene*, filament::Renderer*) {
-	//view->setAntiAliasing(g_params.fxaa ? View::AntiAliasing::FXAA : View::AntiAliasing::NONE);
-	//view->setDithering(g_params.dithering ? View::Dithering::TEMPORAL : View::Dithering::NONE);
-	//view->setSampleCount((uint8_t)(g_params.msaa ? 4 : 1));
+
 }
- 
+
 static void animate(Engine* engine, View* view, double now)
 {
-	return;
-
-	auto& rcm = engine->getRenderableManager();
-	auto& tcm = engine->getTransformManager();
-
-	/*Entity *renderable = obj->renderable;
-	if (rcm.hasComponent(*renderable)) {
-		auto ti = tcm.getInstance(*renderable);
-		tcm.setTransform(ti, filament::math::mat4f::rotation(now, filament::math::float3{ 0, 1, 0 }) *
-			mat4f {
-			mat3f(g_config.scale), float3(0.0f, 0.0f, 0.0f)
-		});
-	}*/
+	simulator.stepSimulation(now);
 }
 
 int main(int argc, char *argv[]) {

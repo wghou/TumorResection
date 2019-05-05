@@ -25,6 +25,7 @@ public:
 	void addSoftObject(ObjectBase* object) { m_SftObjects.push_back(object); }
 	void addRigidObject(ObjectBase* object) { m_RgdObjects.push_back(object); }
 	void addInteractions(InteractionBase* interaction) { m_interactions.push_back(interaction); }
+	void cleanUp();
 
 private:
 	vector<ObjectBase*> m_SftObjects;			// »ÌÃÂ∂‘œÛ

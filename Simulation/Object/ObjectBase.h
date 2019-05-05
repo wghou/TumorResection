@@ -33,7 +33,7 @@ struct Mesh
 	float* mUV1 = nullptr;
 
 	uint16_t* mFaces = nullptr;
-	int* mTets = nullptr;
+	uint16_t* mTets = nullptr;
 
 	Vector3f m_localPos;		// 对象体的实时位置
 	MyMatrix4f m_localOriant;		// 对象体的旋转矩阵
@@ -52,7 +52,7 @@ public:
 
 
 	// 仿真步骤相关
-	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName) {};
+	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName) { return true; };
 	virtual void timeStep(float time) {};
 
 
