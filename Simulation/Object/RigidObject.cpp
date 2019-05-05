@@ -39,12 +39,22 @@ RigidObject::RigidObject(char* fileName)
 			memcpy(m_mesh.mUV0, m_loader.getUVs(), m_mesh.numVertices * 2);
 		}
 	}
+	else {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no vertex in the obj: " + string(fileName), "");
+		initialized = false;
+		return;
+	}
 	
 	m_mesh.numFaces = m_loader.getNumFaces();
 	if (m_mesh.numFaces != 0)
 	{
 		m_mesh.mFaces = new uint16_t[m_mesh.numFaces * 3];
 		memcpy(m_mesh.mFaces, m_loader.getFaces(), sizeof(uint16_t)*m_mesh.numFaces * 3);
+	}
+	else {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no surface mesh in the obj: " + string(fileName), "");
+		initialized = false;
+		return;
 	}
 
 	// 初始化成功

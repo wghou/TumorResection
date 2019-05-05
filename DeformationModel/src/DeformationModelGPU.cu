@@ -7,7 +7,7 @@
 
 #include"DeformationModelGPU.h"
 
-#include"logger.h"
+#include"Logger\include\Logger.h"
 #include <iostream>
 #include <fstream>
 

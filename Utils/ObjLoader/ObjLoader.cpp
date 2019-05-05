@@ -8,6 +8,7 @@
 #include"tiny_obj_loader.h"
 
 #include "TBN.h"
+#include"Logger/include/Logger.h"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ ObjLoader::~ObjLoader()
 
 void ObjLoader::loadObj(const std::string fileName)
 {
-	cout << "Loading " << fileName << endl;
+	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + fileName, "ObjLoader::loadObj");
 
 	tinyobj::attrib_t attrib;
 	vector<tinyobj::shape_t> shapes;
@@ -36,7 +37,7 @@ void ObjLoader::loadObj(const std::string fileName)
 		cerr << err << endl;
 	}
 	if (!ret) {
-		cerr << "Error." << endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when loading file" + fileName + "with tinyobj", "ObjLoader::loadObj");
 		return;
 	}
 
@@ -48,7 +49,7 @@ void ObjLoader::loadObj(const std::string fileName)
 	if (tVNs.size() == 0) tVNs.resize(3, 0);
 	
 	if (shapes.size() != 1) {
-		cout << "error shpes.size" << endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "Something wrong with the shapes.size.", "ObjLoader::loadObj");
 	}
 	// loop over faces(ploygon)
 	size_t index_offset = 0;
@@ -56,7 +57,7 @@ void ObjLoader::loadObj(const std::string fileName)
 		int fv = shapes[0].mesh.num_face_vertices[f];
 
 		if (fv != 3) {
-			cerr << "error fv" << endl;
+			Logger::getMainLogger().log(Logger::Level::Error, "Error with fv", "ObjLoader::loadObj");
 			break;
 		}
 
@@ -87,7 +88,7 @@ void ObjLoader::loadObj(const std::string fileName)
 void ObjLoader::optimMesh()
 {
 	if (tVertices.size() == 0 || tFaces.size() == 0) {
-		cerr << "There is no mesh." << endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the file", "ObjLoader::optimMesh");
 		return;
 	}
 
@@ -153,7 +154,8 @@ void ObjLoader::optimMesh()
 			// 需要新建顶点
 			else {
 				if (newIndex >= numVertices) {
-					cout << "err";
+					Logger::getMainLogger().log(Logger::Level::Error, "Error occur when create new vertex.", "ObjLoader::optimMesh");
+					break;
 				}
 
 				mVertices[newIndex * 3 + 0] = tVertices[fv.v * 3 + 0];

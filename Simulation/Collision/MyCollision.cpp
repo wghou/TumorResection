@@ -42,7 +42,6 @@ MyCollision::MyCollision(ObjectBase* obj_self)
 	}
 	else if (typeid(*obj_self) == typeid(ObjectBase))
 	{
-		//printf("Error when construct a new MyCollision object. \n");
 		Logger::getMainLogger().log(Logger::Error, "Error when construct a new MyCollision object.", "MyCollision::MyCollision");
 	}
 
@@ -145,7 +144,6 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 
 
 				Logger::getMainLogger().log(Logger::Debug, "Detected collision..  vertex index: " + std::to_string(*it));
-				//printf("Detected collision..  vertex index: %d\n", (*it));
 				return true;
 			}
 		}

@@ -69,7 +69,7 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 
 
 	loader = new ObjLoader();
-	loader->loadObj("../assets/models/sphere2.obj");
+	loader->loadObj("../assets/models/monkey/monkey.obj");
 
 	RenderableObject& objRef = RenderableObject::get(engine, scene);
 

@@ -96,6 +96,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -166,6 +167,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Render\FilamentWinApp\FilamentWinApp.vcxproj">
       <Project>{fba42c75-c2fd-4b30-b289-8683e8274623}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utils\Logger\Logger.vcxproj">
+      <Project>{ee86d541-0afd-443e-8040-e28ffe586b6d}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\ObjLoader\ObjLoader.vcxproj">
       <Project>{3b40d1b6-ea08-4970-a937-c63b03f5ff5a}</Project>

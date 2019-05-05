@@ -24,6 +24,12 @@ SoftObjectGPU::SoftObjectGPU(char* fileName)
 	ElementLoader m_loader;
 	m_loader.loadElement(fileName);
 
+	if (m_loader.getNumVertices() == 0 || m_loader.getNumTets() == 0 || m_loader.getNumVertices() == 0) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the eleFile.", "SoftObjectGPU::SoftObjectGPU");
+		initialized = false;
+		return;
+	}
+
 	DfModel_Config config;
 	config.numVertex = m_loader.getNumVertices();
 	config.mVertices = m_loader.getVertices();

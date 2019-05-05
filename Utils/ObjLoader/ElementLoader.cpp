@@ -9,6 +9,7 @@
 #include"tiny_obj_loader.h"
 
 #include"TBN.h"
+#include"Logger/include/Logger.h"
 
 
 ElementLoader::~ElementLoader()
@@ -26,33 +27,33 @@ void ElementLoader::loadElement(const string fileName)
 {
 	/////////  Node File //////////
 	string nodeFile = fileName + ".node";
-	std::cout << "Loading " << nodeFile << std::endl;
+	Logger::getMainLogger().log(Logger::Level::Info, "Loading " + nodeFile, "ElementLoader::loadElement");
 
 	ifstream fileStream1;
 	fileStream1.open(nodeFile.c_str());
 	if (fileStream1.fail())
 	{
-		std::cerr << "Failed to open file: " << nodeFile << endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + nodeFile, "ElementLoader::loadElement");
 		return;
 	}
 
 	string line_stream;
 	if (!getline(fileStream1, line_stream)) {
-		cerr << "there no node in the file." << endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "There no node in the file " + nodeFile, "ElementLoader::loadElement");
 		return;
 	}
 
 	stringstream num_stream(line_stream);
 	num_stream >> numVertices;
 	if (numVertices <= 0) {
-		cerr << "Error." << endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "The number of vertices seems wrong: ", "ElementLoader::loadElement");
 		return;
 	}
 
 	for (int i = 0; i < numVertices; i++)
 	{
 		if (!getline(fileStream1, line_stream)) {
-			cerr << "error" << endl;
+			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + nodeFile, "ElementLoader::loadElement");
 			break;
 		}
 
@@ -69,25 +70,25 @@ void ElementLoader::loadElement(const string fileName)
 
 	///////// Ele File  //////////
 	string eleFile = fileName + ".ele";
-	std::cout << "Loading " << eleFile << std::endl;
+	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + eleFile, "ElementLoader::loadElement");
 
 	ifstream fileStream2;
 	fileStream2.open(eleFile.c_str());
 	if (fileStream2.fail())
 	{
-		std::cerr << "Failed to open file: " << eleFile << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + eleFile, "ElementLoader::loadElement");
 		return;
 	}
 
 	if (!getline(fileStream2, line_stream)) {
-		std::cerr << "there no node in the file." << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no node in file " + eleFile, "ElementLoader::loadElement");
 		return;
 	}
 
 	stringstream num2_stream(line_stream);
 	num2_stream >> numTets;
 	if (numTets <= 0) {
-		std::cerr << "Error." << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "There is something wrong with the tet number in " + eleFile, "ElementLoader::loadElement");
 		return;
 	}
 
@@ -95,7 +96,7 @@ void ElementLoader::loadElement(const string fileName)
 	for (int i = 0; i < numTets; i++)
 	{
 		if (!getline(fileStream2, line_stream)) {
-			cerr << "error" << endl;
+			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + eleFile, "ElementLoader::loadElement");
 			break;
 		}
 
@@ -114,7 +115,7 @@ void ElementLoader::loadElement(const string fileName)
 	///////// obj File  //////////
 	string objFile = fileName + ".obj";
 
-	std::cout << "Loading " << objFile << std::endl;
+	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + objFile, "ElementLoader::loadElement");
 
 	tinyobj::attrib_t attrib;
 	vector<tinyobj::shape_t> shapes;
@@ -127,7 +128,7 @@ void ElementLoader::loadElement(const string fileName)
 		std::cerr << err << std::endl;
 	}
 	if (!ret) {
-		std::cerr << "Error." << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when loading file" + objFile + "with tinyobj", "ElementLoader::loadElement");
 		return;
 	}
 
@@ -136,7 +137,7 @@ void ElementLoader::loadElement(const string fileName)
 	tVNs.resize(3, 0);
 	
 	if (shapes.size() != 1) {
-		std::cout << "error shpes.size" << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "Something wrong with the shapes.size.", "ElementLoader::loadElement");
 	}
 	// loop over faces(ploygon)
 	size_t index_offset = 0;
@@ -144,7 +145,7 @@ void ElementLoader::loadElement(const string fileName)
 		int fv = shapes[0].mesh.num_face_vertices[f];
 
 		if (fv != 3) {
-			std::cerr << "error fv" << std::endl;
+			Logger::getMainLogger().log(Logger::Level::Error, "Error with fv", "ElementLoader::loadElement");
 			break;
 		}
 
@@ -169,7 +170,7 @@ void ElementLoader::loadElement(const string fileName)
 
 	///////// 优化网格  //////////
 	if (tVertices.size() == 0 || tFaces.size() == 0) {
-		cerr << "There is no mesh." << endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the file", "ElementLoader::loadElement");
 		return;
 	}
 
@@ -235,7 +236,8 @@ void ElementLoader::loadElement(const string fileName)
 			// 需要新建顶点
 			else {
 				if (newIndex >= numVertices) {
-					cout << "err";
+					Logger::getMainLogger().log(Logger::Level::Error, "Error occur when create new vertex.", "ElementLoader::loadElement");
+					break;
 				}
 
 				mVertices[newIndex * 3 + 0] = tVertices[fv.v * 3 + 0];

@@ -23,6 +23,8 @@
 #include "resources/resources.h"
 #include "FilamentApp.h"
 
+#include"Logger/include/Logger.h"
+
 using namespace filament::math;
 using namespace filament;
 using namespace filamat;
@@ -137,11 +139,11 @@ void RenderableObject::loadTexture(const std::string& filePath, Texture** map, b
 				(*map)->generateMipmaps(*mEngine);
 			}
 			else {
-				std::cout << "The texture " << path << " could not be loaded" << std::endl;
+				Logger::getMainLogger().log(Logger::Level::Error, "The texture " + path.getName() + " could not be loaded", "RenderableObject::loadTexture");
 			}
 		}
 		else {
-			std::cout << "The texture " << path << " does not exist" << std::endl;
+			Logger::getMainLogger().log(Logger::Level::Error, "The texture " + path.getName() + " doesnt exist.", "RenderableObject::loadTexture");
 		}
 	}
 }
@@ -151,8 +153,8 @@ bool RenderableObject::genMaterial(std::string mtFile)
 	Path path(mtFile);
 	std::string name(path.getName());
 
-	if (mMtls.find(name) == mMtls.end()) {
-		std::cerr << "material " << name << " already exist." << std::endl;
+	if (mMtls.find(name) != mMtls.end()) {
+		Logger::getMainLogger().log(Logger::Level::Warning, "The material " + path.getName() + " has already exist.", "RenderableObject::genMaterial");
 		return false;
 	}
 
@@ -171,7 +173,7 @@ bool RenderableObject::genMaterial(std::string mtFile)
 	bool hasNormalMap = mtl.g_normalMap != nullptr;
 
 	if (!hasBaseColorMap && !hasMetallicMap && !hasRoughnessMap && !hasAOMap && !hasNormalMap) {
-		std::cerr << "No material" << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Warning, "There is no texture maps in the material" + name, "RenderableObject::genMaterial");
 		return false;
 	}
 
@@ -288,13 +290,13 @@ bool RenderableObject::genMaterial(std::string mtFile)
 bool RenderableObject::genRenderable(std::string objName, int numVert, float *mVert, float *mTBNs, float *mUVs, int numFaces, uint16_t* mFaces)
 {
 	if (mRenderables.find(objName) != mRenderables.end()) {
-		std::cerr << "renderable object " << objName << "  already exist." << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "The renderable object " + objName + " has already exist.", "RenderableObject::genRenderable");
 		return false;
 	}
 	
 	if (numVert == 0 || mVert == nullptr || mTBNs == nullptr ||
 		numFaces == 0 || mFaces == nullptr) {
-		std::cerr << "errror" << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the object: nullptr", "RenderableObject::genRenderable");
 		return false;
 	}
 
@@ -401,7 +403,7 @@ bool RenderableObject::genRenderable(std::string objName, int numVert, float *mV
 bool RenderableObject::genLight(std::string lightName)
 {
 	if (mLights.find(lightName) != mLights.end()) {
-		std::cerr << "Light with name: " << lightName << " was already existed." << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Warning, "The light " + lightName + " has already exist.", "RenderableObject::genLight");
 		return false;
 	}
 
@@ -420,7 +422,7 @@ bool RenderableObject::genLight(std::string lightName)
 void RenderableObject::updateObjectOriant(std::string objName, float* pos, float* ori)
 {
 	if (mRenderables.find(objName) == mRenderables.end()) {
-		std::cerr << "there is no object " << objName << " when update the oriant." << std::endl;
+		Logger::getMainLogger().log(Logger::Level::Warning, "There is no renderable object " + objName + " when update the oriant.", "RenderableObject::updateObjectOriant");
 		return;
 	}
 

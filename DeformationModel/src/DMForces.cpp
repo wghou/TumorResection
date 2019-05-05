@@ -4,7 +4,7 @@
 
 #include"DeformationModelGPU.h"
 
-#include"logger.h"
+#include"Logger/include/Logger.h"
 
 DMForces::~DMForces()
 {
