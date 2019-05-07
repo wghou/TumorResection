@@ -25,6 +25,7 @@ public:
 
 protected:
 	void optimMesh();
+	void scale(float s);
 
 private:
 	// Êý¾Ý»º´æ

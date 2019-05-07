@@ -5,6 +5,7 @@
 #include<vector>
 
 #include <utils/Entity.h>
+#include <math/mat4.h>
 
 // Name for default materials (2nd is used if meshes have UV coords)
 #define AI_DEFAULT_MATERIAL_NAME          "DefaultMaterial"
@@ -19,6 +20,7 @@ namespace filament {
 	class Texture;
 };
 
+using namespace filament::math;
 using namespace filament;
 using namespace utils;
 
@@ -41,6 +43,7 @@ public:
 	bool genLight(std::string lightName);
 
 	void updateObjectOriant(std::string objName, float* pos, float* ori);
+	void updateObjectOriant(std::string objName, mat4f oriant4f);
 	void updateVertexBuffer(std::string objName);
 
 	void cleanUp();

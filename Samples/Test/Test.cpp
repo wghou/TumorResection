@@ -91,19 +91,14 @@ static void preRender(filament::Engine*, filament::View* view, filament::Scene*,
  
 static void animate(Engine* engine, View* view, double now)
 {
-	return;
+	//return;
 
-	auto& rcm = engine->getRenderableManager();
-	auto& tcm = engine->getTransformManager();
+	RenderableObject& objRef = RenderableObject::get(engine, NULL);
 
-	/*Entity *renderable = obj->renderable;
-	if (rcm.hasComponent(*renderable)) {
-		auto ti = tcm.getInstance(*renderable);
-		tcm.setTransform(ti, filament::math::mat4f::rotation(now, filament::math::float3{ 0, 1, 0 }) *
-			mat4f {
-			mat3f(g_config.scale), float3(0.0f, 0.0f, 0.0f)
-		});
-	}*/
+	objRef.updateObjectOriant("monkey", filament::math::mat4f::rotation(now, filament::math::float3{ 0, 1, 0 }) *
+		mat4f {
+		mat3f(g_config.scale), float3(0.0f, 0.0f, 0.0f)
+	});
 }
 
 int main(int argc, char *argv[]) {

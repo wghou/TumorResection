@@ -378,6 +378,13 @@ bool RenderableObject::genRenderable(std::string objName, int numVert, float *mV
 	}
 	else {
 		obj.mtlInstance = mDefaultColorMaterial->createInstance();
+
+		obj.mtlInstance->setParameter("baseColor", RgbType::sRGB, float3{ 0.8f });
+		obj.mtlInstance->setParameter("roughness", 0.4f);
+		obj.mtlInstance->setParameter("metallic", 0.6f);
+		obj.mtlInstance->setParameter("reflectance", 0.5f);
+		//obj.mtlInstance->setParameter("clearCoat", 0.0f);
+		//obj.mtlInstance->setParameter("clearCoatRoughness", 0.0f);
 	}
 	
 	// create renderable entity
@@ -387,6 +394,7 @@ bool RenderableObject::genRenderable(std::string objName, int numVert, float *mV
 		.boundingBox({ {-1.f, -1.f, -1.f}, {1.f, 1.f, 1.f} })
 		.geometry(0, RenderableManager::PrimitiveType::TRIANGLES, obj.mVertexBuffer, obj.mIndexBuffer, 0, numFaces * 3)
 		.material(0, obj.mtlInstance)
+		.castShadows(true)
 		.build(*mEngine, obj.renderable);
 
 
@@ -425,6 +433,16 @@ bool RenderableObject::genLight(std::string lightName)
 
 void RenderableObject::updateObjectOriant(std::string objName, float* pos, float* ori)
 {
+	mat4f oriant4f = mat4f{ ori[0], ori[1], ori[2], 0,
+							ori[4], ori[5], ori[6], 0,
+							ori[8], ori[9], ori[10], 0,
+							pos[0], pos[1], pos[2], 1 };
+
+	updateObjectOriant(objName, oriant4f);
+}
+
+void RenderableObject::updateObjectOriant(std::string objName, mat4f oriant4f)
+{
 	if (mRenderables.find(objName) == mRenderables.end()) {
 		Logger::getMainLogger().log(Logger::Level::Warning, "There is no renderable object " + objName + " when update the oriant.", "RenderableObject::updateObjectOriant");
 		return;
@@ -435,13 +453,9 @@ void RenderableObject::updateObjectOriant(std::string objName, float* pos, float
 	auto& rcm = mEngine->getRenderableManager();
 	auto& tcm = mEngine->getTransformManager();
 
-	mat4f oriant4f = mat4f{ ori[0], ori[1], ori[2], ori[3],
-							ori[4], ori[5], ori[6], ori[7],
-							ori[8], ori[9], ori[10], ori[11],
-							ori[12], ori[13], ori[14], ori[15] };
 	if (rcm.hasComponent(renderable)) {
 		auto ti = tcm.getInstance(renderable);
-		tcm.setTransform(ti, oriant4f * mat4f::translation(float3{ pos[0], pos[1], pos[2] }));
+		tcm.setTransform(ti, oriant4f);
 	}
 }
 

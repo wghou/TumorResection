@@ -57,9 +57,16 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	//obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
 	//simulator.addRigidObject(obj_drill);
 
-	ObjectBase* obj_liver = new SoftObjectGPU("../assets/models/liver/myLiver");
-	obj_liver->createRenderableObject(&objRef, obj_liver->getObjectName());
-	simulator.addSoftObject(obj_liver);
+	//ObjectBase* obj_liver = new SoftObjectGPU("../assets/models/liver/myLiver");
+	//obj_liver->createRenderableObject(&objRef, obj_liver->getObjectName());
+	//simulator.addSoftObject(obj_liver);
+
+	ObjectBase* obj_skull = new RigidObject("../assets/models/skull/skull.obj");
+	objRef.genMaterial("../assets/models/skull");
+	obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
+	simulator.addRigidObject(obj_skull);
+
+	objRef.genLight("light1");
 
 	return;
 }
@@ -76,7 +83,7 @@ static void animate(Engine* engine, View* view, double now)
 int main(int argc, char *argv[]) {
 
 	g_config.scale = 1.0f;
-	g_config.title = "Material Sandbox";
+	g_config.title = "Brain Tumor Dissection";
 	g_config.iblDirectory = "../envs/pillars";
 
 	FilamentApp& filamentApp = FilamentApp::get();

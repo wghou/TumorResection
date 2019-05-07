@@ -43,7 +43,7 @@ RigidObject::RigidObject(char* fileName)
 
 		if (m_loader.getUVs() != nullptr) {
 			m_mesh.mUV0 = new float[m_mesh.numVertices * 2];
-			memcpy(m_mesh.mUV0, m_loader.getUVs(), m_mesh.numVertices * 2);
+			memcpy(m_mesh.mUV0, m_loader.getUVs(), sizeof(float)*m_mesh.numVertices * 2);
 		}
 	}
 	else {
@@ -64,7 +64,7 @@ RigidObject::RigidObject(char* fileName)
 		return;
 	}
 
-	m_objName = filePath.getName();
+	m_objName = filePath.getNameWithoutExtension();
 	// 初始化成功
 	initialized = true;
 	return;

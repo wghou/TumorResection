@@ -13,17 +13,5 @@
 
 #include "resources/resources.h"
 
-constexpr uint8_t MATERIAL_MODEL_UNLIT = 0;
-constexpr uint8_t MATERIAL_MODEL_LIT = 1;
-constexpr uint8_t MATERIAL_MODEL_SUBSURFACE = 2;
-constexpr uint8_t MATERIAL_MODEL_CLOTH = 3;
-
-constexpr uint8_t MATERIAL_UNLIT = 0;
-constexpr uint8_t MATERIAL_LIT = 1;
-constexpr uint8_t MATERIAL_SUBSURFACE = 2;
-constexpr uint8_t MATERIAL_CLOTH = 3;
-constexpr uint8_t MATERIAL_TRANSPARENT = 4;
-constexpr uint8_t MATERIAL_FADE = 5;
-constexpr uint8_t MATERIAL_COUNT = 6;
 #endif // !BRAIN_TUMOR_H
 
