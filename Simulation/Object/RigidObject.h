@@ -8,6 +8,7 @@
 #define RIGIDOBJECT_H_
 
 #include"Object\ObjectBase.h"
+#include<string>
 
 
 class SurfaceMeshBase;
@@ -16,7 +17,7 @@ class RigidObject : public ObjectBase
 {
 
 public:
-	RigidObject(char* fileName);
+	RigidObject(std::string filePath);
 	~RigidObject();
 
 

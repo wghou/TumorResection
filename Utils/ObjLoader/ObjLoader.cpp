@@ -182,8 +182,6 @@ void ObjLoader::optimMesh()
 
 	delete tagV;
 
-	scale(0.25);
-
 	// Éú³É TBNs
 	TBN::updateTBNs(numVertices, mNormals, mTBNs);
 
@@ -195,4 +193,9 @@ void ObjLoader::scale(float s)
 	for (int i = 0; i < numVertices * 3; i++) {
 		mVertices[i] *= s;
 	}
+}
+
+void ObjLoader::translate(float _x, float _y, float _z)
+{
+
 }

@@ -22,6 +22,9 @@ public:
 	uint16_t* getFaces() { return mFaces; }
 	uint16_t* getTets() { return mTets; }
 
+	void scale(float s = 1);
+	void translate(float _x, float _y, float _z);
+
 private:
 	vector<float> tVertices;
 	vector<float> tVTs;

@@ -10,7 +10,7 @@
 #ifndef OBJECTBASE_H_
 #define OBJECTBASE_H_
 
-#include"MyMath.h"
+#include"Math\MyMath.h"
 #include<memory>
 #include<vector>
 #include<stdint.h>
@@ -70,6 +70,7 @@ protected:
 	std::string m_objName = "ObjectBase";
 	Mesh m_mesh;				// 网格数据
 	RenderableObject* m_rdFactory = nullptr;
+	std::string m_mtlPath;		// 纹理存储路径
 
 	GenericCollision* m_collision = nullptr;	// 碰撞对象
 	bool isPerformCollisionDetection = true;	// 是否参与碰撞检测

@@ -7,8 +7,8 @@
 #ifndef PHANTOMDEVICE_H
 #define PHANTOMDEVICE_H
 
-#include"chai3d.h"
-#include"MyMath.h"
+#include"Chai3d/chai3d.h"
+#include"Math\MyMath.h"
 
 
 // maximum number of devices supported by this application

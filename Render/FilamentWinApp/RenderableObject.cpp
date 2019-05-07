@@ -143,7 +143,7 @@ void RenderableObject::loadTexture(const std::string& filePath, Texture** map, b
 			}
 		}
 		else {
-			Logger::getMainLogger().log(Logger::Level::Error, "The texture " + path.getName() + " doesnt exist.", "RenderableObject::loadTexture");
+			Logger::getMainLogger().log(Logger::Level::Warning, "The texture " + path.getName() + " doesnt exist.", "RenderableObject::loadTexture");
 		}
 	}
 }

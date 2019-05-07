@@ -91,7 +91,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32;_USE_MATH_DEFINES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Render\filament\include\;$(SolutionDir)Render\FilamentWinApp\;$(SolutionDir)Utils\;$(SolutionDir)Simulation\;$(SolutionDir)Utils\Math\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Render\filament\include\;$(SolutionDir)Render\FilamentWinApp\;$(SolutionDir)Utils\;$(SolutionDir)Simulation\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -124,7 +124,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32;_USE_MATH_DEFINES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Render\filament\include\;$(SolutionDir)Render\FilamentWinApp\;$(SolutionDir)Utils\;$(SolutionDir)Simulation\;$(SolutionDir)Utils\Math\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Render\filament\include\;$(SolutionDir)Render\FilamentWinApp\;$(SolutionDir)Utils\;$(SolutionDir)Simulation\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <SupportJustMyCode>false</SupportJustMyCode>
     </ClCompile>
     <Link>
@@ -180,6 +180,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\Chai3d\Chai3d.vcxproj">
       <Project>{43b071cd-8451-4766-9a34-94a1b37c827f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utils\json\json.vcxproj">
+      <Project>{896c4c3e-506f-4129-88bd-df98bdca56fe}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\Logger\Logger.vcxproj">
       <Project>{ee86d541-0afd-443e-8040-e28ffe586b6d}</Project>

@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Samples\Test\Test.v
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BrainTumor", "Samples\BrainTumor\BrainTumor.vcxproj", "{E92603B8-A9AB-4DB6-AFAE-42A7E75D142E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "json", "Utils\json\json.vcxproj", "{896C4C3E-506F-4129-88BD-DF98BDCA56FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -105,6 +107,14 @@ Global
 		{E92603B8-A9AB-4DB6-AFAE-42A7E75D142E}.Release|x64.Build.0 = Release|x64
 		{E92603B8-A9AB-4DB6-AFAE-42A7E75D142E}.Release|x86.ActiveCfg = Release|Win32
 		{E92603B8-A9AB-4DB6-AFAE-42A7E75D142E}.Release|x86.Build.0 = Release|Win32
+		{896C4C3E-506F-4129-88BD-DF98BDCA56FE}.Debug|x64.ActiveCfg = Debug|x64
+		{896C4C3E-506F-4129-88BD-DF98BDCA56FE}.Debug|x64.Build.0 = Debug|x64
+		{896C4C3E-506F-4129-88BD-DF98BDCA56FE}.Debug|x86.ActiveCfg = Debug|Win32
+		{896C4C3E-506F-4129-88BD-DF98BDCA56FE}.Debug|x86.Build.0 = Debug|Win32
+		{896C4C3E-506F-4129-88BD-DF98BDCA56FE}.Release|x64.ActiveCfg = Release|x64
+		{896C4C3E-506F-4129-88BD-DF98BDCA56FE}.Release|x64.Build.0 = Release|x64
+		{896C4C3E-506F-4129-88BD-DF98BDCA56FE}.Release|x86.ActiveCfg = Release|Win32
+		{896C4C3E-506F-4129-88BD-DF98BDCA56FE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,6 +126,7 @@ Global
 		{3B40D1B6-EA08-4970-A937-C63B03F5FF5A} = {ADA45427-0364-4547-92B3-7BF6F7AC4FF8}
 		{21F92289-72D3-461C-9ACD-A2E03BD8044B} = {26230F3D-6371-4219-9D9F-607915F0187A}
 		{E92603B8-A9AB-4DB6-AFAE-42A7E75D142E} = {26230F3D-6371-4219-9D9F-607915F0187A}
+		{896C4C3E-506F-4129-88BD-DF98BDCA56FE} = {ADA45427-0364-4547-92B3-7BF6F7AC4FF8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3881A9A3-3723-4745-B553-28E41BB5CA35}

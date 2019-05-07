@@ -90,7 +90,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32;_USE_MATH_DEFINES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Render\filament\include\;$(SolutionDir)Render\FilamentWinApp\;$(SolutionDir)Utils\;$(SolutionDir)Simulation\;$(SolutionDir)Utils\Math\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Render\filament\include\;$(SolutionDir)Render\FilamentWinApp\;$(SolutionDir)Utils\;$(SolutionDir)Simulation\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <SupportJustMyCode>false</SupportJustMyCode>
     </ClCompile>
     <Link>
@@ -141,7 +141,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32;_USE_MATH_DEFINES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Render\filament\include\;$(SolutionDir)Render\FilamentWinApp\;$(SolutionDir)Utils\;$(SolutionDir)Simulation\;$(SolutionDir)Utils\Math\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Render\filament\include\;$(SolutionDir)Render\FilamentWinApp\;$(SolutionDir)Utils\;$(SolutionDir)Simulation\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -167,6 +167,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Render\FilamentWinApp\FilamentWinApp.vcxproj">
       <Project>{fba42c75-c2fd-4b30-b289-8683e8274623}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utils\json\json.vcxproj">
+      <Project>{896c4c3e-506f-4129-88bd-df98bdca56fe}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\Logger\Logger.vcxproj">
       <Project>{ee86d541-0afd-443e-8040-e28ffe586b6d}</Project>

@@ -1,6 +1,6 @@
 #include"InteractionTraction.h"
 
-#include"logger.h"
+#include"logger\include\Logger.h"
 
 #include"Object\SoftObjectGPU.h"
 #include"Object\Drill.h"
@@ -51,6 +51,7 @@ void InteractionTraction::processBeforeTimeStep()
 		{
 			m_isTracking = false;
 			dynamic_cast<SoftObjectGPU*>(m_objB)->setMoreFixed(target, -1);
+			Logger::getMainLogger().log(Logger::Level::Debug, "Stop tracting.");
 		}
 		// Ö´ÐÐÀ­³¶
 		else

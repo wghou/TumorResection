@@ -23,10 +23,13 @@ public:
 	float* getTBNs() { return mTBNs; }
 	uint16_t* getFaces() { return mFaces; }
 
-protected:
-	void optimMesh();
+	void translate(float _x, float _y, float _z);
 	void scale(float s);
 
+
+protected:
+	void optimMesh();
+	
 private:
 	// Êý¾Ý»º´æ
 	vector<float> tVertices;

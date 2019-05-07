@@ -19,7 +19,7 @@ class Knife : public RigidObject
 	friend class InteractionTraction;
 
 public:
-	Knife(char* fileName = "../assets/models/knife.obj");
+	Knife(char* fileName = "../assets/models/knife");
 	~Knife();
 
 

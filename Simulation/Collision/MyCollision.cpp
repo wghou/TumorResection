@@ -11,7 +11,7 @@
 #include<algorithm>
 #include<math.h>
 
-#include"logger.h"
+#include"logger\include\Logger.h"
 #include"Object\Drill.h"
 #include"Object\SoftObjectGPU.h"
 

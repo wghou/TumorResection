@@ -6,7 +6,7 @@
 #include"Object\SoftObjectGPU.h"
 
 
-#include"Logger.h"
+#include"Logger\include\Logger.h"
 
 #include<vector>
 

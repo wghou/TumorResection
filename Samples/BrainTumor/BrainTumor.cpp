@@ -53,18 +53,26 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	
 	RenderableObject& objRef = RenderableObject::get(engine, scene);
 
-	//ObjectBase* obj_drill = new Drill();
-	//obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
-	//simulator.addRigidObject(obj_drill);
+	ObjectBase* obj_drill = new Drill();
+	obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
+	simulator.addRigidObject(obj_drill);
 
 	//ObjectBase* obj_liver = new SoftObjectGPU("../assets/models/liver/myLiver");
 	//obj_liver->createRenderableObject(&objRef, obj_liver->getObjectName());
 	//simulator.addSoftObject(obj_liver);
 
-	ObjectBase* obj_skull = new RigidObject("../assets/models/skull/skull.obj");
-	objRef.genMaterial("../assets/models/skull");
+	ObjectBase* obj_skull = new RigidObject("../assets/models/pulse/skull/");
 	obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
 	simulator.addRigidObject(obj_skull);
+
+	ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
+	obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
+	simulator.addSoftObject(obj_brain);
+
+	InteractionBase* itc_bs = new InteractionTraction();
+	dynamic_cast<InteractionTraction*>(itc_bs)->init(dynamic_cast<Drill*>(obj_drill), dynamic_cast<SoftObjectGPU*>(obj_brain));
+	simulator.addInteractions(itc_bs);
+
 
 	objRef.genLight("light1");
 

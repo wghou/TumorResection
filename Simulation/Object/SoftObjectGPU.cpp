@@ -7,7 +7,8 @@
 
 #include"SoftObjectGPU.h"
 
-#include"logger.h"
+#include"Logger/include/Logger.h"
+#include"json/json_helper.h"
 #include <iostream>
 #include <fstream>
 
@@ -16,21 +17,53 @@
 
 #include"FilamentWinApp/RenderableObject.h"
 #include"utils/Path.h"
-#include"ElementLoader.h"
-#include"TBN.h"
+#include"ObjLoader/ElementLoader.h"
+#include"ObjLoader/TBN.h"
 
 
-SoftObjectGPU::SoftObjectGPU(char* fileName)
+SoftObjectGPU::SoftObjectGPU(char* filePath)
 {
-	Path filePath(fileName);
-	//if (!filePath.exists()) {
-	//	Logger::getMainLogger().log(Logger::Level::Error, "The file " + filePath.getName() + " doesnt exist.", "SoftObjectGPU::SoftObjectGPU");
-	//	initialized = false;
-	//	return;
-	//}
-
 	ElementLoader m_loader;
-	m_loader.loadElement(fileName);
+
+	Path _path(filePath);
+	if (!_path.exists()) {
+		Logger::getMainLogger().log(Logger::Level::Error, "The file " + _path.getName() + " doesnt exist.", "RigidObject::RigidObject");
+		initialized = false;
+		return;
+	}
+
+	std::string objFilePath = _path.concat(_path.getName());
+	std::string jsonFileName = _path.concat(_path.getName() + ".json");
+
+	// load .ele .node .obj files
+	m_loader.loadElement(objFilePath);
+
+	// open json
+	nlohmann::json _json;
+	std::ifstream input_file(jsonFileName);
+	if (input_file.is_open()) {
+
+		float sl = 1.0f;
+		float trans[3] = { 0.0f,0.0f,0.0f };
+
+		try {
+			_json << input_file;
+			json_helper::readVector3f(_json, "trans", trans);
+			json_helper::readValue(_json, "scale", sl);
+			json_helper::readValue(_json, "mtlPath", m_mtlPath);
+
+			// translate, then scale
+			m_loader.translate(trans[0], trans[1], trans[2]);
+			m_loader.scale(sl);
+		}
+		catch (std::exception &ex) {
+			Logger::getMainLogger().log(Logger::Level::Error, "Error when initial json: " + std::string(ex.what()), "RigidObject::RigidObject");
+		}
+	}
+	else {
+		Logger::getMainLogger().log(Logger::Level::Error, "Cannot open config file: " + jsonFileName, "RigidObject::RigidObject");
+	}
+
 
 	if (m_loader.getNumVertices() == 0 || m_loader.getNumTets() == 0 || m_loader.getNumVertices() == 0) {
 		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the eleFile.", "SoftObjectGPU::SoftObjectGPU");
@@ -65,7 +98,7 @@ SoftObjectGPU::SoftObjectGPU(char* fileName)
 	// collision
 	m_collision = new MyCollision(this);
 	
-	m_objName = filePath.getName();
+	m_objName = _path.getNameWithoutExtension();
 	initialized = true;
 	return;
 }

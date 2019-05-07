@@ -55,19 +55,6 @@ static void cleanup(Engine* engine, View*, Scene* secne) {
 
 static void setup(Engine* engine, View* view, Scene* scene) {
 
-	//view->setClearColor({ 0.1, 0.125, 0.25, 1.0 });
-
-	//ele = new RenderableObject(*engine);
-	//eleLoader = new ElementLoader();
-	//eleLoader->loadElement("../assets/models/liver/myLiver");
-	//ele->genRenderable(scene, eleLoader->getNumVertices(), eleLoader->getVertices(),
-	//	eleLoader->getTBNs(), eleLoader->getUVs(), eleLoader->getNumFaceVertices(),
-	//	eleLoader->getFaces());
-
-	//ele->genLight(scene);
-
-
-
 	loader = new ObjLoader();
 	loader->loadObj("../assets/models/monkey/monkey.obj");
 

@@ -1,6 +1,6 @@
 #include"PhantomDevice.h"
 
-#include"Logger.h"
+#include"Logger/include/Logger.h"
 
 PhantomDevice::DeviceHandlerSPtr PhantomDevice::s_handler = nullptr;
 chai3d::cGenericHapticDevicePtr PhantomDevice::hapticDevice[MAX_DEVICES];

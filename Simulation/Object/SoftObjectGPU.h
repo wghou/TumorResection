@@ -20,7 +20,7 @@ class SoftObjectGPU :public ObjectBase
 	friend MyCollision;
 
 public:
-	SoftObjectGPU(char* fileName);
+	SoftObjectGPU(char* filePath);
 	~SoftObjectGPU();
 
 

@@ -272,3 +272,21 @@ void ElementLoader::loadElement(const string fileName)
 
 	return;
 }
+
+void ElementLoader::scale(float s)
+{
+	for (int i = 0; i < numVertices * 3; i++) {
+		mVertices[i] *= s;
+	}
+}
+
+void ElementLoader::translate(float _x, float _y, float _z)
+{
+	if (numVertices <= 0) return;
+
+	for (int i = 0; i < numVertices; i++) {
+		mVertices[3 * i + 0] += _x;
+		mVertices[3 * i + 1] += _y;
+		mVertices[3 * i + 2] += _z;
+	}
+}

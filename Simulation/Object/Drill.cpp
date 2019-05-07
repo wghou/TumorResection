@@ -7,8 +7,8 @@
 
 #include"Drill.h"
 
-#include"OBJLoader.h"
-#include"Logger.h"
+#include"OBJLoader/ObjLoader.h"
+#include"Logger/include/Logger.h"
 
 #include"Collision\MyCollision.h"
 
