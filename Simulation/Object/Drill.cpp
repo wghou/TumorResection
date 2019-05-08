@@ -38,6 +38,9 @@ Drill::Drill(char* fileName) : RigidObject(fileName)
 		return;
 	}
 
+	// collision
+	m_collision = new MyCollision(this);
+
 	// 初始化成功
 	initialized = true;
 }
@@ -45,6 +48,8 @@ Drill::Drill(char* fileName) : RigidObject(fileName)
 Drill::~Drill()
 {
 	if (m_phDevice) delete m_phDevice;
+
+	if (m_collision) delete m_collision;
 }
 
 

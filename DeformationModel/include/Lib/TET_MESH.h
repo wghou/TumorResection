@@ -27,6 +27,8 @@ public:
 	TYPE*	inv_Dm;
 	TYPE*	Vol;
 
+	TYPE density = 50000;
+
 	TET_MESH(): number(0)
 	{
 		max_number	= 500000;
@@ -48,10 +50,8 @@ public:
 		if(Vol)		delete[] Vol;
 	}
 
-	void Initialize()	
+	void Initialize()
 	{
-		TYPE density=50000;
-
 		memset(M, 0, sizeof(TYPE)*number);
 
 		for(int t=0; t<tet_number; t++)
@@ -70,6 +70,7 @@ public:
 			Dm[t*9+2]=X[p3+0]-X[p0+0];
 			Dm[t*9+5]=X[p3+1]-X[p0+1];
 			Dm[t*9+8]=X[p3+2]-X[p0+2];
+
 			Vol[t]=fabs(Matrix_Inverse_3(&Dm[t*9], &inv_Dm[t*9]))/6.0;
 
 			M[p0/3]+=Vol[t]*density;

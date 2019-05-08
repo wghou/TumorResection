@@ -97,8 +97,6 @@ RigidObject::RigidObject(std::string filePath)
 		return;
 	}
 
-	// collision
-	m_collision = new MyCollision(this);
 
 	m_objName = _path.getNameWithoutExtension();
 	// 初始化成功
@@ -113,8 +111,6 @@ RigidObject::~RigidObject()
 	if (m_mesh.mTBNs) delete[] m_mesh.mTBNs;
 	if (m_mesh.mUV0) delete[] m_mesh.mUV0;
 	if (m_mesh.mUV1) delete[] m_mesh.mUV1;
-
-	if (m_collision) delete m_collision;
 }
 
 bool RigidObject::createRenderableObject(RenderableObject* rdFactory, std::string objName)

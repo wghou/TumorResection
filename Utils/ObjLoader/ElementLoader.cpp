@@ -199,6 +199,10 @@ void ElementLoader::loadElement(const string fileName)
 	// allocate new copy for mesh information
 	numVertices = numVertices + countV - attrib.vertices.size() / 3;
 	mVertices = new float[numVertices * 3];
+	for (int i = 0; i < tVertices.size(); i++) {
+		mVertices[i] = tVertices[i];
+	}
+
 	int *tagV = new int[numVertices];
 	memset(tagV, 0, numVertices * sizeof(int));
 	mUVs = new float[numVertices * 2];

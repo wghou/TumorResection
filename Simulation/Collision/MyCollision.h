@@ -24,12 +24,12 @@ public:
 
 
 	float* getXPtr() { return X_ptr; }
-	const std::vector<int> & getXIndex() { return X_index; }
+	const std::vector<uint16_t> & getXIndex() { return X_index; }
 	float getRadius() { return radius; }
 
 private:
 	float* X_ptr = nullptr;		// x的坐标地址
-	std::vector<int> X_index;	// 需要参与碰撞检测的节点的编号
+	std::vector<uint16_t> X_index;	// 需要参与碰撞检测的节点的编号
 	float radius = 0.03f;			// 节点的大小
 
 	// AABB

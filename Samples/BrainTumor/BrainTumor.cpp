@@ -57,10 +57,6 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
 	simulator.addRigidObject(obj_drill);
 
-	//ObjectBase* obj_liver = new SoftObjectGPU("../assets/models/liver/myLiver");
-	//obj_liver->createRenderableObject(&objRef, obj_liver->getObjectName());
-	//simulator.addSoftObject(obj_liver);
-
 	ObjectBase* obj_skull = new RigidObject("../assets/models/pulse/skull/");
 	obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
 	simulator.addRigidObject(obj_skull);

@@ -454,9 +454,9 @@ __global__ void Constraint_1_Kernel(const float* M, const float* X, const float*
 
 	// Get Force
 	float error[3];
-	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 1.0*V[i * 3 + 0]) * M[i];
-	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 1.0*V[i * 3 + 1]) * M[i];
-	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 1.0*V[i * 3 + 2]) * M[i] + gravity*M[i];
+	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 2.0*V[i * 3 + 0]) * M[i];
+	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 2.0*V[i * 3 + 1]) * M[i];
+	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 2.0*V[i * 3 + 2]) * M[i] + gravity*M[i];
 
 	// Update Energy
 	float energy = 0;
@@ -751,7 +751,7 @@ public:
 
 		cudaMalloc((void**)&dev_inv_Dm,		sizeof(TYPE)*tet_number*9);
 		cudaMalloc((void**)&dev_Vol,		sizeof(TYPE)*tet_number  );
-		cudaMalloc((void**)&dev_Tet,		sizeof(uint16_t )*tet_number*4);
+		cudaMalloc((void**)&dev_Tet,		sizeof(uint16_t)*tet_number*4);
 		
 		cudaMalloc((void**)&dev_lambda,		sizeof(TYPE)*tet_number  );
 		cudaMalloc((void**)&dev_last_lambda,sizeof(TYPE)*tet_number	 );
@@ -789,7 +789,11 @@ public:
 		int blocksPerGrid = (number + threadsPerBlock - 1) / threadsPerBlock;
 		Control_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_fixed, dev_more_fixed, dev_offset_X, control_mag, number, select_v);
 		cudaMemcpy(more_fixed, dev_more_fixed, sizeof(TYPE)*number, cudaMemcpyDeviceToHost);
-		//if(select_v !=-1) printf("select: %d\n", select_v);
+		if (select_v != -1) { 
+			//printf("select: %d\n", select_v); 
+			//printf("fixed[%d]: %f\n", select_v, fixed[select_v]);
+			//printf("vertex direction: %f  %f   %f\n", vertexDir[0], vertexDir[1], vertexDir[2]);
+		}
 	}
 
 	// wghou
@@ -867,6 +871,7 @@ public:
 			if(l%8==0)
 			{
 				float energy=Get_Energy_Magnitude();
+				//printf("Energy: %f\n", energy);
 				//	thrust::device_ptr<TYPE> dev_c_ptr(dev_C);
 				//	printf("C sum: %ef\n", thrust::reduce(dev_c_ptr+0, dev_c_ptr+number*3));
 				//	printf("C sum: %ef\n", thrust::reduce(dev_c_ptr+number*3, dev_c_ptr+number*6));

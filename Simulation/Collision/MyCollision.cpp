@@ -35,7 +35,7 @@ MyCollision::MyCollision(ObjectBase* obj_self)
 		for (int i = 0; i < triangleNum * 3; i++)
 		{
 			uint16_t v = T[i];
-			std::vector<int>::iterator it;
+			std::vector<uint16_t>::iterator it;
 			it = std::find(X_index.begin(), X_index.end(), v);
 			if (it == X_index.end()) X_index.push_back(v);
 		}
@@ -101,10 +101,10 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 	else if (col_type == COL_POINT && col_obj->getColType() == COL_TRIANGLE)
 	{
 		float* x_ptr = dynamic_cast<MyCollision*>(col_obj)->getXPtr();
-		const std::vector<int> &x_index = dynamic_cast<MyCollision*>(col_obj)->getXIndex();
+		const std::vector<uint16_t> &x_index = dynamic_cast<MyCollision*>(col_obj)->getXIndex();
 		float x_radius = dynamic_cast<MyCollision*>(col_obj)->getRadius();
 
-		for (std::vector<int>::const_iterator it = x_index.begin(); it != x_index.end(); it++)
+		for (std::vector<uint16_t>::const_iterator it = x_index.begin(); it != x_index.end(); it++)
 		{
 			double x = parentObject->getLocalPos().x - x_ptr[(*it) * 3 + 0];
 			double y = parentObject->getLocalPos().y - x_ptr[(*it) * 3 + 1];

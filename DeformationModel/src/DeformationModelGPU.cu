@@ -58,7 +58,8 @@ DeformationModelGPU::DeformationModelGPU()
 	//m_model->stiffness_3 = 0.5;
 	//m_model->stiffness_p = 1000000;
 
-	m_model->gravity = 9.8;
+	m_model->gravity = 0;
+	m_model->density = 5;
 
 	//m_model->model = NH_MODEL;
 	//m_model->stiffness_0 = 2000000;	//2000000
