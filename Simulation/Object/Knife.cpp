@@ -43,12 +43,11 @@ void Knife::timeStep(float time)
 	// 更新手柄信息
 	m_phDevice->updateDeviceStatus();
 
-
-	// 从 phantomDevice 读取位置
-	m_mesh.m_localPos =
-		Vector3f(10 * m_phDevice->getPhantomPostion().x + 0.45,
-			10 * m_phDevice->getPhantomPostion().y,
-			10 * m_phDevice->getPhantomPostion().z + 0.6);
-
 	m_mesh.m_localOriant = m_phDevice->getPhantomTransform();
+	// location
+	m_mesh.m_localOriant.m[3][0] = 10 * m_phDevice->getPhantomPostion().x + 0.45;
+	m_mesh.m_localOriant.m[3][1] = 10 * m_phDevice->getPhantomPostion().y;
+	m_mesh.m_localOriant.m[3][2] = 10 * m_phDevice->getPhantomPostion().z + 0.6;
+
+	RigidObject::timeStep(time);
 }

@@ -42,7 +42,7 @@ public:
 	bool genRenderable(std::string objName, int numVert, float *mVert, float *mTBNs, float *mUVs, int numFaces, uint16_t* mFaces);
 	bool genLight(std::string lightName);
 
-	void updateObjectOriant(std::string objName, float* pos, float* ori);
+	void updateObjectOriant(std::string objName, float* ori);
 	void updateObjectOriant(std::string objName, mat4f oriant4f);
 	void updateVertexBuffer(std::string objName);
 

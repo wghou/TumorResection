@@ -133,7 +133,7 @@ bool RigidObject::createRenderableObject(RenderableObject* rdFactory, std::strin
 
 void RigidObject::timeStep(float time)
 {
-
+	m_rdFactory->updateObjectOriant(m_objName, &m_mesh.m_localOriant.m[0][0]);
 }
 
 void RigidObject::collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder)

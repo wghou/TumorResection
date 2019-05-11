@@ -35,7 +35,6 @@ struct Mesh
 	uint16_t* mFaces = nullptr;
 	uint16_t* mTets = nullptr;
 
-	Vector3f m_localPos;		// 对象体的实时位置
 	MyMatrix4f m_localOriant;		// 对象体的旋转矩阵
 };
 
@@ -60,7 +59,7 @@ public:
 	GenericCollision* getCollisionObject() { return m_collision; }
 	virtual void collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder) {};
 
-	Vector3f getLocalPos() { return m_mesh.m_localPos; }
+	Vector3f getLocalPos() { return Vector3f{ m_mesh.m_localOriant.m[3][0],m_mesh.m_localOriant.m[3][1], m_mesh.m_localOriant.m[3][2]}; }
 	MyMatrix4f getLocalOriant() { return m_mesh.m_localOriant; }
 	Mesh getMesh() { return m_mesh; }
 	std::string getObjectName() { return m_objName; }

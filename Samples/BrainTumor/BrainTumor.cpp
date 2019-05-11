@@ -61,13 +61,13 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
 	simulator.addRigidObject(obj_skull);
 
-	ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
-	obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
-	simulator.addSoftObject(obj_brain);
+	//ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
+	//obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
+	//simulator.addSoftObject(obj_brain);
 
-	InteractionBase* itc_bs = new InteractionTraction();
-	dynamic_cast<InteractionTraction*>(itc_bs)->init(dynamic_cast<Drill*>(obj_drill), dynamic_cast<SoftObjectGPU*>(obj_brain));
-	simulator.addInteractions(itc_bs);
+	//InteractionBase* itc_bs = new InteractionTraction();
+	//dynamic_cast<InteractionTraction*>(itc_bs)->init(dynamic_cast<Drill*>(obj_drill), dynamic_cast<SoftObjectGPU*>(obj_brain));
+	//simulator.addInteractions(itc_bs);
 
 
 	objRef.genLight("light1");

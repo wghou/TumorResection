@@ -78,7 +78,7 @@ static void preRender(filament::Engine*, filament::View* view, filament::Scene*,
  
 static void animate(Engine* engine, View* view, double now)
 {
-	//return;
+	return;
 
 	RenderableObject& objRef = RenderableObject::get(engine, NULL);
 

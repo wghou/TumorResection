@@ -431,12 +431,12 @@ bool RenderableObject::genLight(std::string lightName)
 	return true;
 }
 
-void RenderableObject::updateObjectOriant(std::string objName, float* pos, float* ori)
+void RenderableObject::updateObjectOriant(std::string objName, float* ori)
 {
 	mat4f oriant4f = mat4f{ ori[0], ori[1], ori[2], 0,
 							ori[4], ori[5], ori[6], 0,
 							ori[8], ori[9], ori[10], 0,
-							pos[0], pos[1], pos[2], 1 };
+							ori[12], ori[13], ori[14], 1 };
 
 	updateObjectOriant(objName, oriant4f);
 }

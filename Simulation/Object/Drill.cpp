@@ -67,18 +67,12 @@ void Drill::timeStep(float time)
 
 	// 更新手柄信息
 	m_phDevice->updateDeviceStatus();
-
-	m_mesh.m_localPos = 
-		Vector3f(10 * m_phDevice->getPhantomPostion().x + 0.45, 
-		10 * m_phDevice->getPhantomPostion().y, 
-		10 * m_phDevice->getPhantomPostion().z + 0.6);
 	
 	m_mesh.m_localOriant = m_phDevice->getPhantomTransform();
+	// location
+	m_mesh.m_localOriant.m[3][0] = 10 * m_phDevice->getPhantomPostion().x + 0.45;
+	m_mesh.m_localOriant.m[3][1] = 10 * m_phDevice->getPhantomPostion().y;
+	m_mesh.m_localOriant.m[3][2] = 10 * m_phDevice->getPhantomPostion().z + 0.6;
 
-	float pos[3];
-	pos[0] = m_mesh.m_localPos.x;
-	pos[1] = m_mesh.m_localPos.y;
-	pos[2] = m_mesh.m_localPos.z;
-
-	m_rdFactory->updateObjectOriant(m_objName, pos, &m_mesh.m_localOriant.m[0][0]);
+	RigidObject::timeStep(time);
 }
