@@ -15,7 +15,8 @@ struct FaceVertex
 	}
 
 	bool isDuplication(const FaceVertex& fv) {
-		return (v == fv.v && (vt != fv.vt || vn != fv.vn));
+		return (v == fv.v && (vt != fv.vt));
+		//return (v == fv.v && (vt != fv.vt || vn != fv.vn));
 	}
 };
 

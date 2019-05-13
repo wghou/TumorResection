@@ -167,7 +167,6 @@ void ElementLoader::loadElement(const string fileName)
 	numFaces = shapes[0].mesh.num_face_vertices.size();
 
 
-
 	///////// 优化网格  //////////
 	if (tVertices.size() == 0 || tFaces.size() == 0) {
 		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the file", "ElementLoader::loadElement");
@@ -273,6 +272,50 @@ void ElementLoader::loadElement(const string fileName)
 
 	// 生成 TBNs
 	TBN::updateTBNs(numVertices, mNormals, mTBNs);
+
+
+	///////// .fxd File  //////////
+	string fxdFile = fileName + ".fxd";
+	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + fxdFile, "ElementLoader::loadElement");
+
+	ifstream fileStream3;
+	fileStream3.open(fxdFile.c_str());
+	if (fileStream3.fail())
+	{
+		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + fxdFile, "ElementLoader::loadElement");
+		fileStream3.close();
+		return;
+	}
+
+	if (!getline(fileStream3, line_stream)) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no node in file " + fxdFile, "ElementLoader::loadElement");
+		fileStream3.close();
+		return;
+	}
+
+	stringstream num3_stream(line_stream);
+	int numFxd = 0;
+	num3_stream >> numFxd;
+	if (numFxd <= 0) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is something wrong with the tet number in " + fxdFile, "ElementLoader::loadElement");
+		fileStream3.close();
+		return;
+	}
+
+	for (int i = 0; i < numFxd; i++)
+	{
+		if (!getline(fileStream3, line_stream)) {
+			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + fxdFile, "ElementLoader::loadElement");
+			break;
+		}
+
+		uint16_t index;
+		stringstream str_stream(line_stream);
+		str_stream >> index;
+		mFixed.push_back(index);
+	}
+
+	fileStream3.close();
 
 	return;
 }

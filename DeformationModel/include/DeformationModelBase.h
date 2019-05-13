@@ -16,6 +16,7 @@ class DfModel_Config
 public:
 	std::string modelType;
 	int numVertex = 0;
+	int tetVertNum = 0;
 	float* mVertices = nullptr;
 	int numTet = 0;
 	uint16_t* mTets = nullptr;
@@ -23,7 +24,7 @@ public:
 	float fixedAxisUp[3] = { 0.0f, 0.0f, 0.0f };
 	float fixedAxisBt[3] = { 0.0f, 0.0f, 0.0f };
 
-	std::vector<int> fixedVertices;
+	std::vector<uint16_t> fixedVertices;
 };
 
 class DeformationModelBase

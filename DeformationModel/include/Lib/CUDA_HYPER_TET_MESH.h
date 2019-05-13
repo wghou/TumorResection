@@ -614,7 +614,7 @@ public:
 		stiffness_p = 5000000;
 		lower_bound = 0.4;
 		upper_bound = 3.0;
-		gravity = -0.98;
+		//gravity = -0.98;
 		//gravity = 0;
 
 
@@ -825,13 +825,13 @@ public:
 	float Get_Gradient_Magnitude()
 	{
 		thrust::device_ptr<TYPE> dev_g_ptr(dev_G);
-		return thrust::reduce(dev_g_ptr, dev_g_ptr+number);
+		return thrust::reduce(dev_g_ptr, dev_g_ptr+ tetVertNum);
 	}
 
 	float Get_Energy_Magnitude()
 	{
 		thrust::device_ptr<TYPE> dev_e_ptr(dev_E);
-		return thrust::reduce(dev_e_ptr, dev_e_ptr+number);
+		return thrust::reduce(dev_e_ptr, dev_e_ptr+ tetVertNum);
 	}
 
 

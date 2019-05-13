@@ -76,6 +76,9 @@ SoftObjectGPU::SoftObjectGPU(char* filePath)
 	config.mVertices = m_loader.getVertices();
 	config.numTet = m_loader.getNumTets();
 	config.mTets = m_loader.getTets();
+	config.tetVertNum = m_loader.getTetVertNum();
+
+	config.fixedVertices.assign(m_loader.getFixed().begin(), m_loader.getFixed().end());
 
 	m_deformationModel = new DeformationModelGPU();
 	m_deformationModel->Initialize(config);
@@ -121,6 +124,15 @@ bool SoftObjectGPU::createRenderableObject(RenderableObject* rdFactory, std::str
 {
 	m_rdFactory = rdFactory;
 
+	// 导入纹理
+	if (!m_mtlPath.empty()) {
+		rdFactory->genMaterial(m_mtlPath);
+	}
+	else {
+		Logger::getMainLogger().log(Logger::Level::Warning, "There is no material for object " + objName, "RigidObject::createRenderableObject");
+	}
+
+	// 生成渲染对象
 	bool rlt = rdFactory->genRenderable(objName, m_mesh.numVertices, m_mesh.mVertices,
 		m_mesh.mTBNs, m_mesh.mUV0, m_mesh.numFaces, m_mesh.mFaces);
 	return rlt;
@@ -134,6 +146,10 @@ void SoftObjectGPU::timeStep(float time)
 
 	m_deformationModel->Reset_More_Fixed(more_fixed, dir);
 	m_deformationModel->timeStep(time);
+
+	// bug
+	// 对于网格中，因为纹理坐标原因，新建的点
+	// 应在 mesh 中做记录，并在计算完成后，更新点的坐标
 
 	TBN::buildVns(m_mesh.numFaces, m_mesh.mFaces, m_mesh.numVertices, m_mesh.mVertices, m_mesh.mNormals);
 	TBN::updateTBNs(m_mesh.numVertices, m_mesh.mNormals, m_mesh.mTBNs);

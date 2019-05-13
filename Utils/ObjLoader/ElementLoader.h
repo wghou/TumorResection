@@ -21,6 +21,9 @@ public:
 	float* getTBNs() { return mTBNs; }
 	uint16_t* getFaces() { return mFaces; }
 	uint16_t* getTets() { return mTets; }
+	std::vector<uint16_t> &getFixed() { return mFixed; }
+
+	int getTetVertNum() { return tVertices.size() / 3; }
 
 	void scale(float s = 1);
 	void translate(float _x, float _y, float _z);
@@ -38,6 +41,7 @@ private:
 	float* mTBNs = nullptr;
 	uint16_t* mFaces = nullptr;
 	uint16_t* mTets = nullptr;
+	std::vector<uint16_t> mFixed;
 
 	int numVertices = 0;
 	int numFaces = 0;
