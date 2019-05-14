@@ -18,8 +18,6 @@ public:
 
 	//Vertex
 	int		number;
-	// wghou
-	int tetVertNum;
 	TYPE*	X;
 	TYPE*	M;
 

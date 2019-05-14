@@ -5,6 +5,7 @@
 #include"Object\SoftObjectGPU.h"
 #include"Object\Drill.h"
 #include"Object\PhantomDevice.h"
+#include"Object/SurfaceMesh.h"
 
 #include"Collision\MyCollision.h"
 #include"Collision\CollisionBasic.h"
@@ -42,9 +43,9 @@ void InteractionTraction::processBeforeTimeStep()
 	if (m_isTracking)
 	{
 		float target[3];
-		target[0] = m_objA->getLocalPos().x;
-		target[1] = m_objA->getLocalPos().y;
-		target[2] = m_objA->getLocalPos().z;
+		target[0] = m_objA->getMesh()->getLocalPos().x;
+		target[1] = m_objA->getMesh()->getLocalPos().y;
+		target[2] = m_objA->getMesh()->getLocalPos().z;
 
 		// ½áÊøÀ­³¶
 		if (dynamic_cast<Drill*>(m_objA)->m_phDevice->getUserSwitchStatus_0() == false)

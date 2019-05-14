@@ -58,7 +58,7 @@ DeformationModelGPU::DeformationModelGPU()
 	//m_model->stiffness_3 = 0.5;
 	//m_model->stiffness_p = 1000000;
 
-	m_model->gravity = 0;
+	m_model->gravity = 0.0;
 	m_model->density = 1000;
 
 	//m_model->model = NH_MODEL;
@@ -118,8 +118,6 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 	//std::cout << config.fixedVertices.size();
 
 	m_model->Initialize(1.0f);
-
-	m_model->tetVertNum = config.tetVertNum;
 }
 
 
@@ -131,6 +129,8 @@ void DeformationModelGPU::timeStep(float time)
 
 void DeformationModelGPU::Reset_More_Fixed(int select_v, float dir[])
 {
+	if (select_v >= m_model->number) return;
+
 	m_model->Reset_More_Fixed(select_v);
 	vertexDir[0] = dir[0];
 	vertexDir[1] = dir[1];

@@ -22,7 +22,7 @@ public:
 	Knife(char* fileName = "../assets/models/knife");
 	~Knife();
 
-
+	bool createRenderableObject(RenderableObject* rdFactory, std::string objName = "Knife");
 	// 仿真步骤相关
 	virtual void timeStep(float time);
 

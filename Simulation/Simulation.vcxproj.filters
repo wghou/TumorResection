@@ -45,6 +45,12 @@
     <ClCompile Include="Object\SoftObjectGPU.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="Object\SurfaceMesh.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\DfSurfaceMesh.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\Drill.h">
@@ -87,6 +93,12 @@
       <Filter>SimulationScene</Filter>
     </ClInclude>
     <ClInclude Include="Object\SoftObjectGPU.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\SurfaceMesh.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\DfSurfaceMesh.h">
       <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,6 +14,7 @@
 
 #include"DeformationModelGPU.h"
 #include"Collision\MyCollision.h"
+#include"Object/DfSurfaceMesh.h"
 
 #include"FilamentWinApp/RenderableObject.h"
 #include"utils/Path.h"
@@ -37,6 +38,9 @@ SoftObjectGPU::SoftObjectGPU(char* filePath)
 
 	// load .ele .node .obj files
 	m_loader.loadElement(objFilePath);
+
+	// material path
+	std::string m_mtlPath;
 
 	// open json
 	nlohmann::json _json;
@@ -71,32 +75,24 @@ SoftObjectGPU::SoftObjectGPU(char* filePath)
 		return;
 	}
 
+	
+	// init deformation model
 	DfModel_Config config;
-	config.numVertex = m_loader.getNumVertices();
+	config.numVertex = m_loader.getTetVertNum();
 	config.mVertices = m_loader.getVertices();
 	config.numTet = m_loader.getNumTets();
 	config.mTets = m_loader.getTets();
-	config.tetVertNum = m_loader.getTetVertNum();
 
 	config.fixedVertices.assign(m_loader.getFixed().begin(), m_loader.getFixed().end());
 
 	m_deformationModel = new DeformationModelGPU();
 	m_deformationModel->Initialize(config);
 
-	m_mesh.numVertices = m_loader.getNumVertices();
-	m_mesh.mVertices = m_deformationModel->getX();
-	m_mesh.mNormals = new float[m_mesh.numVertices * 3];
-	m_mesh.mTBNs = new float[m_mesh.numVertices * 4];
-	m_mesh.mUV0 = new float[m_mesh.numVertices * 2];
-	memcpy(m_mesh.mUV0, m_loader.getUVs(), m_mesh.numVertices * sizeof(float) * 2);
 
-	// surface mesh
-	m_mesh.numFaces = m_loader.getNumFaceVertices();
-	m_mesh.mFaces = new uint16_t[m_mesh.numFaces * 3];
-	memcpy(m_mesh.mFaces, m_loader.getFaces(), sizeof(uint16_t)*m_mesh.numFaces * 3);
-
-	TBN::buildVns(m_mesh.numFaces, m_mesh.mFaces, m_mesh.numVertices, m_mesh.mVertices, m_mesh.mNormals);
-	TBN::updateTBNs(m_mesh.numVertices, m_mesh.mNormals, m_mesh.mTBNs);
+	// init surface mesh
+	m_mesh = new DfSurfaceMesh(m_loader.getNumVertices(), m_loader.getNumFaces(), m_objName);
+	m_mesh->initSurfaceMesh(m_loader.getVertices(), m_loader.getFaces(), m_loader.getUVs(), m_mtlPath);
+	dynamic_cast<DfSurfaceMesh*>(m_mesh)->setVertCpys(m_loader.getTetVertNum(), m_deformationModel->getX(), m_loader.getVertCpys());
 
 	// collision
 	m_collision = new MyCollision(this);
@@ -109,14 +105,8 @@ SoftObjectGPU::SoftObjectGPU(char* filePath)
 SoftObjectGPU::~SoftObjectGPU()
 {
 	if (m_deformationModel) delete m_deformationModel;
-
 	if (m_collision) delete m_collision;
-
-	// delete mesh buffer
-	if (m_mesh.mFaces) delete[] m_mesh.mFaces;
-	if (m_mesh.mNormals) delete[] m_mesh.mNormals;
-	if (m_mesh.mTBNs) delete[] m_mesh.mTBNs;
-	if (m_mesh.mUV0) delete[] m_mesh.mUV0;
+	if (m_mesh) delete m_mesh;
 }
 
 
@@ -124,17 +114,12 @@ bool SoftObjectGPU::createRenderableObject(RenderableObject* rdFactory, std::str
 {
 	m_rdFactory = rdFactory;
 
-	// 导入纹理
-	if (!m_mtlPath.empty()) {
-		rdFactory->genMaterial(m_mtlPath);
-	}
-	else {
-		Logger::getMainLogger().log(Logger::Level::Warning, "There is no material for object " + objName, "RigidObject::createRenderableObject");
+	if (m_rdFactory == nullptr) {
+		Logger::getMainLogger().log(Logger::Level::Error, "The *rdFactory is NULL.", "SoftObjectGPU::createRenderableObject");
+		return false;
 	}
 
-	// 生成渲染对象
-	bool rlt = rdFactory->genRenderable(objName, m_mesh.numVertices, m_mesh.mVertices,
-		m_mesh.mTBNs, m_mesh.mUV0, m_mesh.numFaces, m_mesh.mFaces);
+	bool rlt = m_mesh->createRenderableObject(rdFactory, objName);
 	return rlt;
 }
 
@@ -147,14 +132,7 @@ void SoftObjectGPU::timeStep(float time)
 	m_deformationModel->Reset_More_Fixed(more_fixed, dir);
 	m_deformationModel->timeStep(time);
 
-	// bug
-	// 对于网格中，因为纹理坐标原因，新建的点
-	// 应在 mesh 中做记录，并在计算完成后，更新点的坐标
-
-	TBN::buildVns(m_mesh.numFaces, m_mesh.mFaces, m_mesh.numVertices, m_mesh.mVertices, m_mesh.mNormals);
-	TBN::updateTBNs(m_mesh.numVertices, m_mesh.mNormals, m_mesh.mTBNs);
-
-	m_rdFactory->updateVertexBuffer(m_objName);
+	m_mesh->rendering(m_rdFactory);
 }
 
 

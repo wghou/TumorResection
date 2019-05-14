@@ -15,6 +15,7 @@
 
 #include"Collision/MyCollision.h"
 #include"Object/SoftObjectGPU.h"
+#include"Object/SurfaceMesh.h"
 
 #include"FilamentWinApp/RenderableObject.h"
 #include"utils/Path.h"
@@ -32,11 +33,16 @@ RigidObject::RigidObject(std::string filePath)
 		return;
 	}
 
+	m_objName = _path.getNameWithoutExtension();
+
 	std::string objFileName = _path.concat(_path.getName() + ".obj");
 	std::string jsonFileName = _path.concat(_path.getName() + ".json");
 
 	// load .obj file
 	m_loader.loadObj(objFileName);
+
+	// material path
+	std::string m_mtlPath;
 
 	// open json
 	nlohmann::json _json;
@@ -64,41 +70,15 @@ RigidObject::RigidObject(std::string filePath)
 		Logger::getMainLogger().log(Logger::Level::Error, "Cannot open config file: " + jsonFileName, "RigidObject::RigidObject");
 	}
 
-	
-	m_mesh.numVertices = m_loader.getNumVertices();
-	if (m_loader.getNumVertices() != 0)
-	{
-		m_mesh.mVertices = new float[m_mesh.numVertices * 3];
-		memcpy(m_mesh.mVertices, m_loader.getVertices(), sizeof(float)*m_mesh.numVertices * 3);
-
-		m_mesh.mTBNs = new float[m_mesh.numVertices * 4];
-		memcpy(m_mesh.mTBNs, m_loader.getTBNs(), sizeof(float)*m_mesh.numVertices * 4);
-
-		if (m_loader.getUVs() != nullptr) {
-			m_mesh.mUV0 = new float[m_mesh.numVertices * 2];
-			memcpy(m_mesh.mUV0, m_loader.getUVs(), sizeof(float)*m_mesh.numVertices * 2);
-		}
-	}
-	else {
-		Logger::getMainLogger().log(Logger::Level::Error, "There is no vertex in the obj: " + string(_path.getName()), "");
-		initialized = false;
-		return;
-	}
-	
-	m_mesh.numFaces = m_loader.getNumFaces();
-	if (m_mesh.numFaces != 0)
-	{
-		m_mesh.mFaces = new uint16_t[m_mesh.numFaces * 3];
-		memcpy(m_mesh.mFaces, m_loader.getFaces(), sizeof(uint16_t)*m_mesh.numFaces * 3);
-	}
-	else {
-		Logger::getMainLogger().log(Logger::Level::Error, "There is no surface mesh in the obj: " + string(_path.getName()), "");
+	if (m_loader.getNumVertices() == 0 || m_loader.getNumVertices() == 0) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the eleFile.", "RigidObject::RigidObject");
 		initialized = false;
 		return;
 	}
 
-
-	m_objName = _path.getNameWithoutExtension();
+	m_mesh = new SurfaceMesh(m_loader.getNumVertices(), m_loader.getNumFaces(), m_objName);
+	m_mesh->initSurfaceMesh(m_loader.getVertices(), m_loader.getFaces(), m_loader.getUVs(), m_mtlPath);
+	
 	// 初始化成功
 	initialized = true;
 	return;
@@ -106,34 +86,25 @@ RigidObject::RigidObject(std::string filePath)
 
 RigidObject::~RigidObject()
 {
-	if (m_mesh.mVertices) delete[] m_mesh.mVertices;
-	if (m_mesh.mNormals) delete[] m_mesh.mNormals;
-	if (m_mesh.mTBNs) delete[] m_mesh.mTBNs;
-	if (m_mesh.mUV0) delete[] m_mesh.mUV0;
-	if (m_mesh.mUV1) delete[] m_mesh.mUV1;
+	if (m_mesh) delete m_mesh;
 }
 
 bool RigidObject::createRenderableObject(RenderableObject* rdFactory, std::string objName)
 {
 	m_rdFactory = rdFactory;
 
-	// 导入纹理
-	if (!m_mtlPath.empty()) {
-		rdFactory->genMaterial(m_mtlPath);
+	if (m_rdFactory == nullptr) {
+		Logger::getMainLogger().log(Logger::Level::Error, "The *rdFactory is NULL.", "RigidObject::createRenderableObject");
+		return false;
 	}
-	else {
-		Logger::getMainLogger().log(Logger::Level::Warning, "There is no material for object " + objName, "RigidObject::createRenderableObject");
-	}
-	
-	// 生成渲染对象
-	bool rlt = rdFactory->genRenderable(objName, m_mesh.numVertices, m_mesh.mVertices,
-		m_mesh.mTBNs, m_mesh.mUV0, m_mesh.numFaces, m_mesh.mFaces);
+
+	bool rlt = m_mesh->createRenderableObject(rdFactory, objName);
 	return rlt;
 }
 
 void RigidObject::timeStep(float time)
 {
-	m_rdFactory->updateObjectOriant(m_objName, &m_mesh.m_localOriant.m[0][0]);
+	m_mesh->rendering(m_rdFactory);
 }
 
 void RigidObject::collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder)

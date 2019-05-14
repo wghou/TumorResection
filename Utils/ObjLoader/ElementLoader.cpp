@@ -252,6 +252,11 @@ void ElementLoader::loadElement(const string fileName)
 				//mNormals[newIndex * 3 + 1] = tVNs[fv.vn * 3 + 1];
 				//mNormals[newIndex * 3 + 2] = tVNs[fv.vn * 3 + 2];
 
+				// 存储 复制节点 的编号
+				mVertCpys.push_back(newIndex);
+				mVertCpys.push_back(fv.v);
+
+
 				fv.v = newIndex++;
 
 				tagV[fv.v] = 1;

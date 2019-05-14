@@ -14,6 +14,7 @@
 #include"logger\include\Logger.h"
 #include"Object\Drill.h"
 #include"Object\SoftObjectGPU.h"
+#include"Object/SurfaceMesh.h"
 
 MyCollision::MyCollision(ObjectBase* obj_self)
 {
@@ -27,11 +28,11 @@ MyCollision::MyCollision(ObjectBase* obj_self)
 	{
 		col_type = COL_TRIANGLE;
 
-		X_ptr = dynamic_cast<SoftObjectGPU*>(obj_self)->m_mesh.mVertices;
+		X_ptr = dynamic_cast<SoftObjectGPU*>(obj_self)->getMesh()->getVertices();
 		
 		X_index.clear();
-		int triangleNum = dynamic_cast<SoftObjectGPU*>(obj_self)->m_mesh.numFaces;
-		uint16_t *T = dynamic_cast<SoftObjectGPU*>(obj_self)->m_mesh.mFaces;
+		int triangleNum = dynamic_cast<SoftObjectGPU*>(obj_self)->getMesh()->getNumFaces();
+		uint16_t *T = dynamic_cast<SoftObjectGPU*>(obj_self)->getMesh()->getFaces();
 		for (int i = 0; i < triangleNum * 3; i++)
 		{
 			uint16_t v = T[i];
@@ -59,9 +60,9 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 	if (col_type == COL_POINT && col_obj->getColType() == COL_POINT)
 	{
 		// 两者距离 = 碰撞对象 A 自身位置 - 碰撞对象 B 位置
-		double x = parentObject->getLocalPos().x - col_obj->getParentObject()->getLocalPos().x;
-		double y = parentObject->getLocalPos().y - col_obj->getParentObject()->getLocalPos().y;
-		double z = parentObject->getLocalPos().z - col_obj->getParentObject()->getLocalPos().z;
+		double x = parentObject->getMesh()->getLocalPos().x - col_obj->getParentObject()->getMesh()->getLocalPos().x;
+		double y = parentObject->getMesh()->getLocalPos().y - col_obj->getParentObject()->getMesh()->getLocalPos().y;
+		double z = parentObject->getMesh()->getLocalPos().z - col_obj->getParentObject()->getMesh()->getLocalPos().z;
 
 		double len = sqrt(x*x + y*y + z*z);
 
@@ -75,9 +76,9 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 			// 自身 A
 			recorder->obj_self = this->parentObject;
 			recorder->col_X_index_self = 0;
-			recorder->col_X_self[0] = parentObject->getLocalPos().x;
-			recorder->col_X_self[1] = parentObject->getLocalPos().y;
-			recorder->col_X_self[2] = parentObject->getLocalPos().z;
+			recorder->col_X_self[0] = parentObject->getMesh()->getLocalPos().x;
+			recorder->col_X_self[1] = parentObject->getMesh()->getLocalPos().y;
+			recorder->col_X_self[2] = parentObject->getMesh()->getLocalPos().z;
 			recorder->col_VN_self[0] = -x;
 			recorder->col_VN_self[1] = -y;
 			recorder->col_VN_self[2] = -z;
@@ -85,9 +86,9 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 			// 碰撞对象 B
 			recorder->obj_1 = col_obj->getParentObject();
 			recorder->col_X_index_1 = 0;
-			recorder->col_X_1[0] = col_obj->getParentObject()->getLocalPos().x;
-			recorder->col_X_1[1] = col_obj->getParentObject()->getLocalPos().y;
-			recorder->col_X_1[2] = col_obj->getParentObject()->getLocalPos().z;
+			recorder->col_X_1[0] = col_obj->getParentObject()->getMesh()->getLocalPos().x;
+			recorder->col_X_1[1] = col_obj->getParentObject()->getMesh()->getLocalPos().y;
+			recorder->col_X_1[2] = col_obj->getParentObject()->getMesh()->getLocalPos().z;
 			recorder->col_VN_1[0] = x;
 			recorder->col_VN_1[1] = y;
 			recorder->col_VN_1[2] = z;
@@ -106,9 +107,9 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 
 		for (std::vector<uint16_t>::const_iterator it = x_index.begin(); it != x_index.end(); it++)
 		{
-			double x = parentObject->getLocalPos().x - x_ptr[(*it) * 3 + 0];
-			double y = parentObject->getLocalPos().y - x_ptr[(*it) * 3 + 1];
-			double z = parentObject->getLocalPos().z - x_ptr[(*it) * 3 + 2];
+			double x = parentObject->getMesh()->getLocalPos().x - x_ptr[(*it) * 3 + 0];
+			double y = parentObject->getMesh()->getLocalPos().y - x_ptr[(*it) * 3 + 1];
+			double z = parentObject->getMesh()->getLocalPos().z - x_ptr[(*it) * 3 + 2];
 
 			double len = sqrt(x*x + y*y + z*z);
 
@@ -122,9 +123,9 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 				// 自身 A
 				recorder->obj_self = this->parentObject;
 				recorder->col_X_index_self = 0;
-				recorder->col_X_self[0] = parentObject->getLocalPos().x;
-				recorder->col_X_self[1] = parentObject->getLocalPos().y;
-				recorder->col_X_self[2] = parentObject->getLocalPos().z;
+				recorder->col_X_self[0] = parentObject->getMesh()->getLocalPos().x;
+				recorder->col_X_self[1] = parentObject->getMesh()->getLocalPos().y;
+				recorder->col_X_self[2] = parentObject->getMesh()->getLocalPos().z;
 				recorder->col_VN_self[0] = -x;
 				recorder->col_VN_self[1] = -y;
 				recorder->col_VN_self[2] = -z;

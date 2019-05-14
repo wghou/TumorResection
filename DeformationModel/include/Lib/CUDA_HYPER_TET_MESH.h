@@ -825,13 +825,13 @@ public:
 	float Get_Gradient_Magnitude()
 	{
 		thrust::device_ptr<TYPE> dev_g_ptr(dev_G);
-		return thrust::reduce(dev_g_ptr, dev_g_ptr+ tetVertNum);
+		return thrust::reduce(dev_g_ptr, dev_g_ptr + number);
 	}
 
 	float Get_Energy_Magnitude()
 	{
 		thrust::device_ptr<TYPE> dev_e_ptr(dev_E);
-		return thrust::reduce(dev_e_ptr, dev_e_ptr+ tetVertNum);
+		return thrust::reduce(dev_e_ptr, dev_e_ptr + number);
 	}
 
 
@@ -843,6 +843,7 @@ public:
 		TYPE theta		= 1;
 		TYPE omega;
 
+		cudaMemcpy(dev_X, X, sizeof(TYPE) * 3 * number, cudaMemcpyHostToDevice);
 		// Update S and initialize X
 		cudaMemcpy(dev_S, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToDevice);
 		Update_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X, t, number, dir[0], dir[1], dir[2]);

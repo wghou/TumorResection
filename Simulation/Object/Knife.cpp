@@ -11,6 +11,7 @@
 #include"Logger/include/Logger.h"
 #include"Collision\MyCollision.h"
 #include"PhantomDevice.h"
+#include"Object/SurfaceMesh.h"
 
 
 Knife::Knife(char* fileName) : RigidObject(fileName)
@@ -34,6 +35,13 @@ Knife::~Knife()
 	if (m_phDevice) delete m_phDevice;
 }
 
+bool Knife::createRenderableObject(RenderableObject* rdFactory, std::string objName)
+{
+	bool rlt = RigidObject::createRenderableObject(rdFactory, objName);
+
+	return rlt;
+}
+
 
 void Knife::timeStep(float time)
 {
@@ -43,11 +51,13 @@ void Knife::timeStep(float time)
 	// 更新手柄信息
 	m_phDevice->updateDeviceStatus();
 
-	m_mesh.m_localOriant = m_phDevice->getPhantomTransform();
+	MyMatrix4f ori = m_phDevice->getPhantomTransform();
 	// location
-	m_mesh.m_localOriant.m[3][0] = 10 * m_phDevice->getPhantomPostion().x + 0.15;
-	m_mesh.m_localOriant.m[3][1] = 10 * m_phDevice->getPhantomPostion().y;
-	m_mesh.m_localOriant.m[3][2] = 10 * m_phDevice->getPhantomPostion().z + 0.6;
+	ori.m[3][0] = 10 * m_phDevice->getPhantomPostion().x + 0.15;
+	ori.m[3][1] = 10 * m_phDevice->getPhantomPostion().y;
+	ori.m[3][2] = 10 * m_phDevice->getPhantomPostion().z + 0.6;
+
+	m_mesh->setOriant(ori);
 
 	RigidObject::timeStep(time);
 }
