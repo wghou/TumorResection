@@ -31,14 +31,29 @@ public:
 	// 后面做改进的时候吧，将 surface mesh 独立出来
 	int getTetVertNum() { return tVertices.size() / 3; }
 
+	// 计算表面上的约束点
+	//vector<uint16_t> &calCstVert(float alitude);
+	//void calculateFixed(float radius);
+
 	void scale(float s = 1);
 	void translate(float _x, float _y, float _z);
+
+private:
+	void loadObjFile(std::string objFile);
+	void loadNodeFile(std::string nodeFile);
+	void loadEleFile(std::string eleFile);
+	void loadFxdFile(std::string fxdFile);
+	void loadCstFile(std::string cstFile);
+	void optimizeMesh();
 
 private:
 	vector<float> tVertices;
 	vector<float> tVTs;
 	vector<float> tVNs;
 	vector<FaceVertex> tFaces;
+
+	// constraint vertex
+	vector<uint16_t> tCstVert;
 	
 
 	float* mVertices = nullptr;
@@ -53,7 +68,7 @@ private:
 	int numVertices = 0;
 	int numFaces = 0;
 	int numTets = 0;
-
+	int numVerticesObj = 0;
 };
 #endif // !ELEMENT_LOADER_H
 

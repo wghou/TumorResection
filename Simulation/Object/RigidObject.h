@@ -10,7 +10,7 @@
 #include"Object\ObjectBase.h"
 #include<string>
 
-
+class ObjLoader;
 class SurfaceMeshBase;
 
 class RigidObject : public ObjectBase
@@ -24,11 +24,14 @@ public:
 	// 仿真步骤相关
 	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName);
 	virtual void timeStep(float time);
+	virtual void post2Render();
 
 
 	// 碰撞检测相关
 	virtual void collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder);
 
+protected:
+	ObjLoader *m_loader;
 };
 
 #endif // !INSTRUMENT_H_

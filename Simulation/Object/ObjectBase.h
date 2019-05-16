@@ -36,6 +36,7 @@ public:
 	// 仿真步骤相关
 	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName) { return true; };
 	virtual void timeStep(float time) {};
+	virtual void post2Render() {};
 
 
 	// 碰撞检测相关

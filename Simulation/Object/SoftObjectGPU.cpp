@@ -22,10 +22,9 @@
 #include"ObjLoader/TBN.h"
 
 
-SoftObjectGPU::SoftObjectGPU(char* filePath)
+SoftObjectGPU::SoftObjectGPU(std::string filePath)
 {
-	ElementLoader m_loader;
-
+	m_loader = new ElementLoader();
 	Path _path(filePath);
 	if (!_path.exists()) {
 		Logger::getMainLogger().log(Logger::Level::Error, "The file " + _path.getName() + " doesnt exist.", "RigidObject::RigidObject");
@@ -37,7 +36,7 @@ SoftObjectGPU::SoftObjectGPU(char* filePath)
 	std::string jsonFileName = _path.concat(_path.getName() + ".json");
 
 	// load .ele .node .obj files
-	m_loader.loadElement(objFilePath);
+	m_loader->loadElement(objFilePath);
 
 	// material path
 	std::string m_mtlPath;
@@ -57,8 +56,8 @@ SoftObjectGPU::SoftObjectGPU(char* filePath)
 			json_helper::readValue(_json, "mtlPath", m_mtlPath);
 
 			// translate, then scale
-			m_loader.translate(trans[0], trans[1], trans[2]);
-			m_loader.scale(sl);
+			m_loader->translate(trans[0], trans[1], trans[2]);
+			m_loader->scale(sl);
 		}
 		catch (std::exception &ex) {
 			Logger::getMainLogger().log(Logger::Level::Error, "Error when initial json: " + std::string(ex.what()), "RigidObject::RigidObject");
@@ -69,7 +68,7 @@ SoftObjectGPU::SoftObjectGPU(char* filePath)
 	}
 
 
-	if (m_loader.getNumVertices() == 0 || m_loader.getNumTets() == 0 || m_loader.getNumVertices() == 0) {
+	if (m_loader->getNumVertices() == 0 || m_loader->getNumTets() == 0 || m_loader->getNumVertices() == 0) {
 		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the eleFile.", "SoftObjectGPU::SoftObjectGPU");
 		initialized = false;
 		return;
@@ -78,21 +77,21 @@ SoftObjectGPU::SoftObjectGPU(char* filePath)
 	
 	// init deformation model
 	DfModel_Config config;
-	config.numVertex = m_loader.getTetVertNum();
-	config.mVertices = m_loader.getVertices();
-	config.numTet = m_loader.getNumTets();
-	config.mTets = m_loader.getTets();
+	config.numVertex = m_loader->getTetVertNum();
+	config.mVertices = m_loader->getVertices();
+	config.numTet = m_loader->getNumTets();
+	config.mTets = m_loader->getTets();
 
-	config.fixedVertices.assign(m_loader.getFixed().begin(), m_loader.getFixed().end());
+	config.fixedVertices.assign(m_loader->getFixed().begin(), m_loader->getFixed().end());
 
 	m_deformationModel = new DeformationModelGPU();
 	m_deformationModel->Initialize(config);
 
 
 	// init surface mesh
-	m_mesh = new DfSurfaceMesh(m_loader.getNumVertices(), m_loader.getNumFaces(), m_objName);
-	m_mesh->initSurfaceMesh(m_loader.getVertices(), m_loader.getFaces(), m_loader.getUVs(), m_mtlPath);
-	dynamic_cast<DfSurfaceMesh*>(m_mesh)->setVertCpys(m_loader.getTetVertNum(), m_deformationModel->getX(), m_loader.getVertCpys());
+	m_mesh = new DfSurfaceMesh(m_loader->getNumVertices(), m_loader->getNumFaces(), m_objName);
+	m_mesh->initSurfaceMesh(m_loader->getVertices(), m_loader->getFaces(), m_loader->getUVs(), m_mtlPath);
+	dynamic_cast<DfSurfaceMesh*>(m_mesh)->setVertCpys(m_loader->getTetVertNum(), m_deformationModel->getX(), m_loader->getVertCpys());
 
 	// collision
 	m_collision = new MyCollision(this);
@@ -107,6 +106,7 @@ SoftObjectGPU::~SoftObjectGPU()
 	if (m_deformationModel) delete m_deformationModel;
 	if (m_collision) delete m_collision;
 	if (m_mesh) delete m_mesh;
+	if (m_loader) delete m_loader;
 }
 
 
@@ -131,8 +131,6 @@ void SoftObjectGPU::timeStep(float time)
 
 	m_deformationModel->Reset_More_Fixed(more_fixed, dir);
 	m_deformationModel->timeStep(time);
-
-	m_mesh->rendering(m_rdFactory);
 }
 
 
@@ -148,4 +146,10 @@ void SoftObjectGPU::collisionDetection(ObjectBase* obj_other, CollisionRecorder*
 
 	// Ö´ÐÐÅö×²¼ì²â
 	this->m_collision->computeCollision(obj_other->getCollisionObject(), recorder);
+}
+
+
+void SoftObjectGPU::post2Render()
+{
+	m_mesh->rendering(m_rdFactory);
 }

@@ -12,7 +12,7 @@
 
 
 class MyCollision;
-
+class ElementLoader;
 class DeformationModelGPU;
 
 class SoftObjectGPU :public ObjectBase
@@ -20,13 +20,14 @@ class SoftObjectGPU :public ObjectBase
 	friend MyCollision;
 
 public:
-	SoftObjectGPU(char* filePath);
+	SoftObjectGPU(std::string filePath);
 	~SoftObjectGPU();
 
 
 	// 仿真步骤相关
 	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName);
 	virtual void timeStep(float time);
+	virtual void post2Render();
 
 
 	// 碰撞检测相关
@@ -40,7 +41,8 @@ public:
 public:
 	float dir[3] = { 0,0,0 };
 
-private:
+protected:
+	ElementLoader *m_loader;
 	DeformationModelGPU *m_deformationModel = nullptr;		// 形变模型对象
 	int more_fixed = -1;
 };

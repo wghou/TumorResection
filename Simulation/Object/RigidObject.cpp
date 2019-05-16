@@ -24,7 +24,7 @@
 
 RigidObject::RigidObject(std::string filePath)
 {
-	ObjLoader m_loader;
+	m_loader = new ObjLoader();
 
 	Path _path(filePath);
 	if (!_path.exists()) {
@@ -39,7 +39,7 @@ RigidObject::RigidObject(std::string filePath)
 	std::string jsonFileName = _path.concat(_path.getName() + ".json");
 
 	// load .obj file
-	m_loader.loadObj(objFileName);
+	m_loader->loadObj(objFileName);
 
 	// material path
 	std::string m_mtlPath;
@@ -59,8 +59,8 @@ RigidObject::RigidObject(std::string filePath)
 			json_helper::readValue(_json, "mtlPath", m_mtlPath);
 
 			// translate, then scale
-			m_loader.translate(trans[0], trans[1], trans[2]);
-			m_loader.scale(sl);
+			m_loader->translate(trans[0], trans[1], trans[2]);
+			m_loader->scale(sl);
 		}
 		catch (std::exception &ex) {
 			Logger::getMainLogger().log(Logger::Level::Error, "Error when initial json: " + std::string(ex.what()), "RigidObject::RigidObject");
@@ -70,14 +70,14 @@ RigidObject::RigidObject(std::string filePath)
 		Logger::getMainLogger().log(Logger::Level::Error, "Cannot open config file: " + jsonFileName, "RigidObject::RigidObject");
 	}
 
-	if (m_loader.getNumVertices() == 0 || m_loader.getNumVertices() == 0) {
+	if (m_loader->getNumVertices() == 0 || m_loader->getNumVertices() == 0) {
 		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the eleFile.", "RigidObject::RigidObject");
 		initialized = false;
 		return;
 	}
 
-	m_mesh = new SurfaceMesh(m_loader.getNumVertices(), m_loader.getNumFaces(), m_objName);
-	m_mesh->initSurfaceMesh(m_loader.getVertices(), m_loader.getFaces(), m_loader.getUVs(), m_mtlPath);
+	m_mesh = new SurfaceMesh(m_loader->getNumVertices(), m_loader->getNumFaces(), m_objName);
+	m_mesh->initSurfaceMesh(m_loader->getVertices(), m_loader->getFaces(), m_loader->getUVs(), m_mtlPath);
 	
 	// 初始化成功
 	initialized = true;
@@ -87,6 +87,7 @@ RigidObject::RigidObject(std::string filePath)
 RigidObject::~RigidObject()
 {
 	if (m_mesh) delete m_mesh;
+	if (m_loader) delete m_loader;
 }
 
 bool RigidObject::createRenderableObject(RenderableObject* rdFactory, std::string objName)
@@ -103,6 +104,11 @@ bool RigidObject::createRenderableObject(RenderableObject* rdFactory, std::strin
 }
 
 void RigidObject::timeStep(float time)
+{
+	
+}
+
+void RigidObject::post2Render()
 {
 	m_mesh->rendering(m_rdFactory);
 }

@@ -37,7 +37,6 @@ private:
 	vector<float> tVNs;
 	vector<FaceVertex> tFaces;
 
-
 	float* mVertices = nullptr;
 	float* mUVs = nullptr;
 	float* mNormals = nullptr;

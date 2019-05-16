@@ -27,94 +27,65 @@ void ElementLoader::loadElement(const string fileName)
 {
 	/////////  Node File //////////
 	string nodeFile = fileName + ".node";
-	Logger::getMainLogger().log(Logger::Level::Info, "Loading " + nodeFile, "ElementLoader::loadElement");
-
-	ifstream fileStream1;
-	fileStream1.open(nodeFile.c_str());
-	if (fileStream1.fail())
-	{
-		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + nodeFile, "ElementLoader::loadElement");
-		return;
-	}
-
-	string line_stream;
-	if (!getline(fileStream1, line_stream)) {
-		Logger::getMainLogger().log(Logger::Level::Error, "There no node in the file " + nodeFile, "ElementLoader::loadElement");
-		return;
-	}
-
-	stringstream num_stream(line_stream);
-	num_stream >> numVertices;
-	if (numVertices <= 0) {
-		Logger::getMainLogger().log(Logger::Level::Error, "The number of vertices seems wrong: ", "ElementLoader::loadElement");
-		return;
-	}
-
-	for (int i = 0; i < numVertices; i++)
-	{
-		if (!getline(fileStream1, line_stream)) {
-			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + nodeFile, "ElementLoader::loadElement");
-			break;
-		}
-
-		float temp, x, y, z;
-		stringstream str_stream(line_stream);
-		str_stream >> temp >> x >> y >> z;
-		tVertices.push_back(x);
-		tVertices.push_back(y);
-		tVertices.push_back(z);
-	}
-
-	fileStream1.close();
+	loadNodeFile(nodeFile);
 
 
 	///////// Ele File  //////////
 	string eleFile = fileName + ".ele";
-	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + eleFile, "ElementLoader::loadElement");
-
-	ifstream fileStream2;
-	fileStream2.open(eleFile.c_str());
-	if (fileStream2.fail())
-	{
-		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + eleFile, "ElementLoader::loadElement");
-		return;
-	}
-
-	if (!getline(fileStream2, line_stream)) {
-		Logger::getMainLogger().log(Logger::Level::Error, "There is no node in file " + eleFile, "ElementLoader::loadElement");
-		return;
-	}
-
-	stringstream num2_stream(line_stream);
-	num2_stream >> numTets;
-	if (numTets <= 0) {
-		Logger::getMainLogger().log(Logger::Level::Error, "There is something wrong with the tet number in " + eleFile, "ElementLoader::loadElement");
-		return;
-	}
-
-	mTets = new uint16_t[numTets * 4];
-	for (int i = 0; i < numTets; i++)
-	{
-		if (!getline(fileStream2, line_stream)) {
-			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + eleFile, "ElementLoader::loadElement");
-			break;
-		}
-
-		uint16_t temp, v0, v1, v2, v3;
-		stringstream str_stream(line_stream);
-		str_stream >> temp >> v0 >> v1 >> v2 >> v3;
-		mTets[i * 4 + 0] = v0;
-		mTets[i * 4 + 1] = v1;
-		mTets[i * 4 + 2] = v2;
-		mTets[i * 4 + 3] = v3;
-	}
-
-	fileStream2.close();
+	loadEleFile(eleFile);
 
 
 	///////// obj File  //////////
 	string objFile = fileName + ".obj";
+	loadObjFile(objFile);
 
+	///////// .fxd File  //////////
+	string fxdFile = fileName + ".fxd";
+	loadFxdFile(fxdFile);
+
+
+	///////// .cst File  //////////
+	string cstFile = fileName + ".cst";
+	loadCstFile(cstFile);
+	
+
+	///////// 优化网格  //////////
+	optimizeMesh();
+
+
+	// update normals
+	TBN::buildVns(numFaces, mFaces, numVertices, mVertices, mNormals);
+
+	// 生成 TBNs
+	TBN::updateTBNs(numVertices, mNormals, mTBNs);
+
+
+	return;
+}
+
+
+void ElementLoader::scale(float s)
+{
+	for (int i = 0; i < numVertices * 3; i++) {
+		mVertices[i] *= s;
+	}
+}
+
+
+void ElementLoader::translate(float _x, float _y, float _z)
+{
+	if (numVertices <= 0) return;
+
+	for (int i = 0; i < numVertices; i++) {
+		mVertices[3 * i + 0] += _x;
+		mVertices[3 * i + 1] += _y;
+		mVertices[3 * i + 2] += _z;
+	}
+}
+
+
+void ElementLoader::loadObjFile(std::string objFile) 
+{
 	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + objFile, "ElementLoader::loadElement");
 
 	tinyobj::attrib_t attrib;
@@ -135,7 +106,7 @@ void ElementLoader::loadElement(const string fileName)
 	tVTs.swap(attrib.texcoords);
 	if (tVTs.size() == 0) tVTs.resize(2, 0);
 	tVNs.resize(3, 0);
-	
+
 	if (shapes.size() != 1) {
 		Logger::getMainLogger().log(Logger::Level::Error, "Something wrong with the shapes.size.", "ElementLoader::loadElement");
 	}
@@ -165,9 +136,201 @@ void ElementLoader::loadElement(const string fileName)
 	}
 
 	numFaces = shapes[0].mesh.num_face_vertices.size();
+	numVerticesObj = attrib.vertices.size() / 3;
+}
 
 
-	///////// 优化网格  //////////
+void ElementLoader::loadNodeFile(std::string nodeFile)
+{
+	Logger::getMainLogger().log(Logger::Level::Info, "Loading " + nodeFile, "ElementLoader::loadElement");
+
+	ifstream fileStream;
+	fileStream.open(nodeFile.c_str());
+	if (fileStream.fail())
+	{
+		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + nodeFile, "ElementLoader::loadElement");
+		return;
+	}
+
+	string line_stream;
+	if (!getline(fileStream, line_stream)) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There no node in the file " + nodeFile, "ElementLoader::loadElement");
+		return;
+	}
+
+	stringstream num_stream(line_stream);
+	num_stream >> numVertices;
+	if (numVertices <= 0) {
+		Logger::getMainLogger().log(Logger::Level::Error, "The number of vertices seems wrong: ", "ElementLoader::loadElement");
+		return;
+	}
+
+	for (int i = 0; i < numVertices; i++)
+	{
+		if (!getline(fileStream, line_stream)) {
+			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + nodeFile, "ElementLoader::loadElement");
+			break;
+		}
+
+		float temp, x, y, z;
+		stringstream str_stream(line_stream);
+		str_stream >> temp >> x >> y >> z;
+		tVertices.push_back(x);
+		tVertices.push_back(y);
+		tVertices.push_back(z);
+	}
+
+	fileStream.close();
+
+	return;
+}
+
+
+void ElementLoader::loadEleFile(std::string eleFile)
+{
+	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + eleFile, "ElementLoader::loadElement");
+
+	ifstream fileStream;
+	fileStream.open(eleFile.c_str());
+	if (fileStream.fail())
+	{
+		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + eleFile, "ElementLoader::loadElement");
+		return;
+	}
+
+	string line_stream;
+	if (!getline(fileStream, line_stream)) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no node in file " + eleFile, "ElementLoader::loadElement");
+		return;
+	}
+
+	stringstream num_stream(line_stream);
+	num_stream >> numTets;
+	if (numTets <= 0) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is something wrong with the tet number in " + eleFile, "ElementLoader::loadElement");
+		return;
+	}
+
+	mTets = new uint16_t[numTets * 4];
+	for (int i = 0; i < numTets; i++)
+	{
+		if (!getline(fileStream, line_stream)) {
+			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + eleFile, "ElementLoader::loadElement");
+			break;
+		}
+
+		uint16_t temp, v0, v1, v2, v3;
+		stringstream str_stream(line_stream);
+		str_stream >> temp >> v0 >> v1 >> v2 >> v3;
+		mTets[i * 4 + 0] = v0;
+		mTets[i * 4 + 1] = v1;
+		mTets[i * 4 + 2] = v2;
+		mTets[i * 4 + 3] = v3;
+	}
+
+	fileStream.close();
+
+	return;
+}
+
+
+void ElementLoader::loadFxdFile(std::string fxdFile)
+{
+	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + fxdFile, "ElementLoader::loadElement");
+
+	ifstream fileStream;
+	fileStream.open(fxdFile.c_str());
+	if (fileStream.fail())
+	{
+		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + fxdFile, "ElementLoader::loadElement");
+		fileStream.close();
+		return;
+	}
+
+	string line_stream;
+	if (!getline(fileStream, line_stream)) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no node in file " + fxdFile, "ElementLoader::loadElement");
+		fileStream.close();
+		return;
+	}
+
+	stringstream num_stream(line_stream);
+	int numFxd = 0;
+	num_stream >> numFxd;
+	if (numFxd <= 0) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is something wrong with the tet number in " + fxdFile, "ElementLoader::loadElement");
+		fileStream.close();
+		return;
+	}
+
+	for (int i = 0; i < numFxd; i++)
+	{
+		if (!getline(fileStream, line_stream)) {
+			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + fxdFile, "ElementLoader::loadElement");
+			break;
+		}
+
+		uint16_t index;
+		stringstream str_stream(line_stream);
+		str_stream >> index;
+		mFixed.push_back(index);
+	}
+
+	fileStream.close();
+
+	return;
+}
+
+
+void ElementLoader::loadCstFile(std::string cstFile)
+{
+	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + cstFile, "ElementLoader::loadElement");
+
+	ifstream fileStream;
+	fileStream.open(cstFile.c_str());
+	if (fileStream.fail())
+	{
+		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + cstFile, "ElementLoader::loadElement");
+		fileStream.close();
+		return;
+	}
+
+	string line_stream;
+	if (!getline(fileStream, line_stream)) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is no node in file " + cstFile, "ElementLoader::loadElement");
+		fileStream.close();
+		return;
+	}
+
+	stringstream num_stream(line_stream);
+	int numCst = 0;
+	num_stream >> numCst;
+	if (numCst <= 0) {
+		Logger::getMainLogger().log(Logger::Level::Error, "There is something wrong with the tet number in " + cstFile, "ElementLoader::loadElement");
+		fileStream.close();
+		return;
+	}
+
+	for (int i = 0; i < numCst; i++)
+	{
+		if (!getline(fileStream, line_stream)) {
+			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + cstFile, "ElementLoader::loadElement");
+			break;
+		}
+
+		uint16_t index;
+		stringstream str_stream(line_stream);
+		str_stream >> index;
+		tCstVert.push_back(index);
+	}
+
+	fileStream.close();
+
+	return;
+}
+
+void ElementLoader::optimizeMesh()
+{
 	if (tVertices.size() == 0 || tFaces.size() == 0) {
 		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the file", "ElementLoader::loadElement");
 		return;
@@ -196,7 +359,7 @@ void ElementLoader::loadElement(const string fileName)
 
 
 	// allocate new copy for mesh information
-	numVertices = numVertices + countV - attrib.vertices.size() / 3;
+	numVertices = numVertices + countV - numVerticesObj;
 	mVertices = new float[numVertices * 3];
 	for (int i = 0; i < tVertices.size(); i++) {
 		mVertices[i] = tVertices[i];
@@ -271,74 +434,4 @@ void ElementLoader::loadElement(const string fileName)
 	}
 
 	delete tagV;
-
-	// update normals
-	TBN::buildVns(numFaces, mFaces, numVertices, mVertices, mNormals);
-
-	// 生成 TBNs
-	TBN::updateTBNs(numVertices, mNormals, mTBNs);
-
-
-	///////// .fxd File  //////////
-	string fxdFile = fileName + ".fxd";
-	Logger::getMainLogger().log(Logger::Level::Info, "Loading file: " + fxdFile, "ElementLoader::loadElement");
-
-	ifstream fileStream3;
-	fileStream3.open(fxdFile.c_str());
-	if (fileStream3.fail())
-	{
-		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + fxdFile, "ElementLoader::loadElement");
-		fileStream3.close();
-		return;
-	}
-
-	if (!getline(fileStream3, line_stream)) {
-		Logger::getMainLogger().log(Logger::Level::Error, "There is no node in file " + fxdFile, "ElementLoader::loadElement");
-		fileStream3.close();
-		return;
-	}
-
-	stringstream num3_stream(line_stream);
-	int numFxd = 0;
-	num3_stream >> numFxd;
-	if (numFxd <= 0) {
-		Logger::getMainLogger().log(Logger::Level::Error, "There is something wrong with the tet number in " + fxdFile, "ElementLoader::loadElement");
-		fileStream3.close();
-		return;
-	}
-
-	for (int i = 0; i < numFxd; i++)
-	{
-		if (!getline(fileStream3, line_stream)) {
-			Logger::getMainLogger().log(Logger::Level::Error, "Error occurs when reading line from the file " + fxdFile, "ElementLoader::loadElement");
-			break;
-		}
-
-		uint16_t index;
-		stringstream str_stream(line_stream);
-		str_stream >> index;
-		mFixed.push_back(index);
-	}
-
-	fileStream3.close();
-
-	return;
-}
-
-void ElementLoader::scale(float s)
-{
-	for (int i = 0; i < numVertices * 3; i++) {
-		mVertices[i] *= s;
-	}
-}
-
-void ElementLoader::translate(float _x, float _y, float _z)
-{
-	if (numVertices <= 0) return;
-
-	for (int i = 0; i < numVertices; i++) {
-		mVertices[3 * i + 0] += _x;
-		mVertices[3 * i + 1] += _y;
-		mVertices[3 * i + 2] += _z;
-	}
 }

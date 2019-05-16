@@ -58,6 +58,4 @@ void Knife::timeStep(float time)
 	ori.m[3][2] = 10 * m_phDevice->getPhantomPostion().z + 0.6;
 
 	m_mesh->setOriant(ori);
-
-	RigidObject::timeStep(time);
 }

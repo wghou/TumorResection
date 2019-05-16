@@ -16,10 +16,11 @@ int main()
 	float* Vptr = loader.getVertices();
 
 	std::vector<uint16_t> fxd;
+	std::vector<uint16_t> cst;
 
 	for (uint16_t i = 0; i < numV; i++) {
-		if (Vptr[i * 3 + 0] < 0) {
-			
+		if (Vptr[i * 3 + 0] > -3.5) {
+			cst.push_back(i);
 		}
 
 		float len = sqrtf(Vptr[i * 3 + 1] * Vptr[i * 3 + 1] + Vptr[i * 3 + 2] * Vptr[i * 3 + 2]);
@@ -27,8 +28,10 @@ int main()
 		if (len > 17.9) fxd.push_back(i);
 	}
 
-	std::cout << fxd.size();
+	std::cout << "Fixed vertices number: " << fxd.size() << "  Constraint Vertices number: " << cst.size() << std::endl;
 
+
+	//////////////
 	string fxdFile = "../../Samples/assets/models/pulse/brain/brain.fxd";
 	ofstream fileStream;
 	fileStream.open(fxdFile.c_str(), ios::trunc);
@@ -41,7 +44,22 @@ int main()
 	for (int i = 0; i < fxd.size(); i++) {
 		fileStream << fxd[i] << std::endl;
 	}
+	fileStream.close();
 
+
+	//////////////
+	string cstFile = "../../Samples/assets/models/pulse/brain/brain.cst";
+	fileStream.open(cstFile.c_str(), ios::trunc);
+	if (fileStream.fail()) {
+		return -1;
+	}
+
+	fileStream << cst.size() << std::endl;
+
+	for (int i = 0; i < cst.size(); i++) {
+		fileStream << cst[i] << std::endl;
+	}
+	fileStream.close();
 
 	return 0;
 }

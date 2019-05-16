@@ -21,6 +21,7 @@ public:
 	~SimulationSceneC();
 
 	void stepSimulation(float deltaTime);	// ·ÂÕæ²½
+	void post2RenderBuffer();
 
 	void addSoftObject(ObjectBase* object) { m_SftObjects.push_back(object); }
 	void addRigidObject(ObjectBase* object) { m_RgdObjects.push_back(object); }

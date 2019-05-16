@@ -454,9 +454,9 @@ __global__ void Constraint_1_Kernel(const float* M, const float* X, const float*
 
 	// Get Force
 	float error[3];
-	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 2.0*V[i * 3 + 0]) * M[i];
+	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 2.0*V[i * 3 + 0]) * M[i] + gravity * M[i];
 	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 2.0*V[i * 3 + 1]) * M[i];
-	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 2.0*V[i * 3 + 2]) * M[i] + gravity*M[i];
+	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 2.0*V[i * 3 + 2]) * M[i];
 
 	// Update Energy
 	float energy = 0;
@@ -467,7 +467,7 @@ __global__ void Constraint_1_Kernel(const float* M, const float* X, const float*
 	energy += (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1])*(fixed_X[i * 3 + 1] - X[i * 3 + 1]);	// fixed energy
 	energy += (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2])*(fixed_X[i * 3 + 2] - X[i * 3 + 2]);	// fixed energy
 	energy *= 0.5f;
-	energy += -gravity*M[i] * X[i * 3 + 2] + externalForce[i * 3 + 0] * M[i] * X[i * 3 + 0] + externalForce[i * 3 + 1] * M[i] * X[i * 3 + 1] + externalForce[i * 3 + 2] * M[i] * X[i * 3 + 2];										// gravity energy
+	energy += -gravity*M[i] * X[i * 3 + 0] + externalForce[i * 3 + 0] * M[i] * X[i * 3 + 0] + externalForce[i * 3 + 1] * M[i] * X[i * 3 + 1] + externalForce[i * 3 + 2] * M[i] * X[i * 3 + 2];										// gravity energy
 	E[i] += energy;
 
 	float cx=C[i*9+0]+c+ext_C[i];
@@ -514,6 +514,40 @@ __global__ void Constraint_3_Kernel(float* X, float* S, float* V, float* prev_V,
 	V[i*3+0]+=(X[i*3+0]-S[i*3+0])*inv_t;
 	V[i*3+1]+=(X[i*3+1]-S[i*3+1])*inv_t;
 	V[i*3+2]+=(X[i*3+2]-S[i*3+2])*inv_t;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//  Constraint Kernel 3
+///////////////////////////////////////////////////////////////////////////////////////////
+__global__ void Constraint_cst_Kernel(float* next_X, uint16_t* cstVert, uint16_t* cvr, float ratio, float cX, float cY, float cZ, float radius, int cst_number)
+{
+	int i = blockDim.x * blockIdx.x + threadIdx.x;
+	if (i >= cst_number)	return;
+
+	int index = cstVert[i];
+
+	// 提取约束层坐标
+	int cvrIndex0 = next_X[index * 3 + 0] * ratio;
+	int cvrIndex1 = next_X[index * 3 + 1] * ratio;
+
+	// 不施加约束
+	if (cvr[(cvrIndex0 + 50) * 100 + (cvrIndex1 + 50)] == 0) return;
+
+	float x = next_X[index * 3 + 0] - cX;
+	float y = next_X[index * 3 + 1] - cY;
+	float z = next_X[index * 3 + 2] - cZ;
+
+	float len = sqrt(x * x + y * y + z * z);
+
+	// 在约束球以内
+	if (len < radius) return;
+
+	// 施加约束
+	float mv_len = len - radius;
+
+	next_X[index * 3 + 0] += (next_X[index * 3 + 0] - cX)*mv_len;
+	next_X[index * 3 + 1] += (next_X[index * 3 + 1] - cY)*mv_len;;
+	next_X[index * 3 + 2] += (next_X[index * 3 + 2] - cZ)*mv_len;;
 }
 
 
@@ -565,6 +599,7 @@ public:
 	// wghou
 	// external force
 	TYPE*	dev_externalForce;
+	TYPE*	externalForce;
 
 
 	TYPE*	dev_inv_Dm;
@@ -587,6 +622,8 @@ public:
 	int		tet_threadsPerBlock;
 	int		tet_blocksPerGrid;
 
+	int		cst_threadsPerBlock;
+	int		cst_blocksPerGrid;
 
 
 	CUDA_HYPER_TET_MESH()
@@ -597,6 +634,8 @@ public:
 		fixed		= new TYPE	[max_number   ];
 		more_fixed	= new TYPE	[max_number   ];	
 		fixed_X		= new TYPE	[max_number*3 ];
+		externalForce = new TYPE[max_number * 3];
+		memset(externalForce, 0, sizeof(TYPE)*max_number * 3);
 
 		// Default parameters
 		fps			= 0;
@@ -758,7 +797,7 @@ public:
 
 		cudaMalloc((void**)&dev_G,			sizeof(TYPE)*number);
 		cudaMalloc((void**)&dev_E,			sizeof(TYPE)*number);
-		cudaMalloc((void**)&dev_P,			sizeof(TYPE)*number);		
+		cudaMalloc((void**)&dev_P,			sizeof(TYPE)*number);	
 
 		//Copy data into CUDA memory
 		cudaMemcpy(dev_M,			M,			sizeof(TYPE)*number,		cudaMemcpyHostToDevice);
@@ -789,25 +828,8 @@ public:
 		int blocksPerGrid = (number + threadsPerBlock - 1) / threadsPerBlock;
 		Control_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_fixed, dev_more_fixed, dev_offset_X, control_mag, number, select_v);
 		cudaMemcpy(more_fixed, dev_more_fixed, sizeof(TYPE)*number, cudaMemcpyDeviceToHost);
-		if (select_v != -1) { 
-			//printf("select: %d\n", select_v); 
-			//printf("fixed[%d]: %f\n", select_v, fixed[select_v]);
-			//printf("vertex direction: %f  %f   %f\n", vertexDir[0], vertexDir[1], vertexDir[2]);
-		}
 	}
 
-	// wghou
-	// 设置外力的大小
-	void SetExternalForce(TYPE * externalForce)
-	{
-		cudaMemcpy(dev_externalForce, externalForce, sizeof(TYPE) * 3 * number, cudaMemcpyHostToDevice);
-	}
-
-
-	void Clear_Velocity()
-	{ 
-		cudaMemset(dev_V, 0, sizeof(TYPE)*3*number);
-	}
 
 	void Evaluate(TYPE stepping, TYPE t, bool update_C)
 	{
@@ -836,14 +858,13 @@ public:
 
 
 	float Update(TYPE t, int iterations, TYPE dir[])
-	{		
-		TIMER timer;
-
+	{
 		TYPE rho		= 0.9992;
 		TYPE theta		= 1;
 		TYPE omega;
 
 		cudaMemcpy(dev_X, X, sizeof(TYPE) * 3 * number, cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_externalForce, externalForce, sizeof(TYPE) * 3 * number, cudaMemcpyHostToDevice);
 		// Update S and initialize X
 		cudaMemcpy(dev_S, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToDevice);
 		Update_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X, t, number, dir[0], dir[1], dir[2]);
@@ -925,7 +946,8 @@ public:
 			}
 	
 			if(omega!=1)			
-				Constraint_2_Kernel<< <blocksPerGrid, threadsPerBlock>> >(dev_prev_X, dev_next_X, omega, number);			
+				Constraint_2_Kernel<< <blocksPerGrid, threadsPerBlock>> >(dev_prev_X, dev_next_X, omega, number);
+
 
 			Swap(dev_X, dev_prev_X);
 			Swap(dev_X, dev_next_X);
@@ -935,23 +957,7 @@ public:
 		Constraint_3_Kernel<< <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_S, dev_V, dev_prev_V, dev_fixed, dev_more_fixed, t, 1/t, number);		
 		cudaMemcpy(X, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToHost);
 
-
-		// wghou
-		// 清除外力
-		cudaMemset(dev_externalForce, 0, sizeof(TYPE)*number * 3);
-
-
-		// Perform timing statistics
-		cost[cost_ptr]=timer.Get_Time();
-		cost_ptr=(cost_ptr+1)%64;
-		fps=0;
-		for(int i=0; i<64; i++)
-			fps+=cost[i];
-		fps=64.0/fps;
-		
 		return 0;
 	}
 };
-
-
 #endif

@@ -51,6 +51,9 @@
     <ClCompile Include="Object\DfSurfaceMesh.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="Object\SftBrain.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\Drill.h">
@@ -99,6 +102,9 @@
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Object\DfSurfaceMesh.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\SftBrain.h">
       <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
