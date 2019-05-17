@@ -15,6 +15,7 @@
 #include"DeformationModelGPU.h"
 #include"Collision\MyCollision.h"
 #include"Object/DfSurfaceMesh.h"
+#include"Constraint/ConstraintBase.h"
 
 #include"FilamentWinApp/RenderableObject.h"
 #include"utils/Path.h"
@@ -129,8 +130,18 @@ void SoftObjectGPU::timeStep(float time)
 	// Î´³õÊ¼»¯
 	if (initialized == false) return;
 
+	// process constraint
+	for each (auto cst in m_constraints) {
+		cst->processBeforeTimeStep();
+	}
+
 	m_deformationModel->Reset_More_Fixed(more_fixed, dir);
 	m_deformationModel->timeStep(time);
+
+	// process constraint
+	for each (auto cst in m_constraints) {
+		cst->processAfterTimeStep();
+	}
 }
 
 

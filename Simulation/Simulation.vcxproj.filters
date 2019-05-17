@@ -13,6 +13,9 @@
     <Filter Include="SimulationScene">
       <UniqueIdentifier>{b0ee10fb-6928-48ed-8966-ece8f3c75093}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Constraint">
+      <UniqueIdentifier>{bbf5f275-2f47-400f-82c8-4f2f8c5fe705}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Object\Drill.cpp">
@@ -53,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="Object\SftBrain.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Constraint\SphereConstraint.cpp">
+      <Filter>Constraint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +112,12 @@
     </ClInclude>
     <ClInclude Include="Object\SftBrain.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraint\ConstraintBase.h">
+      <Filter>Constraint</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraint\SphereConstraint.h">
+      <Filter>Constraint</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

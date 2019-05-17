@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Collision\GenericCollision.cpp" />
     <ClCompile Include="Collision\MyCollision.cpp" />
+    <ClCompile Include="Constraint\SphereConstraint.cpp" />
     <ClCompile Include="Interaction\InteractionTraction.cpp" />
     <ClCompile Include="Interaction\MyInteraction.cpp" />
     <ClCompile Include="Object\DfSurfaceMesh.cpp" />
@@ -37,6 +38,8 @@
     <ClInclude Include="Collision\CollisionBasic.h" />
     <ClInclude Include="Collision\GenericCollision.h" />
     <ClInclude Include="Collision\MyCollision.h" />
+    <ClInclude Include="Constraint\ConstraintBase.h" />
+    <ClInclude Include="Constraint\SphereConstraint.h" />
     <ClInclude Include="Interaction\InteractioBase.h" />
     <ClInclude Include="Interaction\InteractionTraction.h" />
     <ClInclude Include="Interaction\MyInteraction.h" />

@@ -4,14 +4,7 @@
 #include"Object/SoftObjectGPU.h"
 #include"DeformationModelBase.h"
 
-class BrModel_Config : public DfModel_Config
-{
-	float center[3];
-	float radius;
-	float ratio;
-	uint16_t cvr[100][100];
-	std::vector<uint16_t> cstVertices;
-};
+class SphereConstraint;
 
 class SftBrain : public SoftObjectGPU
 {
@@ -19,8 +12,10 @@ public:
 	SftBrain(std::string filePath = "../assets/models/pulse/brain/");
 	~SftBrain();
 
-private:
+	virtual void timeStep(float time);
 
+private:
+	SphereConstraint* m_cst;
 };
 
 #endif // !SFT_BRAIN_H

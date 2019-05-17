@@ -21,6 +21,7 @@ class MyCollision;
 class CollisionRecorder;
 class RenderableObject;
 class SurfaceMesh;
+class ConstraintBase;
 
 class ObjectBase
 {
@@ -54,6 +55,8 @@ protected:
 
 	GenericCollision* m_collision = nullptr;	// 碰撞对象
 	bool isPerformCollisionDetection = true;	// 是否参与碰撞检测
+
+	std::vector<ConstraintBase*> m_constraints;
 };
 
 
