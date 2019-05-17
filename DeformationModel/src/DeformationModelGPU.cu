@@ -153,3 +153,5 @@ float* DeformationModelGPU::getVel() { return m_model->V; }
 uint16_t* DeformationModelGPU::getTet() { return m_model->Tet; }
 
 int DeformationModelGPU::getTetNumber() { return m_model->tet_number; }
+
+float * DeformationModelGPU::getExternalForce() { return m_model->externalForce; }

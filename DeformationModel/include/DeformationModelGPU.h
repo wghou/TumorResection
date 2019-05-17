@@ -38,6 +38,7 @@ public:
 	virtual float* getVel();
 	virtual uint16_t* getTet();				// 获取四面体单元格顶点编号
 	virtual int getTetNumber();			// 获取四面体单元格顶点个数
+	float * getExternalForce();
 
 
 private:

@@ -10,6 +10,7 @@ class SftBrain;
 
 class SphereConstraint : public ConstraintBase
 {
+	friend class SftBrain;
 public:
 	SphereConstraint(SftBrain* objA);
 	virtual ~SphereConstraint();
@@ -18,7 +19,7 @@ public:
 	virtual void processBeforeTimeStep();
 	virtual void processAfterTimeStep();
 
-private:
+protected:
 	float center[3];
 	float radius;
 	float ratio;

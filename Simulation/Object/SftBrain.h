@@ -2,7 +2,6 @@
 #define SFT_BRAIN_H
 
 #include"Object/SoftObjectGPU.h"
-#include"DeformationModelBase.h"
 
 class SphereConstraint;
 

@@ -2,10 +2,20 @@
 
 #include"DeformationModelGPU.h"
 #include"Constraint/SphereConstraint.h"
+#include"ObjLoader/ElementLoader.h"
 
 SftBrain::SftBrain(std::string filePath) : SoftObjectGPU(filePath)
 {
 	m_cst = new SphereConstraint(this);
+
+	// ³õÊ¼»¯ SphereConstraint
+	m_cst->center[0] = -40; m_cst->center[1] = 0; m_cst->center[2] = 0;
+
+	m_cst->radius = 40;
+
+	m_cst->ratio = 1;
+
+	m_cst->cstVertices.assign(m_loader->getCstVertices().begin(), m_loader->getCstVertices().end());
 }
 
 

@@ -61,7 +61,7 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	//obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
 	//simulator.addRigidObject(obj_skull);
 
-	ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
+	ObjectBase* obj_brain = new SftBrain("../assets/models/pulse/brain/");
 	obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
 	simulator.addSoftObject(obj_brain);
 

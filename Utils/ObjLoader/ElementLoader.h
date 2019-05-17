@@ -23,6 +23,7 @@ public:
 	uint16_t* getTets() { return mTets; }
 	std::vector<uint16_t> &getFixed() { return mFixed; }
 	std::vector<uint16_t> &getVertCpys() { return mVertCpys; }
+	std::vector<uint16_t> &getCstVertices() { return tCstVert; }
 
 	// 返回 Tet 网格中的节点个数，实际上就是参与形变计算的节点个数
 	// 因为表面网格纹理贴图的关系，所以参与形变计算的节点跟表面网格节点不太对应

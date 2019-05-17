@@ -956,6 +956,7 @@ public:
 		// End the update
 		Constraint_3_Kernel<< <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_S, dev_V, dev_prev_V, dev_fixed, dev_more_fixed, t, 1/t, number);		
 		cudaMemcpy(X, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToHost);
+		cudaMemset(dev_externalForce, 0, sizeof(TYPE)*number * 3);
 
 		return 0;
 	}
