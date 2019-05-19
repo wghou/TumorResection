@@ -155,6 +155,7 @@ void FilamentApp::run(const Config& config, SetupCallback setupCallback,
             mEngine->execute();
         }
 
+		static double begin = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
         // Allow the app to animate the scene if desired.
         if (mAnimation) {
             double now = (double) SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
@@ -176,6 +177,11 @@ void FilamentApp::run(const Config& config, SetupCallback setupCallback,
 			case SDL_KEYDOWN:
 				if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
 					mClosed = true;
+				}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_M) {
+					if (mAnimation) {
+						mAnimation(mEngine, window->mMainView->getView(), 1.0f/30.0f);
+					}
 				}
 				break;
 			case SDL_MOUSEWHEEL:

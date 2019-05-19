@@ -16,6 +16,8 @@ SftBrain::SftBrain(std::string filePath) : SoftObjectGPU(filePath)
 	m_cst->ratio = 1;
 
 	m_cst->cstVertices.assign(m_loader->getCstVertices().begin(), m_loader->getCstVertices().end());
+
+	m_deformationModel->setConstraint(m_loader->getCstVertices().size(), m_loader->getCstVertices().data());
 }
 
 

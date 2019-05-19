@@ -448,15 +448,15 @@ __global__ void Constraint_1_Kernel(const float* M, const float* X, const float*
 	float c  = M[i]*inv_t*inv_t+fixed[i]+more_fixed[i];
 
 
-	//externalForce[i * 3 + 0] += 0.001*V[i * 3 + 0];
-	//externalForce[i * 3 + 1] += 0.001*V[i * 3 + 1];
-	//externalForce[i * 3 + 2] += 0.001*V[i * 3 + 2];
+	//externalForce[i * 3 + 0] += 0.1*V[i * 3 + 0];
+	//externalForce[i * 3 + 1] += 0.1*V[i * 3 + 1];
+	//externalForce[i * 3 + 2] += 0.1*V[i * 3 + 2];
 
 	// Get Force
 	float error[3];
-	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 2.0*V[i * 3 + 0]) * M[i] + gravity * M[i];
-	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 2.0*V[i * 3 + 1]) * M[i];
-	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 2.0*V[i * 3 + 2]) * M[i];
+	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 120000.0*V[i * 3 + 0]) * M[i] + gravity * M[i];
+	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 120000.0*V[i * 3 + 1]) * M[i];
+	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 120000.0*V[i * 3 + 2]) * M[i];
 
 	// Update Energy
 	float energy = 0;
@@ -526,28 +526,33 @@ __global__ void Constraint_cst_Kernel(float* next_X, uint16_t* cstVert, uint16_t
 
 	int index = cstVert[i];
 
+	if (next_X[index * 3 + 0] > 0) {
+		//next_X[index * 3 + 0] = 0;
+	}
+	return;
+
 	// 提取约束层坐标
-	int cvrIndex0 = next_X[index * 3 + 0] * ratio;
-	int cvrIndex1 = next_X[index * 3 + 1] * ratio;
+	//int cvrIndex0 = next_X[index * 3 + 0] * ratio;
+	//int cvrIndex1 = next_X[index * 3 + 1] * ratio;
 
-	// 不施加约束
-	if (cvr[(cvrIndex0 + 50) * 100 + (cvrIndex1 + 50)] == 0) return;
+	//// 不施加约束
+	//if (cvr[(cvrIndex0 + 50) * 100 + (cvrIndex1 + 50)] == 0) return;
 
-	float x = next_X[index * 3 + 0] - cX;
-	float y = next_X[index * 3 + 1] - cY;
-	float z = next_X[index * 3 + 2] - cZ;
+	//float x = next_X[index * 3 + 0] - cX;
+	//float y = next_X[index * 3 + 1] - cY;
+	//float z = next_X[index * 3 + 2] - cZ;
 
-	float len = sqrt(x * x + y * y + z * z);
+	//float len = sqrt(x * x + y * y + z * z);
 
-	// 在约束球以内
-	if (len < radius) return;
+	//// 在约束球以内
+	//if (len < radius) return;
 
-	// 施加约束
-	float mv_len = len - radius;
+	//// 施加约束
+	//float mv_len = len - radius;
 
-	next_X[index * 3 + 0] += (next_X[index * 3 + 0] - cX)*mv_len;
-	next_X[index * 3 + 1] += (next_X[index * 3 + 1] - cY)*mv_len;;
-	next_X[index * 3 + 2] += (next_X[index * 3 + 2] - cZ)*mv_len;;
+	//next_X[index * 3 + 0] += (next_X[index * 3 + 0] - cX)*mv_len;
+	//next_X[index * 3 + 1] += (next_X[index * 3 + 1] - cY)*mv_len;
+	//next_X[index * 3 + 2] += (next_X[index * 3 + 2] - cZ)*mv_len;
 }
 
 
@@ -600,6 +605,11 @@ public:
 	// external force
 	TYPE*	dev_externalForce;
 	TYPE*	externalForce;
+	uint16_t *cstVert;
+	uint16_t *dev_cstVert;
+	int		cst_number = 0;
+	int		cst_threadsPerBlock;
+	int		cst_blocksPerGrid;
 
 
 	TYPE*	dev_inv_Dm;
@@ -622,9 +632,6 @@ public:
 	int		tet_threadsPerBlock;
 	int		tet_blocksPerGrid;
 
-	int		cst_threadsPerBlock;
-	int		cst_blocksPerGrid;
-
 
 	CUDA_HYPER_TET_MESH()
 	{
@@ -636,6 +643,7 @@ public:
 		fixed_X		= new TYPE	[max_number*3 ];
 		externalForce = new TYPE[max_number * 3];
 		memset(externalForce, 0, sizeof(TYPE)*max_number * 3);
+		cstVert		= new uint16_t[max_number];
 
 		// Default parameters
 		fps			= 0;
@@ -735,6 +743,9 @@ public:
 		if(dev_fixed_X)		cudaFree(dev_fixed_X);
 		if(dev_offset_X)	cudaFree(dev_offset_X);
 		if (dev_externalForce) cudaFree(dev_externalForce);
+		if (externalForce)  delete[] externalForce;
+		if (cstVert) delete[] cstVert;
+		if (dev_cstVert)    cudaFree(dev_cstVert);
 
 		if(dev_inv_Dm)		cudaFree(dev_inv_Dm);
 		if(dev_Vol)			cudaFree(dev_Vol);
@@ -762,6 +773,9 @@ public:
 		tet_threadsPerBlock = 64;
 		tet_blocksPerGrid = (tet_number + tet_threadsPerBlock - 1) / tet_threadsPerBlock;
 
+		cst_threadsPerBlock = 64;
+		//cst_blocksPerGrid = (cst_number + cst_threadsPerBlock - 1) / cst_threadsPerBlock;
+
 		Allocate_GPU_Memory();
 	}
 
@@ -787,6 +801,8 @@ public:
 		cudaMalloc((void**)&dev_offset_X,	sizeof(TYPE)*number*3);
 		cudaMalloc((void**)&dev_externalForce, sizeof(TYPE)*number * 3);
 		cudaMemset(dev_externalForce, 0, sizeof(TYPE)*number * 3);
+		cudaMalloc((void**)&dev_cstVert, sizeof(uint16_t)*number);
+		cudaMemset(dev_cstVert, 0, sizeof(uint16_t)*number);
 
 		cudaMalloc((void**)&dev_inv_Dm,		sizeof(TYPE)*tet_number*9);
 		cudaMalloc((void**)&dev_Vol,		sizeof(TYPE)*tet_number  );
@@ -951,12 +967,18 @@ public:
 
 			Swap(dev_X, dev_prev_X);
 			Swap(dev_X, dev_next_X);
+
+			uint16_t* cvr = nullptr;
+			float ratio = 0;
+			float radius = 0;
+			//Constraint_cst_Kernel << <cst_blocksPerGrid, cst_threadsPerBlock >> > (dev_X, dev_cstVert, cvr, ratio, 0, 0, 0, radius, cst_number);
 		}
 
 		// End the update
 		Constraint_3_Kernel<< <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_S, dev_V, dev_prev_V, dev_fixed, dev_more_fixed, t, 1/t, number);		
 		cudaMemcpy(X, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToHost);
-		cudaMemset(dev_externalForce, 0, sizeof(TYPE)*number * 3);
+		//cudaMemset(dev_externalForce, 0, sizeof(TYPE)*number * 3);
+		memset(externalForce, 0, sizeof(TYPE)*number * 3);
 
 		return 0;
 	}

@@ -37,8 +37,9 @@ public:
 	virtual float* getX();
 	virtual float* getVel();
 	virtual uint16_t* getTet();				// 获取四面体单元格顶点编号
-	virtual int getTetNumber();			// 获取四面体单元格顶点个数
+	virtual int getTetNumber();				// 获取四面体单元格顶点个数
 	float * getExternalForce();
+	void setConstraint(int cstNum, uint16_t* cstVert);
 
 
 private:

@@ -67,7 +67,7 @@ RigidObject::RigidObject(std::string filePath)
 		}
 	}
 	else {
-		Logger::getMainLogger().log(Logger::Level::Error, "Cannot open config file: " + jsonFileName, "RigidObject::RigidObject");
+		Logger::getMainLogger().log(Logger::Level::Warning, "Cannot open config file: " + jsonFileName, "RigidObject::RigidObject");
 	}
 
 	if (m_loader->getNumVertices() == 0 || m_loader->getNumVertices() == 0) {

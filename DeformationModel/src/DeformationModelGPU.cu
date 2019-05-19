@@ -45,11 +45,11 @@ DeformationModelGPU::DeformationModelGPU()
 										//stVK
 
 	m_model->model = NH_MODEL;
-	m_model->stiffness_0 = 1000;	//2000000
+	m_model->stiffness_0 = 100;	//2000000
 	m_model->stiffness_1 = 5000;	//2000000
 	m_model->stiffness_2 = 0;	//2000000
 	m_model->stiffness_3 = 0.25;
-	m_model->stiffness_p = 24000;
+	m_model->stiffness_p = 12000;
 
 	//m_model->model = NH_MODEL;
 	//m_model->stiffness_0 = 200000;	//2000000
@@ -58,8 +58,8 @@ DeformationModelGPU::DeformationModelGPU()
 	//m_model->stiffness_3 = 0.5;
 	//m_model->stiffness_p = 1000000;
 
-	m_model->gravity = 0.02;
-	m_model->density = 1000;
+	m_model->gravity = 0.98;
+	m_model->density = 10;
 
 	//m_model->model = NH_MODEL;
 	//m_model->stiffness_0 = 2000000;	//2000000
@@ -141,6 +141,13 @@ void DeformationModelGPU::Reset_More_Fixed(int select_v, float dir[])
 void DeformationModelGPU::SetExternalForce(float* externalForce)
 {
 	//m_model->SetExternalForce(externalForce);
+}
+
+void DeformationModelGPU::setConstraint(int cstNum, uint16_t* cstVert)
+{
+	m_model->cst_number = cstNum;
+	cudaMemcpy(m_model->dev_cstVert, cstVert, sizeof(uint16_t)*cstNum, cudaMemcpyHostToDevice);
+	m_model->cst_blocksPerGrid = (m_model->cst_number + m_model->cst_threadsPerBlock - 1) / m_model->cst_threadsPerBlock;
 }
 
 

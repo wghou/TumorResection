@@ -377,12 +377,13 @@ bool RenderableObject::genRenderable(std::string objName, int numVert, float *mV
 		}
 	}
 	else {
-		obj.mtlInstance = mDefaultColorMaterial->createInstance();
+		//obj.mtlInstance = mDefaultColorMaterial->createInstance();
+		obj.mtlInstance = mDefaultTransparentColorMaterial->createInstance();
 
 		obj.mtlInstance->setParameter("baseColor", RgbType::sRGB, float3{ 0.8f });
 		obj.mtlInstance->setParameter("roughness", 0.4f);
 		obj.mtlInstance->setParameter("metallic", 0.6f);
-		obj.mtlInstance->setParameter("reflectance", 0.5f);
+		//obj.mtlInstance->setParameter("reflectance", 0.5f);
 		//obj.mtlInstance->setParameter("clearCoat", 0.0f);
 		//obj.mtlInstance->setParameter("clearCoatRoughness", 0.0f);
 	}
