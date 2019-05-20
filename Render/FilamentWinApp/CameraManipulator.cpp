@@ -52,7 +52,7 @@ void CameraManipulator::lookAt(const double3& eye, const double3& at) {
     double3 dt = at - eye;
     double yz_length = std::sqrt((dt.y * dt.y) + (dt.z * dt.z));
 	// wghou
-    //mRotation.z = radians(-90);
+    mRotation.z = radians(-90);
     mRotation.x = std::atan2(dt.y, -dt.z);
     mRotation.y = std::atan2(dt.x, yz_length);
     mCenterOfInterest = -length(dt);

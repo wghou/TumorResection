@@ -57,14 +57,14 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
 	simulator.addRigidObject(obj_drill);
 
-	//ObjectBase* obj_skull = new RigidObject("../assets/models/pulse/skull/");
-	//obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
-	//simulator.addRigidObject(obj_skull);
+	ObjectBase* obj_skull = new RigidObject("../assets/models/pulse/skull/");
+	obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
+	simulator.addRigidObject(obj_skull);
 
 
-	ObjectBase* obj_plane = new RigidObject("../assets/models/pulse/plane/");
-	obj_plane->createRenderableObject(&objRef, obj_plane->getObjectName());
-	simulator.addRigidObject(obj_plane);
+	//ObjectBase* obj_plane = new RigidObject("../assets/models/pulse/plane/");
+	//obj_plane->createRenderableObject(&objRef, obj_plane->getObjectName());
+	//simulator.addRigidObject(obj_plane);
 
 	ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
 	obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());

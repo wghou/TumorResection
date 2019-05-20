@@ -128,9 +128,13 @@ __global__ void Update_2_Kernel(float* X, float* V, const float* prev_V, float* 
 		}
 	}
 	
-	if (fixed_X[i * 3 + 0] > 0) {
-		fixed_X[i * 3 + 0] = 0;
-		more_fixed[i] = 100000 * (X[i * 3 + 0] + 0.2);
+	float dist3 = (fixed_X[i * 3 + 0] + 10)*(fixed_X[i * 3 + 0] + 10) + fixed_X[i * 3 + 1] * fixed_X[i * 3 + 1] + fixed_X[i * 3 + 2] * fixed_X[i * 3 + 2];
+	float len = sqrt(dist3);
+	if (len > 10) {
+		fixed_X[i * 3 + 0] -= (fixed_X[i * 3 + 0] + 10)*(len - 10) / len;
+		fixed_X[i * 3 + 1] *= 10 / len;
+		fixed_X[i * 3 + 2] *= 10 / len;
+		more_fixed[i] = 100000 * (len + 0.5);
 	}
 
 	//Calculate S
@@ -870,6 +874,10 @@ public:
 
 	float Update(TYPE t, int iterations, int select_v, TYPE dir[])
 	{
+		if (t <= 0) {
+			t = 1.0f / 30.0f;
+		}
+
 		TYPE rho		= 0.9992;
 		TYPE theta		= 1;
 		TYPE omega;
