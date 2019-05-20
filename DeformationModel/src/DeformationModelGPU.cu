@@ -59,7 +59,7 @@ DeformationModelGPU::DeformationModelGPU()
 	//m_model->stiffness_p = 1000000;
 
 	m_model->gravity = 9.8;
-	m_model->density = 20;
+	m_model->density = 200;
 
 	//m_model->model = NH_MODEL;
 	//m_model->stiffness_0 = 2000000;	//2000000
@@ -80,7 +80,7 @@ DeformationModelGPU::DeformationModelGPU()
 	// stiffness_3 = 0.5;
 
 
-	m_model->control_mag = 10000;
+	m_model->control_mag = 50000;
 	m_model->profile_v[2] = 0.9997;
 }
 
@@ -99,7 +99,7 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 	memcpy(m_model->Tet, config.mTets, sizeof(uint16_t) * 4 * config.numTet);
 
 	// 当 fixedXYZ == 0 时，不固定
-	config.fixedAxisBt[1] = -1;
+	//config.fixedAxisBt[1] = -1;
 	for (int i = 0; i < m_model->number; i++)
 	{
 		if( (config.fixedAxisUp[0] != 0 && m_model->X[i * 3 + 0] > config.fixedAxisUp[0]) ||
@@ -113,7 +113,7 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 
 	// 固定 fixed
 	for (int i = 0; i < config.fixedVertices.size(); i++) {
-		//m_model->fixed[config.fixedVertices[i]] = 100000;
+		m_model->fixed[config.fixedVertices[i]] = 100000;
 	}
 	//std::cout << config.fixedVertices.size();
 
@@ -123,7 +123,7 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 
 void DeformationModelGPU::timeStep(float time)
 {
-	m_model->Update(time, 97, vertexDir);
+	m_model->Update(time, 97, selectVertex, vertexDir);
 }
 
 
@@ -131,7 +131,8 @@ void DeformationModelGPU::Reset_More_Fixed(int select_v, float dir[])
 {
 	if (select_v >= m_model->number) return;
 
-	m_model->Reset_More_Fixed(select_v);
+	//m_model->Reset_More_Fixed(select_v);
+	selectVertex = select_v;
 	vertexDir[0] = dir[0];
 	vertexDir[1] = dir[1];
 	vertexDir[2] = dir[2];

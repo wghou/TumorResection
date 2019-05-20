@@ -101,6 +101,48 @@ __global__ void Update_Kernel(float* X, float* V, const float* prev_V, float* S,
 	X[i * 3 + 2] += (V[i * 3 + 2] + (V[i * 3 + 2] - prev_V[i * 3 + 2])*0.2)*t;
 }
 
+__global__ void Update_2_Kernel(float* X, float* V, const float* prev_V, float* S, const float* fixed, float* more_fixed, float* offset_X, float* fixed_X, const float t, const int number, const int select_v, const float control_mag, const float dir_x, const float dir_y, const float dir_z)
+{
+	int i = blockDim.x * blockIdx.x + threadIdx.x;
+	if (i >= number)	return;
+
+
+	more_fixed[i] = 0;
+	if (fixed[i] != 0) return;	// 不对固定点做修改
+
+	fixed_X[i * 3 + 0] = X[i * 3 + 0];
+	fixed_X[i * 3 + 1] = X[i * 3 + 1];
+	fixed_X[i * 3 + 2] = X[i * 3 + 2];
+
+	if (select_v != -1) {
+		offset_X[i * 3 + 0] = X[i * 3 + 0] - X[select_v * 3 + 0];
+		offset_X[i * 3 + 1] = X[i * 3 + 1] - X[select_v * 3 + 1];
+		offset_X[i * 3 + 2] = X[i * 3 + 2] - X[select_v * 3 + 2];
+
+		float dist2 = offset_X[i * 3 + 0] * offset_X[i * 3 + 0] + offset_X[i * 3 + 1] * offset_X[i * 3 + 1] + offset_X[i * 3 + 2] * offset_X[i * 3 + 2];
+		if (dist2 < RADIUS_SQUARED) {
+			more_fixed[i] = control_mag * (1 - sqrt(dist2 / RADIUS_SQUARED));
+			fixed_X[i * 3 + 0] = offset_X[i * 3 + 0] + dir_x;
+			fixed_X[i * 3 + 1] = offset_X[i * 3 + 1] + dir_y;
+			fixed_X[i * 3 + 2] = offset_X[i * 3 + 2] + dir_z;
+		}
+	}
+	
+	if (fixed_X[i * 3 + 0] > 0) {
+		fixed_X[i * 3 + 0] = 0;
+		more_fixed[i] = 100000 * (X[i * 3 + 0] + 0.2);
+	}
+
+	//Calculate S
+	S[i * 3 + 0] = X[i * 3 + 0] + V[i * 3 + 0] * t;
+	S[i * 3 + 1] = X[i * 3 + 1] + V[i * 3 + 1] * t;
+	S[i * 3 + 2] = X[i * 3 + 2] + V[i * 3 + 2] * t;
+	//Initialize position
+	X[i * 3 + 0] += (V[i * 3 + 0] + (V[i * 3 + 0] - prev_V[i * 3 + 0])*0.2)*t;
+	X[i * 3 + 1] += (V[i * 3 + 1] + (V[i * 3 + 1] - prev_V[i * 3 + 1])*0.2)*t;
+	X[i * 3 + 2] += (V[i * 3 + 2] + (V[i * 3 + 2] - prev_V[i * 3 + 2])*0.2)*t;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 //  Tet Constraint Kernel
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -519,40 +561,6 @@ __global__ void Constraint_3_Kernel(float* X, float* S, float* V, float* prev_V,
 	V[i*3+2]+=(X[i*3+2]-S[i*3+2])*inv_t;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
-//  Constraint Kernel 3
-///////////////////////////////////////////////////////////////////////////////////////////
-__global__ void Constraint_cst_Kernel(float* next_X, uint16_t* cstVert, uint16_t* cvr, float ratio, float cX, float cY, float cZ, float radius, int cst_number)
-{
-	int i = blockDim.x * blockIdx.x + threadIdx.x;
-	if (i >= cst_number)	return;
-
-	int index = cstVert[i];
-
-	// 提取约束层坐标
-	int cvrIndex0 = next_X[index * 3 + 0] * ratio;
-	int cvrIndex1 = next_X[index * 3 + 1] * ratio;
-
-	// 不施加约束
-	if (cvr[(cvrIndex0 + 50) * 100 + (cvrIndex1 + 50)] == 0) return;
-
-	float x = next_X[index * 3 + 0] - cX;
-	float y = next_X[index * 3 + 1] - cY;
-	float z = next_X[index * 3 + 2] - cZ;
-
-	float len = sqrt(x * x + y * y + z * z);
-
-	// 在约束球以内
-	if (len < radius) return;
-
-	// 施加约束
-	float mv_len = len - radius;
-
-	next_X[index * 3 + 0] += (next_X[index * 3 + 0] - cX)*mv_len;
-	next_X[index * 3 + 1] += (next_X[index * 3 + 1] - cY)*mv_len;;
-	next_X[index * 3 + 2] += (next_X[index * 3 + 2] - cZ)*mv_len;;
-}
-
 
 template <class TYPE>
 class CUDA_HYPER_TET_MESH: public TET_MESH<TYPE> 
@@ -860,7 +868,7 @@ public:
 	}
 
 
-	float Update(TYPE t, int iterations, TYPE dir[])
+	float Update(TYPE t, int iterations, int select_v, TYPE dir[])
 	{
 		TYPE rho		= 0.9992;
 		TYPE theta		= 1;
@@ -870,9 +878,13 @@ public:
 		cudaMemcpy(dev_externalForce, externalForce, sizeof(TYPE) * 3 * number, cudaMemcpyHostToDevice);
 		// Update S and initialize X
 		cudaMemcpy(dev_S, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToDevice);
-		Update_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X, t, number, dir[0], dir[1], dir[2]);
-
-		cudaMemset(dev_lambda, 0, sizeof(TYPE)*tet_number);
+		
+		//Update_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X, t, number, dir[0], dir[1], dir[2]);
+		Update_2_Kernel << <blocksPerGrid, threadsPerBlock >> > (dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X,
+			t, number, select_v, control_mag, dir[0], dir[1], dir[2]);
+		
+			
+			cudaMemset(dev_lambda, 0, sizeof(TYPE)*tet_number);
 		
 		//stepping=0.001;
 		if(stepping<0.1)	stepping=0.1;
