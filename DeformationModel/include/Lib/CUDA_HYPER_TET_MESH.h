@@ -41,11 +41,14 @@
 #define NH_MODEL			1
 #define MR_MODEL			2
 #define	FUNG_MODEL			3
-#define RADIUS_SQUARED		0.01
+#define RADIUS_SQUARED		0.5
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //  Control kernel
+//  more_fixed 存放强度值，即将点 x 控制到 的强度
+//  offset_x 是点 x 到控制点 select_v 的距离
+//  fixed_x 是点 x 期望移动到的位置
 ///////////////////////////////////////////////////////////////////////////////////////////
 __global__ void Control_Kernel(float* X, float* fixed, float *more_fixed, float* offset_X, const float control_mag, const int number, const int select_v)
 {
