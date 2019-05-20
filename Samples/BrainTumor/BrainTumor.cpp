@@ -53,21 +53,21 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	
 	RenderableObject& objRef = RenderableObject::get(engine, scene);
 
-	ObjectBase* obj_drill = new Drill();
-	obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
-	simulator.addRigidObject(obj_drill);
+	//ObjectBase* obj_drill = new Drill();
+	//obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
+	//simulator.addRigidObject(obj_drill);
 
-	ObjectBase* obj_skull = new RigidObject("../assets/models/pulse/skull/");
-	obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
-	simulator.addRigidObject(obj_skull);
+	//ObjectBase* obj_skull = new RigidObject("../assets/models/pulse/skull/");
+	//obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
+	//simulator.addRigidObject(obj_skull);
 
 	ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
 	obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
 	simulator.addSoftObject(obj_brain);
 
-	InteractionBase* itc_bs = new InteractionTraction();
-	dynamic_cast<InteractionTraction*>(itc_bs)->init(dynamic_cast<Drill*>(obj_drill), dynamic_cast<SoftObjectGPU*>(obj_brain));
-	simulator.addInteractions(itc_bs);
+	//InteractionBase* itc_bs = new InteractionTraction();
+	//dynamic_cast<InteractionTraction*>(itc_bs)->init(dynamic_cast<Drill*>(obj_drill), dynamic_cast<SoftObjectGPU*>(obj_brain));
+	//simulator.addInteractions(itc_bs);
 
 
 	objRef.genLight("light1");
@@ -79,9 +79,9 @@ static void preRender(filament::Engine*, filament::View* view, filament::Scene*,
 
 }
 
-static void animate(Engine* engine, View* view, double now)
+static void animate(Engine* engine, View* view, double deltaTime)
 {
-	simulator.stepSimulation(now);
+	simulator.stepSimulation(deltaTime);
 	simulator.post2RenderBuffer();
 }
 
@@ -93,6 +93,7 @@ int main(int argc, char *argv[]) {
 
 	FilamentApp& filamentApp = FilamentApp::get();
 	filamentApp.animate(animate);
+	//filamentApp.animateStep(animate);
 	filamentApp.run(g_config, setup, cleanup, nullptr, preRender, nullptr);
 
 	return 0;

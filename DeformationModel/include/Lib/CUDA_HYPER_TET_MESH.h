@@ -457,9 +457,9 @@ __global__ void Constraint_1_Kernel(const float* M, const float* X, const float*
 
 	// Get Force
 	float error[3];
-	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 2.0*V[i * 3 + 0]) * M[i] + gravity * M[i];
-	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 2.0*V[i * 3 + 1]) * M[i];
-	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 2.0*V[i * 3 + 2]) * M[i];
+	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 30.0*V[i * 3 + 0] * V[i * 3 + 0] * V[i * 3 + 0]) * M[i] + gravity * M[i];
+	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 30.0*V[i * 3 + 1] * V[i * 3 + 1] * V[i * 3 + 0]) * M[i];
+	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 30.0*V[i * 3 + 2] * V[i * 3 + 2] * V[i * 3 + 0]) * M[i];
 
 	// Update Energy
 	float energy = 0;
@@ -896,7 +896,7 @@ public:
 			if(l%8==0)
 			{
 				float energy=Get_Energy_Magnitude();
-				//printf("Energy: %f\n", energy);
+				//  printf("Energy: %f\n", energy);
 				//	thrust::device_ptr<TYPE> dev_c_ptr(dev_C);
 				//	printf("C sum: %ef\n", thrust::reduce(dev_c_ptr+0, dev_c_ptr+number*3));
 				//	printf("C sum: %ef\n", thrust::reduce(dev_c_ptr+number*3, dev_c_ptr+number*6));

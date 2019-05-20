@@ -63,6 +63,7 @@ public:
     ~FilamentApp();
 
     void animate(AnimCallback animation) { mAnimation = animation; }
+	void animateStep(AnimCallback animationStep) { mAnimationStep = animationStep; }
 
     void run(const Config& config, SetupCallback setup, CleanupCallback cleanup,
             ImGuiCallback imgui = ImGuiCallback(), PreRenderCallback preRender = PreRenderCallback(),
@@ -200,6 +201,7 @@ private:
     filament::Material const* mDepthMaterial = nullptr;
     filament::MaterialInstance* mDepthMI = nullptr;
     AnimCallback mAnimation;
+	AnimCallback mAnimationStep;
 };
 
 #endif // TNT_FILAMENT_SAMPLE_FILAMENTAPP_H

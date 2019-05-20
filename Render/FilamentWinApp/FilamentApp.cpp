@@ -149,6 +149,7 @@ void FilamentApp::run(const Config& config, SetupCallback setupCallback,
 
     bool mousePressed[3] = { false };
 
+	static float last = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
     while (!mClosed) {
 
         if (!UTILS_HAS_THREADING) {
@@ -158,7 +159,9 @@ void FilamentApp::run(const Config& config, SetupCallback setupCallback,
         // Allow the app to animate the scene if desired.
         if (mAnimation) {
             double now = (double) SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
-            mAnimation(mEngine, window->mMainView->getView(), now);
+			
+            mAnimation(mEngine, window->mMainView->getView(), now - last);
+			last = now;
         }
 
         // Loop over fresh events twice: first stash them and let ImGui process them, then allow
@@ -176,6 +179,9 @@ void FilamentApp::run(const Config& config, SetupCallback setupCallback,
 			case SDL_KEYDOWN:
 				if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
 					mClosed = true;
+				}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_M) {
+					if(mAnimationStep) mAnimationStep(mEngine, window->mMainView->getView(), 1.0f/30.0f);
 				}
 				break;
 			case SDL_MOUSEWHEEL:
