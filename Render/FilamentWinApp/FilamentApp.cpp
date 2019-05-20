@@ -160,7 +160,7 @@ void FilamentApp::run(const Config& config, SetupCallback setupCallback,
         if (mAnimation) {
             double now = (double) SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
 			
-            mAnimation(mEngine, window->mMainView->getView(), now - last);
+            mAnimation(mEngine, window->mMainView->getView(), now);
 			last = now;
         }
 

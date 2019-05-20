@@ -45,11 +45,11 @@ DeformationModelGPU::DeformationModelGPU()
 										//stVK
 
 	m_model->model = NH_MODEL;
-	m_model->stiffness_0 = 10000;	//2000000
+	m_model->stiffness_0 = 1000;	//2000000
 	m_model->stiffness_1 = 50000;	//2000000
 	m_model->stiffness_2 = 0;	//2000000
 	m_model->stiffness_3 = 0.5;
-	m_model->stiffness_p = 240000;
+	m_model->stiffness_p = 24000;
 
 	//m_model->model = NH_MODEL;
 	//m_model->stiffness_0 = 200000;	//2000000
@@ -58,7 +58,7 @@ DeformationModelGPU::DeformationModelGPU()
 	//m_model->stiffness_3 = 0.5;
 	//m_model->stiffness_p = 1000000;
 
-	m_model->gravity = 9.8;
+	m_model->gravity = 0.8;
 	m_model->density = 200;
 
 	//m_model->model = NH_MODEL;
@@ -113,17 +113,20 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 
 	// ¹Ì¶¨ fixed
 	for (int i = 0; i < config.fixedVertices.size(); i++) {
-		m_model->fixed[config.fixedVertices[i]] = 100000;
+		//m_model->fixed[config.fixedVertices[i]] = 100000;
 	}
 	//std::cout << config.fixedVertices.size();
 
 	m_model->Initialize(1.0f);
 }
 
-
 void DeformationModelGPU::timeStep(float time)
 {
-	m_model->Update(time, 97, selectVertex, vertexDir);
+	static float last = time;
+	// brain pulse
+	m_model->gravity = 0.5*sin(time*0.9)*sin(time*0.9) + 0.05;
+	m_model->Update(time - last, 97, selectVertex, vertexDir);
+	last = time;
 }
 
 
