@@ -123,6 +123,7 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 void DeformationModelGPU::timeStep(float time)
 {
 	static float last = time;
+	// brain pulse
 	m_model->gravity = 0.5*sin(time*0.9)*sin(time*0.9) + 0.05;
 	m_model->Update(time - last, 97, selectVertex, vertexDir);
 	last = time;
