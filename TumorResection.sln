@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "json", "Utils\json\json.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Fixed", "Utils\Fixed\Fixed.vcxproj", "{255922D2-87EE-4BC7-A454-A4D61AD6DA87}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TumorDissection", "Samples\TumorDissection\TumorDissection.vcxproj", "{B9324CAD-FF55-4CD9-9521-DDD380E2B803}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -125,6 +127,14 @@ Global
 		{255922D2-87EE-4BC7-A454-A4D61AD6DA87}.Release|x64.Build.0 = Release|x64
 		{255922D2-87EE-4BC7-A454-A4D61AD6DA87}.Release|x86.ActiveCfg = Release|Win32
 		{255922D2-87EE-4BC7-A454-A4D61AD6DA87}.Release|x86.Build.0 = Release|Win32
+		{B9324CAD-FF55-4CD9-9521-DDD380E2B803}.Debug|x64.ActiveCfg = Debug|x64
+		{B9324CAD-FF55-4CD9-9521-DDD380E2B803}.Debug|x64.Build.0 = Debug|x64
+		{B9324CAD-FF55-4CD9-9521-DDD380E2B803}.Debug|x86.ActiveCfg = Debug|Win32
+		{B9324CAD-FF55-4CD9-9521-DDD380E2B803}.Debug|x86.Build.0 = Debug|Win32
+		{B9324CAD-FF55-4CD9-9521-DDD380E2B803}.Release|x64.ActiveCfg = Release|x64
+		{B9324CAD-FF55-4CD9-9521-DDD380E2B803}.Release|x64.Build.0 = Release|x64
+		{B9324CAD-FF55-4CD9-9521-DDD380E2B803}.Release|x86.ActiveCfg = Release|Win32
+		{B9324CAD-FF55-4CD9-9521-DDD380E2B803}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -138,6 +148,7 @@ Global
 		{E92603B8-A9AB-4DB6-AFAE-42A7E75D142E} = {26230F3D-6371-4219-9D9F-607915F0187A}
 		{896C4C3E-506F-4129-88BD-DF98BDCA56FE} = {ADA45427-0364-4547-92B3-7BF6F7AC4FF8}
 		{255922D2-87EE-4BC7-A454-A4D61AD6DA87} = {ADA45427-0364-4547-92B3-7BF6F7AC4FF8}
+		{B9324CAD-FF55-4CD9-9521-DDD380E2B803} = {26230F3D-6371-4219-9D9F-607915F0187A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3881A9A3-3723-4745-B553-28E41BB5CA35}

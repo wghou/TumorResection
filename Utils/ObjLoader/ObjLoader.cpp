@@ -197,5 +197,9 @@ void ObjLoader::scale(float s)
 
 void ObjLoader::translate(float _x, float _y, float _z)
 {
-
+	for (int i = 0; i < numVertices; i++) {
+		mVertices[i * 3 + 0] += _x;
+		mVertices[i * 3 + 1] += _y;
+		mVertices[i * 3 + 2] += _z;
+	}
 }

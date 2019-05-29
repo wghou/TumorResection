@@ -1,4 +1,4 @@
-﻿// BrainTumor.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// TumorDissection.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include "pch.h"
@@ -33,7 +33,7 @@
 #include"Object/Object.h"
 #include"SimulationScene/SimulationSceneC.h"
 
-#include "BrainTumor.h"
+#include "BrainDissection.h"
 
 using namespace filament::math;
 using namespace filament;
@@ -50,25 +50,25 @@ static void cleanup(Engine* engine, View*, Scene* secne) {
 }
 
 static void setup(Engine* engine, View* view, Scene* scene) {
-	
+
 	RenderableObject& objRef = RenderableObject::get(engine, scene);
 
 	//ObjectBase* obj_drill = new Drill();
 	//obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
 	//simulator.addRigidObject(obj_drill);
 
-	ObjectBase* obj_skull = new RigidObject("../assets/models/skull_sphere/");
-	obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
-	simulator.addRigidObject(obj_skull);
-
-
-	//ObjectBase* obj_plane = new RigidObject("../assets/models/pulse/plane/");
-	//obj_plane->createRenderableObject(&objRef, obj_plane->getObjectName());
-	//simulator.addRigidObject(obj_plane);
-
-	ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
+	ObjectBase* obj_brain = new RigidObject("../assets/models/dissection/brain/");
 	obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
-	simulator.addSoftObject(obj_brain);
+	simulator.addRigidObject(obj_brain);
+
+
+	ObjectBase* obj_tumor = new RigidObject("../assets/models/dissection/tumor/");
+	obj_tumor->createRenderableObject(&objRef, obj_tumor->getObjectName());
+	simulator.addRigidObject(obj_tumor);
+
+	//ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
+	//obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
+	//simulator.addSoftObject(obj_brain);
 
 	//InteractionBase* itc_bs = new InteractionTraction();
 	//dynamic_cast<InteractionTraction*>(itc_bs)->init(dynamic_cast<Drill*>(obj_drill), dynamic_cast<SoftObjectGPU*>(obj_brain));
