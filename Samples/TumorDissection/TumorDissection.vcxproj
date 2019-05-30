@@ -122,7 +122,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32;_USE_MATH_DEFINES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Render\filament\include\;$(SolutionDir)Render\FilamentWinApp\;$(SolutionDir)Utils\;$(SolutionDir)Simulation\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

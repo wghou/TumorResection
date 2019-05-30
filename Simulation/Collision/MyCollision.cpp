@@ -45,6 +45,9 @@ MyCollision::MyCollision(ObjectBase* obj_self)
 	{
 		Logger::getMainLogger().log(Logger::Error, "Error when construct a new MyCollision object.", "MyCollision::MyCollision");
 	}
+	else {
+		Logger::getMainLogger().log(Logger::Error, "Error when construct a new MyCollision object: unknown object type", "MyCollision::MyCollision");
+	}
 
 	radius = 0.03f;
 }

@@ -29,7 +29,12 @@ public:
 	virtual void timeStep(float time);
 
 	void Reset_More_Fixed(int select_v, float dir[]);
+
+
+
 	void SetExternalForce(float* externalForce);
+
+	void removeTet(uint16_t t);
 
 
 public:

@@ -57,14 +57,10 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	//obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
 	//simulator.addRigidObject(obj_drill);
 
-	ObjectBase* obj_brain = new RigidObject("../assets/models/dissection/brain/");
+	ObjectBase* obj_brain = new SftBrainTumor("../assets/models/dissection/");
 	obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
 	simulator.addRigidObject(obj_brain);
 
-
-	ObjectBase* obj_tumor = new RigidObject("../assets/models/dissection/tumor/");
-	obj_tumor->createRenderableObject(&objRef, obj_tumor->getObjectName());
-	simulator.addRigidObject(obj_tumor);
 
 	//ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
 	//obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());

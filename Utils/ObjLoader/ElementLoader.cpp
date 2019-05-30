@@ -242,7 +242,7 @@ void ElementLoader::loadFxdFile(std::string fxdFile)
 	fileStream.open(fxdFile.c_str());
 	if (fileStream.fail())
 	{
-		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + fxdFile, "ElementLoader::loadElement");
+		Logger::getMainLogger().log(Logger::Level::Warning, "Failed to open file: " + fxdFile, "ElementLoader::loadElement");
 		fileStream.close();
 		return;
 	}
@@ -290,7 +290,7 @@ void ElementLoader::loadCstFile(std::string cstFile)
 	fileStream.open(cstFile.c_str());
 	if (fileStream.fail())
 	{
-		Logger::getMainLogger().log(Logger::Level::Error, "Failed to open file: " + cstFile, "ElementLoader::loadElement");
+		Logger::getMainLogger().log(Logger::Level::Warning, "Failed to open file: " + cstFile, "ElementLoader::loadElement");
 		fileStream.close();
 		return;
 	}

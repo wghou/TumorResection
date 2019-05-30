@@ -147,6 +147,14 @@ void DeformationModelGPU::SetExternalForce(float* externalForce)
 	//m_model->SetExternalForce(externalForce);
 }
 
+void DeformationModelGPU::removeTet(uint16_t t)
+{
+	if (t >= m_model->tet_number) return;
+
+	m_model->rmTet[t] = 1;
+	cudaMemcpy(m_model->dev_rmTet, m_model->rmTet, sizeof(uint16_t)*m_model->tet_number, cudaMemcpyHostToDevice);
+}
+
 
 int DeformationModelGPU::getNodeNumber() { return m_model->number; }
 

@@ -16,6 +16,8 @@
 
 // soft object
 #include"Object\SoftObjectGPU.h"
+//#include"Object/SftBrain.h"
+#include"Object/SftBrainTumor.h"
 
 
 // interaction

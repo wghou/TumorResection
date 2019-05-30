@@ -29,6 +29,7 @@
     <ClCompile Include="Object\PhantomDevice.cpp" />
     <ClCompile Include="Object\RigidObject.cpp" />
     <ClCompile Include="Object\SftBrain.cpp" />
+    <ClCompile Include="Object\SftBrainTumor.cpp" />
     <ClCompile Include="Object\SoftObjectGPU.cpp" />
     <ClCompile Include="Object\SurfaceMesh.cpp" />
     <ClCompile Include="SimulationScene\SimulationSceneC.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="Object\PhantomDevice.h" />
     <ClInclude Include="Object\RigidObject.h" />
     <ClInclude Include="Object\SftBrain.h" />
+    <ClInclude Include="Object\SftBrainTumor.h" />
     <ClInclude Include="Object\SoftObjectGPU.h" />
     <ClInclude Include="Object\SurfaceMesh.h" />
     <ClInclude Include="SimulationScene\SimulationSceneC.h" />
