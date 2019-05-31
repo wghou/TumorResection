@@ -26,7 +26,7 @@ public:
 
 	// 仿真步骤相关
 	virtual bool createObjectFromFile(std::string filePath);
-	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName);
+	virtual bool createRenderableObject(RenderableObject* rdFactory);
 	virtual void timeStep(float time);
 	virtual void post2Render();
 
@@ -43,7 +43,6 @@ public:
 	float dir[3] = { 0,0,0 };
 
 protected:
-	ElementLoader *m_loader;
 	DeformationModelGPU *m_deformationModel = nullptr;		// 形变模型对象
 	int more_fixed = -1;
 };

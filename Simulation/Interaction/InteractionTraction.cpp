@@ -52,13 +52,13 @@ void InteractionTraction::processBeforeTimeStep()
 		if (dynamic_cast<Drill*>(m_objA)->m_phDevice->getUserSwitchStatus_0() == false)
 		{
 			m_isTracking = false;
-			dynamic_cast<SftBrainTumor*>(m_objB)->setMoreFixed(target, -1);
+			dynamic_cast<SoftObjectGPU*>(m_objB)->setMoreFixed(target, -1);
 			Logger::getMainLogger().log(Logger::Level::Debug, "Stop tracting.");
 		}
 		// Ö´ÐÐÀ­³¶
 		else
 		{
-			dynamic_cast<SftBrainTumor*>(m_objB)->setMoreFixed(target, m_colRecorder->col_X_index_1);
+			dynamic_cast<SoftObjectGPU*>(m_objB)->setMoreFixed(target, m_colRecorder->col_X_index_1);
 		}
 
 		return;

@@ -16,7 +16,10 @@
 
 Knife::Knife(std::string fileName)
 {
-	RigidObject::createObjectFromFile(fileName);
+	if (RigidObject::createObjectFromFile(fileName) == false) {
+		initialized = false;
+		return;
+	}
 
 	// Phantom Device
 	m_phDevice = new PhantomDevice();

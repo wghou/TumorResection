@@ -85,5 +85,7 @@ bool SurfaceMesh::createRenderableObject(RenderableObject* rdFactory)
 
 void SurfaceMesh::rendering(RenderableObject* rdFactory)
 {
+	if (rdFactory == nullptr) return;
+
 	rdFactory->updateObjectOriant(m_meshName, &m_localOriant.m[0][0]);
 }

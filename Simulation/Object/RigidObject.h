@@ -30,9 +30,6 @@ public:
 
 	// Åö×²¼ì²âÏà¹Ø
 	virtual void collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder);
-
-protected:
-	ObjLoader *m_loader;
 };
 
 #endif // !INSTRUMENT_H_

@@ -29,6 +29,7 @@ void DfSurfaceMesh::rendering(RenderableObject* rdFactory)
 	TBN::buildVns(numFaces, mFaces, numVertices, mVertices, mNormals);
 	TBN::updateTBNs(numVertices, mNormals, mTBNs);
 
+	if (rdFactory == nullptr) return;
 	// update the vertexBuffer
 	rdFactory->updateVertexBuffer(m_meshName);
 }

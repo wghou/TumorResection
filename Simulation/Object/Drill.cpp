@@ -22,7 +22,10 @@
 
 Drill::Drill(std::string fileName)
 {
-	RigidObject::createObjectFromFile(fileName);
+	if (RigidObject::createObjectFromFile(fileName) == false) {
+		initialized = false;
+		return;
+	}
 
 
 	if (initialized == false)

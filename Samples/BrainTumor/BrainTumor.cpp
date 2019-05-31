@@ -57,8 +57,9 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	//obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
 	//simulator.addRigidObject(obj_drill);
 
-	ObjectBase* obj_skull = new RigidObject("../assets/models/skull_sphere/");
-	obj_skull->createRenderableObject(&objRef, obj_skull->getObjectName());
+	ObjectBase* obj_skull = new RigidObject();
+	obj_skull->createObjectFromFile("../assets/models/skull_sphere/");
+	obj_skull->createRenderableObject(&objRef);
 	simulator.addRigidObject(obj_skull);
 
 
@@ -66,8 +67,9 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	//obj_plane->createRenderableObject(&objRef, obj_plane->getObjectName());
 	//simulator.addRigidObject(obj_plane);
 
-	ObjectBase* obj_brain = new SoftObjectGPU("../assets/models/pulse/brain/");
-	obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
+	ObjectBase* obj_brain = new SoftObjectGPU();
+	obj_brain->createObjectFromFile("../assets/models/pulse/brain/");
+	obj_brain->createRenderableObject(&objRef);
 	simulator.addSoftObject(obj_brain);
 
 	//InteractionBase* itc_bs = new InteractionTraction();

@@ -35,7 +35,7 @@ public:
 
 	// 仿真步骤相关
 	virtual bool createObjectFromFile(std::string filePath) = 0;
-	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName) { return true; };
+	virtual bool createRenderableObject(RenderableObject* rdFactory) { return true; };
 	virtual void timeStep(float time) {};
 	virtual void post2Render() {};
 

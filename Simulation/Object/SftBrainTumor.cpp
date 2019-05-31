@@ -24,23 +24,38 @@
 
 SftBrainTumor::SftBrainTumor(std::string filePath)
 {
+	if (createObjectFromFile(filePath) == false) {
+		initialized = false;
+		return;
+	}
+}
+
+
+SftBrainTumor::~SftBrainTumor()
+{
+
+}
+
+
+bool SftBrainTumor::createObjectFromFile(std::string filePath)
+{
 	// material path
+	ElementLoader m_loader_brain;
 	std::string m_mtlPath_brain;
 	// load brain element
 	{
-		m_loader_brain = new ElementLoader();
 		Path _path(filePath);
 		if (!_path.exists()) {
 			Logger::getMainLogger().log(Logger::Level::Error, "The file " + _path.getName() + " doesnt exist.", "SftBrainTumor::SftBrainTumor");
 			initialized = false;
-			return;
+			return false;
 		}
 
 		std::string objFilePath = _path.concat("brain/brain");
 		std::string jsonFileName = _path.concat("brain/brain.json");
 
 		// load .ele .node .obj files
-		m_loader_brain->loadElement(objFilePath);
+		m_loader_brain.loadElement(objFilePath);
 
 		// open json
 		nlohmann::json _json;
@@ -57,8 +72,8 @@ SftBrainTumor::SftBrainTumor(std::string filePath)
 				json_helper::readValue(_json, "mtlPath", m_mtlPath_brain);
 
 				// translate, then scale
-				m_loader_brain->translate(trans[0], trans[1], trans[2]);
-				m_loader_brain->scale(sl);
+				m_loader_brain.translate(trans[0], trans[1], trans[2]);
+				m_loader_brain.scale(sl);
 			}
 			catch (std::exception &ex) {
 				Logger::getMainLogger().log(Logger::Level::Error, "Error when initial json: " + std::string(ex.what()), "SftBrainTumor::SftBrainTumor");
@@ -69,31 +84,30 @@ SftBrainTumor::SftBrainTumor(std::string filePath)
 		}
 
 
-		if (m_loader_brain->getNumVertices() == 0 || m_loader_brain->getNumTets() == 0 || m_loader_brain->getNumVertices() == 0) {
+		if (m_loader_brain.getNumVertices() == 0 || m_loader_brain.getNumTets() == 0 || m_loader_brain.getNumVertices() == 0) {
 			Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the eleFile.", "SftBrainTumor::SftBrainTumor");
 			initialized = false;
-			return;
+			return false;
 		}
 	}
 
 	// material path
 	std::string m_mtlPath_tumor;
+	ElementLoader m_loader_tumor;
 	// load tumor element
 	{
-		m_loader_tumor = new ElementLoader();
 		Path _path(filePath);
 		if (!_path.exists()) {
 			Logger::getMainLogger().log(Logger::Level::Error, "The file " + _path.getName() + " doesnt exist.", "SftBrainTumor::SftBrainTumor");
 			initialized = false;
-			return;
+			return false;
 		}
 
 		std::string objFilePath = _path.concat("tumor/tumor");
 		std::string jsonFileName = _path.concat("tumor/tumor.json");
 
 		// load .ele .node .obj files
-		m_loader_tumor->loadElement(objFilePath);
-
+		m_loader_tumor.loadElement(objFilePath);
 
 		// open json
 		nlohmann::json _json;
@@ -110,8 +124,8 @@ SftBrainTumor::SftBrainTumor(std::string filePath)
 				json_helper::readValue(_json, "mtlPath", m_mtlPath_tumor);
 
 				// translate, then scale
-				m_loader_tumor->translate(trans[0], trans[1], trans[2]);
-				m_loader_tumor->scale(sl);
+				m_loader_tumor.translate(trans[0], trans[1], trans[2]);
+				m_loader_tumor.scale(sl);
 			}
 			catch (std::exception &ex) {
 				Logger::getMainLogger().log(Logger::Level::Error, "Error when initial json: " + std::string(ex.what()), "SftBrainTumor::SftBrainTumor");
@@ -122,10 +136,10 @@ SftBrainTumor::SftBrainTumor(std::string filePath)
 		}
 
 
-		if (m_loader_tumor->getNumVertices() == 0 || m_loader_tumor->getNumTets() == 0 || m_loader_tumor->getNumVertices() == 0) {
+		if (m_loader_tumor.getNumVertices() == 0 || m_loader_tumor.getNumTets() == 0 || m_loader_tumor.getNumVertices() == 0) {
 			Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the eleFile.", "SftBrainTumor::SftBrainTumor");
 			initialized = false;
-			return;
+			return false;
 		}
 	}
 
@@ -143,27 +157,27 @@ SftBrainTumor::SftBrainTumor(std::string filePath)
 
 	// buffer structure:
 	// brain vertex  - tumor vertex - connect vertex
-	mVertices_all = new float[(m_loader_brain->getTetVertNum() + m_loader_tumor->getTetVertNum() + numVertex_connect) * 3];
-	mTet_all = new uint16_t[(m_loader_brain->getNumTets() + m_loader_brain->getNumTets() + numTet_connect) * 4];
-	memcpy(mVertices_all, m_loader_brain->getVertices(), sizeof(float)*m_loader_brain->getTetVertNum() * 3);
-	memcpy(mVertices_all + m_loader_brain->getTetVertNum() * 3, m_loader_tumor->getVertices(), sizeof(float)*m_loader_tumor->getTetVertNum() * 3);
+	mVertices_all = new float[(m_loader_brain.getTetVertNum() + m_loader_tumor.getTetVertNum() + numVertex_connect) * 3];
+	mTet_all = new uint16_t[(m_loader_brain.getNumTets() + m_loader_brain.getNumTets() + numTet_connect) * 4];
+	memcpy(mVertices_all, m_loader_brain.getVertices(), sizeof(float)*m_loader_brain.getTetVertNum() * 3);
+	memcpy(mVertices_all + m_loader_brain.getTetVertNum() * 3, m_loader_tumor.getVertices(), sizeof(float)*m_loader_tumor.getTetVertNum() * 3);
 	//memcpy(mVertices_all + m_loader_brain->getTetVertNum() * 3 + m_loader_tumor->getTetVertNum() * 3, 
 	//	mVertices_connect, sizeof(float)*numVertex_connect * 3);
-	memcpy(mTet_all, m_loader_brain->getTets(), sizeof(float)*m_loader_brain->getNumTets() * 4);
-	memcpy(mTet_all + m_loader_brain->getNumTets() * 4, m_loader_tumor->getTets(), sizeof(float)*m_loader_tumor->getNumTets() * 4);
+	memcpy(mTet_all, m_loader_brain.getTets(), sizeof(float)*m_loader_brain.getNumTets() * 4);
+	memcpy(mTet_all + m_loader_brain.getNumTets() * 4, m_loader_tumor.getTets(), sizeof(float)*m_loader_tumor.getNumTets() * 4);
 	//memcpy(mTet_all + m_loader_brain->getTetVertNum() * 3 + m_loader_tumor->getTetVertNum() * 4, 
 	//	mTet_connect, sizeof(float)*numTet_connect * 4);
 
-	
+
 	// init deformation model
 	DfModel_Config config;
-	config.numVertex = m_loader_brain->getTetVertNum() + m_loader_tumor->getTetVertNum() + numVertex_connect;
+	config.numVertex = m_loader_brain.getTetVertNum();// +m_loader_tumor.getTetVertNum() + numVertex_connect;
 	config.mVertices = mVertices_all;
-	config.numTet = m_loader_brain->getNumTets() + m_loader_tumor->getNumTets() + numTet_connect;
+	config.numTet = m_loader_brain.getNumTets() + m_loader_tumor.getNumTets() + numTet_connect;
 	config.mTets = mTet_all;
 
 	// only the brain contain fixed vertices
-	config.fixedVertices.assign(m_loader_brain->getFixed().begin(), m_loader_brain->getFixed().end());
+	config.fixedVertices.assign(m_loader_brain.getFixed().begin(), m_loader_brain.getFixed().end());
 
 	m_deformationModel = new DeformationModelGPU();
 	m_deformationModel->Initialize(config);
@@ -172,17 +186,17 @@ SftBrainTumor::SftBrainTumor(std::string filePath)
 
 
 	// init brain surface mesh
-	SurfaceMesh* m_mesh_brain = new DfSurfaceMesh(m_loader_brain->getNumVertices(), m_loader_brain->getNumFaces(), "brain");
-	m_mesh_brain->initSurfaceMesh(m_loader_brain->getVertices(), m_loader_brain->getFaces(), m_loader_brain->getUVs(), m_mtlPath_brain);
-	dynamic_cast<DfSurfaceMesh*>(m_mesh_brain)->setVertCpys(m_loader_brain->getTetVertNum(), 0,
-		m_deformationModel->getX(), m_loader_brain->getVertCpys());
+	SurfaceMesh* m_mesh_brain = new DfSurfaceMesh(m_loader_brain.getNumVertices(), m_loader_brain.getNumFaces(), "brain");
+	m_mesh_brain->initSurfaceMesh(m_loader_brain.getVertices(), m_loader_brain.getFaces(), m_loader_brain.getUVs(), m_mtlPath_brain);
+	dynamic_cast<DfSurfaceMesh*>(m_mesh_brain)->setVertCpys(m_loader_brain.getTetVertNum(), 0,
+		m_deformationModel->getX(), m_loader_brain.getVertCpys());
 	m_mesh.push_back(m_mesh_brain);
 
 	// init tumor surface mesh
-	SurfaceMesh* m_mesh_tumor = new DfSurfaceMesh(m_loader_tumor->getNumVertices(), m_loader_tumor->getNumFaces(), "tumor");
-	m_mesh_tumor->initSurfaceMesh(m_loader_tumor->getVertices(), m_loader_tumor->getFaces(), m_loader_tumor->getUVs(), m_mtlPath_tumor);
-	dynamic_cast<DfSurfaceMesh*>(m_mesh_tumor)->setVertCpys(m_loader_tumor->getTetVertNum(), m_loader_brain->getTetVertNum(), m_deformationModel->getX(), m_loader_tumor->getVertCpys());
-	m_mesh.push_back(m_mesh_tumor);
+	SurfaceMesh* m_mesh_tumor = new DfSurfaceMesh(m_loader_tumor.getNumVertices(), m_loader_tumor.getNumFaces(), "tumor");
+	m_mesh_tumor->initSurfaceMesh(m_loader_tumor.getVertices(), m_loader_tumor.getFaces(), m_loader_tumor.getUVs(), m_mtlPath_tumor);
+	dynamic_cast<DfSurfaceMesh*>(m_mesh_tumor)->setVertCpys(m_loader_tumor.getTetVertNum(), m_loader_brain.getTetVertNum(), m_deformationModel->getX(), m_loader_tumor.getVertCpys());
+	//m_mesh.push_back(m_mesh_tumor);
 
 	// init connect surface mesh
 	SurfaceMesh* m_mesh_connect = new DfSurfaceMesh(numVertex_connect, numFace_connect, "connect");
@@ -197,74 +211,6 @@ SftBrainTumor::SftBrainTumor(std::string filePath)
 
 	//m_objName = _path.getNameWithoutExtension();
 	initialized = true;
-	return;
-}
-
-
-SftBrainTumor::~SftBrainTumor()
-{
-	if (m_deformationModel) delete m_deformationModel;
-	if (m_collision) delete m_collision;
-
-	for each(auto mesh in m_mesh) {
-		if (mesh) delete mesh;
-	}
-
-	if (m_loader_brain) delete m_loader_brain;
-	if (m_loader_tumor) delete m_loader_tumor;
-}
-
-
-bool SftBrainTumor::createRenderableObject(RenderableObject* rdFactory, std::string objName)
-{
-	m_rdFactory = rdFactory;
-
-	if (m_rdFactory == nullptr) {
-		Logger::getMainLogger().log(Logger::Level::Error, "The *rdFactory is NULL.", "SoftObjectGPU::createRenderableObject");
-		return false;
-	}
-
-	bool rlt = true;
-	for each(auto mesh in m_mesh) {
-		if (!mesh) continue;
-
-		if (mesh->createRenderableObject(rdFactory) == false) rlt = false;
-	}
-	return rlt;
-}
-
-
-void SftBrainTumor::timeStep(float time)
-{
-	// Î´³õÊ¼»¯
-	if (initialized == false) return;
-
-	m_deformationModel->Reset_More_Fixed(more_fixed, dir);
-	m_deformationModel->timeStep(time);
-}
-
-
-void SftBrainTumor::collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder)
-{
-	// Î´³õÊ¼»¯
-	if (initialized == false) return;
-
-
-	// ²»²ÎÓëÅö×²¼ì²â
-	if (!isPerformCollisionDetection) return;
-
-
-	// Ö´ÐÐÅö×²¼ì²â
-	this->m_collision->computeCollision(obj_other->getCollisionObject(), recorder);
-}
-
-
-void SftBrainTumor::post2Render()
-{
-	for each(auto mesh in m_mesh) {
-		if (!mesh) continue;
-
-		mesh->rendering(m_rdFactory);
-	}
+	return true;
 }
 

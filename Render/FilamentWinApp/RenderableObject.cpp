@@ -377,8 +377,8 @@ bool RenderableObject::genRenderable(std::string objName, int numVert, float *mV
 		}
 	}
 	else {
-		//obj.mtlInstance = mDefaultColorMaterial->createInstance();
-		obj.mtlInstance = mDefaultTransparentColorMaterial->createInstance();
+		obj.mtlInstance = mDefaultColorMaterial->createInstance();
+		//obj.mtlInstance = mDefaultTransparentColorMaterial->createInstance();
 
 		obj.mtlInstance->setParameter("baseColor", RgbType::sRGB, float3{ 0.8f });
 		obj.mtlInstance->setParameter("roughness", 0.4f);

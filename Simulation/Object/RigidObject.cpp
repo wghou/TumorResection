@@ -24,7 +24,6 @@
 
 RigidObject::RigidObject()
 {
-	m_loader = new ObjLoader();
 }
 
 RigidObject::~RigidObject()
@@ -32,16 +31,17 @@ RigidObject::~RigidObject()
 	for each(auto mesh in m_mesh) {
 		if (mesh) delete mesh;
 	}
-	if (m_loader) delete m_loader;
 }
 
 bool RigidObject::createObjectFromFile(std::string filePath)
 {
+	ObjLoader m_loader;
+
 	Path _path(filePath);
 	if (!_path.exists()) {
 		Logger::getMainLogger().log(Logger::Level::Error, "The file " + _path.getName() + " doesnt exist.", "RigidObject::RigidObject");
 		initialized = false;
-		return;
+		return false;
 	}
 
 	m_objName = _path.getNameWithoutExtension();
@@ -50,7 +50,7 @@ bool RigidObject::createObjectFromFile(std::string filePath)
 	std::string jsonFileName = _path.concat(_path.getName() + ".json");
 
 	// load .obj file
-	m_loader->loadObj(objFileName);
+	m_loader.loadObj(objFileName);
 
 	// material path
 	std::string m_mtlPath;
@@ -70,8 +70,8 @@ bool RigidObject::createObjectFromFile(std::string filePath)
 			json_helper::readValue(_json, "mtlPath", m_mtlPath);
 
 			// translate, then scale
-			m_loader->translate(trans[0], trans[1], trans[2]);
-			m_loader->scale(sl);
+			m_loader.translate(trans[0], trans[1], trans[2]);
+			m_loader.scale(sl);
 		}
 		catch (std::exception &ex) {
 			Logger::getMainLogger().log(Logger::Level::Error, "Error when initial json: " + std::string(ex.what()), "RigidObject::RigidObject");
@@ -81,19 +81,19 @@ bool RigidObject::createObjectFromFile(std::string filePath)
 		Logger::getMainLogger().log(Logger::Level::Error, "Cannot open config file: " + jsonFileName, "RigidObject::RigidObject");
 	}
 
-	if (m_loader->getNumVertices() == 0 || m_loader->getNumVertices() == 0) {
+	if (m_loader.getNumVertices() == 0 || m_loader.getNumVertices() == 0) {
 		Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the eleFile.", "RigidObject::RigidObject");
 		initialized = false;
-		return;
+		return false;
 	}
 
-	SurfaceMesh* mesh = new SurfaceMesh(m_loader->getNumVertices(), m_loader->getNumFaces(), m_objName);
-	mesh->initSurfaceMesh(m_loader->getVertices(), m_loader->getFaces(), m_loader->getUVs(), m_mtlPath);
+	SurfaceMesh* mesh = new SurfaceMesh(m_loader.getNumVertices(), m_loader.getNumFaces(), m_objName);
+	mesh->initSurfaceMesh(m_loader.getVertices(), m_loader.getFaces(), m_loader.getUVs(), m_mtlPath);
 	m_mesh.push_back(mesh);
 
 	// 初始化成功
 	initialized = true;
-	return;
+	return true;
 }
 
 bool RigidObject::createRenderableObject(RenderableObject* rdFactory)

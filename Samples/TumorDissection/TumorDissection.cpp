@@ -54,11 +54,11 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	RenderableObject& objRef = RenderableObject::get(engine, scene);
 
 	ObjectBase* obj_drill = new Drill();
-	obj_drill->createRenderableObject(&objRef, obj_drill->getObjectName());
+	obj_drill->createRenderableObject(&objRef);
 	simulator.addRigidObject(obj_drill);
 
 	ObjectBase* obj_brain = new SftBrainTumor("../assets/models/dissection/");
-	obj_brain->createRenderableObject(&objRef, obj_brain->getObjectName());
+	obj_brain->createRenderableObject(&objRef);
 	simulator.addRigidObject(obj_brain);
 
 

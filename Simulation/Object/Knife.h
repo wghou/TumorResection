@@ -28,7 +28,6 @@ public:
 
 
 private:
-
 	// Á¦·´À¡ÊÖ±ú
 	PhantomDevice *m_phDevice;
 };
