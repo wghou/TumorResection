@@ -123,8 +123,6 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 void DeformationModelGPU::timeStep(float time)
 {
 	static float last = time;
-	// brain pulse
-	m_model->gravity = 0.5*sin(time*0.9)*sin(time*0.9) + 0.05;
 	m_model->Update(time - last, 97, selectVertex, vertexDir);
 	last = time;
 }
@@ -145,6 +143,12 @@ void DeformationModelGPU::Reset_More_Fixed(int select_v, float dir[])
 void DeformationModelGPU::SetExternalForce(float* externalForce)
 {
 	//m_model->SetExternalForce(externalForce);
+}
+
+void DeformationModelGPU::setGravity(float g)
+{
+	//m_model->gravity = 0.5*sin(time*0.9)*sin(time*0.9) + 0.05;
+	m_model->gravity = g;
 }
 
 void DeformationModelGPU::removeTet(uint16_t t)
