@@ -58,7 +58,7 @@ DeformationModelGPU::DeformationModelGPU()
 	//m_model->stiffness_3 = 0.5;
 	//m_model->stiffness_p = 1000000;
 
-	m_model->gravity = 0.0;
+	m_model->gravity = 1.1;
 	m_model->density = 200;
 
 	//m_model->model = NH_MODEL;
@@ -113,7 +113,7 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 
 	// ¹Ì¶¨ fixed
 	for (int i = 0; i < config.fixedVertices.size(); i++) {
-		//m_model->fixed[config.fixedVertices[i]] = 100000;
+		m_model->fixed[config.fixedVertices[i]] = 100000;
 	}
 	//std::cout << config.fixedVertices.size();
 

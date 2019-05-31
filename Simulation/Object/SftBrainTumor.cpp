@@ -165,13 +165,16 @@ bool SftBrainTumor::createObjectFromFile(std::string filePath)
 	//	mVertices_connect, sizeof(float)*numVertex_connect * 3);
 	memcpy(mTet_all, m_loader_brain.getTets(), sizeof(float)*m_loader_brain.getNumTets() * 4);
 	memcpy(mTet_all + m_loader_brain.getNumTets() * 4, m_loader_tumor.getTets(), sizeof(float)*m_loader_tumor.getNumTets() * 4);
+	for (int i = 0; i < m_loader_tumor.getNumTets() * 4; i++) {
+		mTet_all[i + m_loader_brain.getNumTets() * 4] += m_loader_brain.getTetVertNum();
+	}
 	//memcpy(mTet_all + m_loader_brain->getTetVertNum() * 3 + m_loader_tumor->getTetVertNum() * 4, 
 	//	mTet_connect, sizeof(float)*numTet_connect * 4);
 
 
 	// init deformation model
 	DfModel_Config config;
-	config.numVertex = m_loader_brain.getTetVertNum();// +m_loader_tumor.getTetVertNum() + numVertex_connect;
+	config.numVertex = m_loader_brain.getTetVertNum() + m_loader_tumor.getTetVertNum() + numVertex_connect;
 	config.mVertices = mVertices_all;
 	config.numTet = m_loader_brain.getNumTets() + m_loader_tumor.getNumTets() + numTet_connect;
 	config.mTets = mTet_all;
@@ -196,7 +199,7 @@ bool SftBrainTumor::createObjectFromFile(std::string filePath)
 	SurfaceMesh* m_mesh_tumor = new DfSurfaceMesh(m_loader_tumor.getNumVertices(), m_loader_tumor.getNumFaces(), "tumor");
 	m_mesh_tumor->initSurfaceMesh(m_loader_tumor.getVertices(), m_loader_tumor.getFaces(), m_loader_tumor.getUVs(), m_mtlPath_tumor);
 	dynamic_cast<DfSurfaceMesh*>(m_mesh_tumor)->setVertCpys(m_loader_tumor.getTetVertNum(), m_loader_brain.getTetVertNum(), m_deformationModel->getX(), m_loader_tumor.getVertCpys());
-	//m_mesh.push_back(m_mesh_tumor);
+	m_mesh.push_back(m_mesh_tumor);
 
 	// init connect surface mesh
 	SurfaceMesh* m_mesh_connect = new DfSurfaceMesh(numVertex_connect, numFace_connect, "connect");

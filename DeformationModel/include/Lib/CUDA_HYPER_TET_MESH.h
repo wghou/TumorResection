@@ -898,7 +898,7 @@ public:
 		// Update S and initialize X
 		cudaMemcpy(dev_S, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToDevice);
 		
-		//Update_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X, t, number, dir[0], dir[1], dir[2]);
+		Update_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X, t, number, dir[0], dir[1], dir[2]);
 		//Update_2_Kernel << <blocksPerGrid, threadsPerBlock >> > (dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X,
 		//	t, number, select_v, control_mag, dir[0], dir[1], dir[2]);
 		
@@ -927,7 +927,7 @@ public:
 			if(l%8==0)
 			{
 				float energy=Get_Energy_Magnitude();
-				  printf("Energy: %f\n", energy);
+				//  printf("Energy: %f\n", energy);
 				//	thrust::device_ptr<TYPE> dev_c_ptr(dev_C);
 				//	printf("C sum: %ef\n", thrust::reduce(dev_c_ptr+0, dev_c_ptr+number*3));
 				//	printf("C sum: %ef\n", thrust::reduce(dev_c_ptr+number*3, dev_c_ptr+number*6));
