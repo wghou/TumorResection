@@ -3,6 +3,7 @@
 #include"logger\include\Logger.h"
 
 #include"Object\SoftObjectGPU.h"
+#include"Object/Object.h"
 #include"Object\Drill.h"
 #include"Object\PhantomDevice.h"
 #include"Object/SurfaceMesh.h"
@@ -43,21 +44,21 @@ void InteractionTraction::processBeforeTimeStep()
 	if (m_isTracking)
 	{
 		float target[3];
-		target[0] = m_objA->getMesh()->getLocalPos().x;
-		target[1] = m_objA->getMesh()->getLocalPos().y;
-		target[2] = m_objA->getMesh()->getLocalPos().z;
+		target[0] = m_objA->getLocalPos().x;
+		target[1] = m_objA->getLocalPos().y;
+		target[2] = m_objA->getLocalPos().z;
 
 		// 结束拉扯
 		if (dynamic_cast<Drill*>(m_objA)->m_phDevice->getUserSwitchStatus_0() == false)
 		{
 			m_isTracking = false;
-			dynamic_cast<SoftObjectGPU*>(m_objB)->setMoreFixed(target, -1);
+			dynamic_cast<SftBrainTumor*>(m_objB)->setMoreFixed(target, -1);
 			Logger::getMainLogger().log(Logger::Level::Debug, "Stop tracting.");
 		}
 		// 执行拉扯
 		else
 		{
-			dynamic_cast<SoftObjectGPU*>(m_objB)->setMoreFixed(target, m_colRecorder->col_X_index_1);
+			dynamic_cast<SftBrainTumor*>(m_objB)->setMoreFixed(target, m_colRecorder->col_X_index_1);
 		}
 
 		return;
@@ -117,7 +118,7 @@ void InteractionTraction::processAfterTimeStep()
 }
 
 
-void InteractionTraction::init(Drill *obA, SoftObjectGPU *obB)
+void InteractionTraction::init(Drill *obA, ObjectBase *obB)
 {
 	m_objA = obA;
 	m_objB = obB;

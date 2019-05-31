@@ -22,7 +22,24 @@
 #include"ObjLoader/TBN.h"
 
 
-SoftObjectGPU::SoftObjectGPU(std::string filePath)
+SoftObjectGPU::SoftObjectGPU()
+{
+
+}
+
+SoftObjectGPU::~SoftObjectGPU()
+{
+	if (m_deformationModel) delete m_deformationModel;
+	if (m_collision) delete m_collision;
+
+	for each(auto mesh in m_mesh) {
+		if (mesh) delete mesh;
+	}
+
+	if (m_loader) delete m_loader;
+}
+
+bool SoftObjectGPU::createObjectFromFile(std::string filePath)
 {
 	m_loader = new ElementLoader();
 	Path _path(filePath);
@@ -74,7 +91,7 @@ SoftObjectGPU::SoftObjectGPU(std::string filePath)
 		return;
 	}
 
-	
+
 	// init deformation model
 	DfModel_Config config;
 	config.numVertex = m_loader->getTetVertNum();
@@ -89,24 +106,16 @@ SoftObjectGPU::SoftObjectGPU(std::string filePath)
 
 
 	// init surface mesh
-	m_mesh = new DfSurfaceMesh(m_loader->getNumVertices(), m_loader->getNumFaces(), m_objName);
-	m_mesh->initSurfaceMesh(m_loader->getVertices(), m_loader->getFaces(), m_loader->getUVs(), m_mtlPath);
-	dynamic_cast<DfSurfaceMesh*>(m_mesh)->setVertCpys(m_loader->getTetVertNum(), m_deformationModel->getX(), m_loader->getVertCpys());
+	SurfaceMesh* mesh = new DfSurfaceMesh(m_loader->getNumVertices(), m_loader->getNumFaces(), m_objName);
+	mesh->initSurfaceMesh(m_loader->getVertices(), m_loader->getFaces(), m_loader->getUVs(), m_mtlPath);
+	dynamic_cast<DfSurfaceMesh*>(mesh)->setVertCpys(m_loader->getTetVertNum(), 0, m_deformationModel->getX(), m_loader->getVertCpys());
+	m_mesh.push_back(mesh);
 
 	// collision
 	m_collision = new MyCollision(this);
-	
+
 	m_objName = _path.getNameWithoutExtension();
 	initialized = true;
-	return;
-}
-
-SoftObjectGPU::~SoftObjectGPU()
-{
-	if (m_deformationModel) delete m_deformationModel;
-	if (m_collision) delete m_collision;
-	if (m_mesh) delete m_mesh;
-	if (m_loader) delete m_loader;
 }
 
 
@@ -119,7 +128,12 @@ bool SoftObjectGPU::createRenderableObject(RenderableObject* rdFactory, std::str
 		return false;
 	}
 
-	bool rlt = m_mesh->createRenderableObject(rdFactory, objName);
+	bool rlt = true;
+	for each(auto mesh in m_mesh) {
+		if (!mesh) continue;
+
+		if (mesh->createRenderableObject(rdFactory) == false) rlt = false;
+	}
 	return rlt;
 }
 
@@ -151,5 +165,9 @@ void SoftObjectGPU::collisionDetection(ObjectBase* obj_other, CollisionRecorder*
 
 void SoftObjectGPU::post2Render()
 {
-	m_mesh->rendering(m_rdFactory);
+	for each(auto mesh in m_mesh) {
+		if (!mesh) continue;
+
+		mesh->rendering(m_rdFactory);
+	}
 }

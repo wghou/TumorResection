@@ -172,20 +172,24 @@ SftBrainTumor::SftBrainTumor(std::string filePath)
 
 
 	// init brain surface mesh
-	m_mesh_brain = new DfSurfaceMesh(m_loader_brain->getNumVertices(), m_loader_brain->getNumFaces(), "brain");
+	SurfaceMesh* m_mesh_brain = new DfSurfaceMesh(m_loader_brain->getNumVertices(), m_loader_brain->getNumFaces(), "brain");
 	m_mesh_brain->initSurfaceMesh(m_loader_brain->getVertices(), m_loader_brain->getFaces(), m_loader_brain->getUVs(), m_mtlPath_brain);
-	dynamic_cast<DfSurfaceMesh*>(m_mesh_brain)->setVertCpys(m_loader_brain->getTetVertNum(), m_deformationModel->getX(), m_loader_brain->getVertCpys());
-
+	dynamic_cast<DfSurfaceMesh*>(m_mesh_brain)->setVertCpys(m_loader_brain->getTetVertNum(), 0,
+		m_deformationModel->getX(), m_loader_brain->getVertCpys());
+	m_mesh.push_back(m_mesh_brain);
 
 	// init tumor surface mesh
-	m_mesh_tumor = new DfSurfaceMesh(m_loader_tumor->getNumVertices(), m_loader_tumor->getNumFaces(), "tumor");
+	SurfaceMesh* m_mesh_tumor = new DfSurfaceMesh(m_loader_tumor->getNumVertices(), m_loader_tumor->getNumFaces(), "tumor");
 	m_mesh_tumor->initSurfaceMesh(m_loader_tumor->getVertices(), m_loader_tumor->getFaces(), m_loader_tumor->getUVs(), m_mtlPath_tumor);
-	dynamic_cast<DfSurfaceMesh*>(m_mesh_tumor)->setVertCpys(m_loader_tumor->getTetVertNum(), m_deformationModel->getX() + m_loader_brain->getTetVertNum() * 3, m_loader_tumor->getVertCpys());
-
+	dynamic_cast<DfSurfaceMesh*>(m_mesh_tumor)->setVertCpys(m_loader_tumor->getTetVertNum(), m_loader_brain->getTetVertNum(), m_deformationModel->getX(), m_loader_tumor->getVertCpys());
+	m_mesh.push_back(m_mesh_tumor);
 
 	// init connect surface mesh
-	m_mesh_connect = new SurfaceMesh(numVertex_connect, numFace_connect, "connect");
+	SurfaceMesh* m_mesh_connect = new DfSurfaceMesh(numVertex_connect, numFace_connect, "connect");
 	m_mesh_connect->initSurfaceMesh(mVertices_connect, mFace_connect, nullptr, "");
+	//dynamic_cast<DfSurfaceMesh*>(m_mesh_tumor)->setVertCpys(config.numVertex, m_loader_brain->getTetVertNum() + m_loader_tumor->getTetVertNum(), 
+	//	m_deformationModel->getX(), NULL);
+	//m_mesh.push_back(m_mesh_connect);
 
 
 	// collision
@@ -201,10 +205,11 @@ SftBrainTumor::~SftBrainTumor()
 {
 	if (m_deformationModel) delete m_deformationModel;
 	if (m_collision) delete m_collision;
-	if (m_mesh) delete m_mesh;
-	if (m_mesh_brain) delete m_mesh_brain;
-	if (m_mesh_tumor) delete m_mesh_tumor;
-	if (m_mesh_connect) delete m_mesh_connect;
+
+	for each(auto mesh in m_mesh) {
+		if (mesh) delete mesh;
+	}
+
 	if (m_loader_brain) delete m_loader_brain;
 	if (m_loader_tumor) delete m_loader_tumor;
 }
@@ -219,10 +224,13 @@ bool SftBrainTumor::createRenderableObject(RenderableObject* rdFactory, std::str
 		return false;
 	}
 
-	bool rlt1 = m_mesh_brain->createRenderableObject(rdFactory, "brain");
-	bool rlt2 = m_mesh_tumor->createRenderableObject(rdFactory, "tumor");
-	//bool rlt3 = m_mesh_connect->createRenderableObject(rdFactory, "connect");
-	return rlt1 && rlt2;
+	bool rlt = true;
+	for each(auto mesh in m_mesh) {
+		if (!mesh) continue;
+
+		if (mesh->createRenderableObject(rdFactory) == false) rlt = false;
+	}
+	return rlt;
 }
 
 
@@ -253,8 +261,10 @@ void SftBrainTumor::collisionDetection(ObjectBase* obj_other, CollisionRecorder*
 
 void SftBrainTumor::post2Render()
 {
-	m_mesh_brain->rendering(m_rdFactory);
-	m_mesh_tumor->rendering(m_rdFactory);
-	//m_mesh_connect->rendering(m_rdFactory);
+	for each(auto mesh in m_mesh) {
+		if (!mesh) continue;
+
+		mesh->rendering(m_rdFactory);
+	}
 }
 

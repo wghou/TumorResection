@@ -20,11 +20,12 @@ class SoftObjectGPU :public ObjectBase
 	friend MyCollision;
 
 public:
-	SoftObjectGPU(std::string filePath);
+	SoftObjectGPU();
 	~SoftObjectGPU();
 
 
 	// 仿真步骤相关
+	virtual bool createObjectFromFile(std::string filePath);
 	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName);
 	virtual void timeStep(float time);
 	virtual void post2Render();

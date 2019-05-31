@@ -19,7 +19,7 @@ class Knife : public RigidObject
 	friend class InteractionTraction;
 
 public:
-	Knife(char* fileName = "../assets/models/knife");
+	Knife(std::string fileName = "../assets/models/knife");
 	~Knife();
 
 	bool createRenderableObject(RenderableObject* rdFactory, std::string objName = "Knife");

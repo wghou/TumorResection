@@ -37,11 +37,6 @@ protected:
 	ElementLoader *m_loader_tumor;
 	DeformationModelGPU *m_deformationModel = nullptr;		// 形变模型对象
 	int more_fixed = -1;
-
-private:
-	SurfaceMesh *m_mesh_brain;
-	SurfaceMesh *m_mesh_tumor;
-	SurfaceMesh *m_mesh_connect;
 };
 
 #endif // !SFT_BRAIN_TUMOR_H

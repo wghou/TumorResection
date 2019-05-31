@@ -14,8 +14,10 @@
 #include"Object/SurfaceMesh.h"
 
 
-Knife::Knife(char* fileName) : RigidObject(fileName)
+Knife::Knife(std::string fileName)
 {
+	RigidObject::createObjectFromFile(fileName);
+
 	// Phantom Device
 	m_phDevice = new PhantomDevice();
 	if (m_phDevice->checkDeviceOK() == false)
@@ -37,7 +39,7 @@ Knife::~Knife()
 
 bool Knife::createRenderableObject(RenderableObject* rdFactory, std::string objName)
 {
-	bool rlt = RigidObject::createRenderableObject(rdFactory, objName);
+	bool rlt = RigidObject::createRenderableObject(rdFactory);
 
 	return rlt;
 }
@@ -57,5 +59,11 @@ void Knife::timeStep(float time)
 	ori.m[3][1] = 10 * m_phDevice->getPhantomPostion().y;
 	ori.m[3][2] = 10 * m_phDevice->getPhantomPostion().z + 0.6;
 
-	m_mesh->setOriant(ori);
+	m_localOriant = ori;
+
+	for each(auto mesh in m_mesh) {
+		if (!mesh) continue;
+
+		mesh->setOriant(ori);
+	}
 }

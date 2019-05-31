@@ -13,6 +13,7 @@
 #include<memory>
 #include<vector>
 #include<stdint.h>
+#include<string>
 
 #include"Math\MyMath.h"
 
@@ -32,8 +33,8 @@ public:
 	ObjectBase() {};
 	virtual ~ObjectBase() {};
 
-
 	// 仿真步骤相关
+	virtual bool createObjectFromFile(std::string filePath) = 0;
 	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName) { return true; };
 	virtual void timeStep(float time) {};
 	virtual void post2Render() {};
@@ -43,14 +44,19 @@ public:
 	GenericCollision* getCollisionObject() { return m_collision; }
 	virtual void collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder) {};
 
-	SurfaceMesh* getMesh() { return m_mesh; }
+	std::vector<SurfaceMesh*> &getMesh() { return m_mesh; }
 	std::string getObjectName() { return m_objName; }
+
+	Vector3f getLocalPos() { return Vector3f{ m_localOriant.m[3][0], m_localOriant.m[3][1], m_localOriant.m[3][2] }; }
+	MyMatrix4f getOriant() { return m_localOriant; }
 
 protected:
 	bool initialized = false;	// 是否初始化
 	std::string m_objName = "ObjectBase";
-	SurfaceMesh* m_mesh = nullptr;				// 网格数据
+	std::vector<SurfaceMesh*> m_mesh;			// 网格数据
 	RenderableObject* m_rdFactory = nullptr;
+
+	MyMatrix4f m_localOriant;		// 对象体的旋转矩阵
 
 	GenericCollision* m_collision = nullptr;	// 碰撞对象
 	bool isPerformCollisionDetection = true;	// 是否参与碰撞检测

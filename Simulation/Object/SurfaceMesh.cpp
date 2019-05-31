@@ -65,22 +65,20 @@ void SurfaceMesh::initSurfaceMesh(float* mVt, uint16_t* mFs, float* mU0, std::st
 }
 
 
-bool SurfaceMesh::createRenderableObject(RenderableObject* rdFactory, std::string objName)
+bool SurfaceMesh::createRenderableObject(RenderableObject* rdFactory)
 {
 	if (rdFactory == nullptr) return false;
-
-	m_meshName = objName;
 
 	// 导入纹理
 	if (!m_mtlPath.empty()) {
 		rdFactory->genMaterial(m_mtlPath);
 	}
 	else {
-		Logger::getMainLogger().log(Logger::Level::Warning, "There is no material for object " + objName, "RigidObject::createRenderableObject");
+		Logger::getMainLogger().log(Logger::Level::Warning, "There is no material for object " + m_meshName, "RigidObject::createRenderableObject");
 	}
 
 	// 生成渲染对象
-	bool rlt = rdFactory->genRenderable(objName, numVertices, mVertices,
+	bool rlt = rdFactory->genRenderable(m_meshName, numVertices, mVertices,
 		mTBNs, mUV0, numFaces, mFaces);
 	return rlt;
 }

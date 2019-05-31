@@ -16,7 +16,7 @@ public:
 
 	void initSurfaceMesh(float* mVt, uint16_t* mFs, float* mU0, std::string mtlPahth);
 
-	bool createRenderableObject(RenderableObject* rdFactory, std::string objName);
+	bool createRenderableObject(RenderableObject* rdFactory);
 	virtual void rendering(RenderableObject* rdFactory);
 	
 	Vector3f getLocalPos() { return Vector3f{m_localOriant.m[3][0], m_localOriant.m[3][1], m_localOriant.m[3][2]}; }

@@ -20,8 +20,11 @@
 #include"FilamentWinApp/RenderableObject.h"
 
 
-Drill::Drill(char* fileName) : RigidObject(fileName)
+Drill::Drill(std::string fileName)
 {
+	RigidObject::createObjectFromFile(fileName);
+
+
 	if (initialized == false)
 	{
 		// 在这里，RigidObject 初始化错误，是不是也没必要再继续增加 phantom 了
@@ -56,7 +59,7 @@ Drill::~Drill()
 
 bool Drill::createRenderableObject(RenderableObject* rdFactory, std::string objName)
 {
-	bool rlt = RigidObject::createRenderableObject(rdFactory, objName);
+	bool rlt = RigidObject::createRenderableObject(rdFactory);
 
 	return rlt;
 }
@@ -75,5 +78,11 @@ void Drill::timeStep(float time)
 	ori.m[3][1] = 10 * m_phDevice->getPhantomPostion().y;
 	ori.m[3][2] = 10 * m_phDevice->getPhantomPostion().z + 0.6;
 
-	m_mesh->setOriant(ori);
+	m_localOriant = ori;
+
+	for each(auto mesh in m_mesh) {
+		if (!mesh) continue;
+
+		mesh->setOriant(ori);
+	}
 }

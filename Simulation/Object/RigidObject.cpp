@@ -22,10 +22,21 @@
 
 
 
-RigidObject::RigidObject(std::string filePath)
+RigidObject::RigidObject()
 {
 	m_loader = new ObjLoader();
+}
 
+RigidObject::~RigidObject()
+{
+	for each(auto mesh in m_mesh) {
+		if (mesh) delete mesh;
+	}
+	if (m_loader) delete m_loader;
+}
+
+bool RigidObject::createObjectFromFile(std::string filePath)
+{
 	Path _path(filePath);
 	if (!_path.exists()) {
 		Logger::getMainLogger().log(Logger::Level::Error, "The file " + _path.getName() + " doesnt exist.", "RigidObject::RigidObject");
@@ -48,7 +59,7 @@ RigidObject::RigidObject(std::string filePath)
 	nlohmann::json _json;
 	std::ifstream input_file(jsonFileName);
 	if (input_file.is_open()) {
-		
+
 		float sl = 1.0f;
 		float trans[3] = { 0.0f,0.0f,0.0f };
 
@@ -76,21 +87,16 @@ RigidObject::RigidObject(std::string filePath)
 		return;
 	}
 
-	m_mesh = new SurfaceMesh(m_loader->getNumVertices(), m_loader->getNumFaces(), m_objName);
-	m_mesh->initSurfaceMesh(m_loader->getVertices(), m_loader->getFaces(), m_loader->getUVs(), m_mtlPath);
-	
+	SurfaceMesh* mesh = new SurfaceMesh(m_loader->getNumVertices(), m_loader->getNumFaces(), m_objName);
+	mesh->initSurfaceMesh(m_loader->getVertices(), m_loader->getFaces(), m_loader->getUVs(), m_mtlPath);
+	m_mesh.push_back(mesh);
+
 	// 初始化成功
 	initialized = true;
 	return;
 }
 
-RigidObject::~RigidObject()
-{
-	if (m_mesh) delete m_mesh;
-	if (m_loader) delete m_loader;
-}
-
-bool RigidObject::createRenderableObject(RenderableObject* rdFactory, std::string objName)
+bool RigidObject::createRenderableObject(RenderableObject* rdFactory)
 {
 	m_rdFactory = rdFactory;
 
@@ -99,7 +105,12 @@ bool RigidObject::createRenderableObject(RenderableObject* rdFactory, std::strin
 		return false;
 	}
 
-	bool rlt = m_mesh->createRenderableObject(rdFactory, objName);
+	bool rlt = true;
+	for each(auto mesh in m_mesh) {
+		if (!mesh) continue;
+
+		if (mesh->createRenderableObject(rdFactory) == false) rlt = false;
+	}
 	return rlt;
 }
 
@@ -110,7 +121,11 @@ void RigidObject::timeStep(float time)
 
 void RigidObject::post2Render()
 {
-	m_mesh->rendering(m_rdFactory);
+	for each(auto mesh in m_mesh) {
+		if (!mesh) continue;
+
+		mesh->rendering(m_rdFactory);
+	}
 }
 
 void RigidObject::collisionDetection(ObjectBase* obj_other, CollisionRecorder* recorder)

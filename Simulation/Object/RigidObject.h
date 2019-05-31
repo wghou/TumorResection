@@ -17,12 +17,13 @@ class RigidObject : public ObjectBase
 {
 
 public:
-	RigidObject(std::string filePath);
+	RigidObject();
 	~RigidObject();
 
 
 	// 仿真步骤相关
-	virtual bool createRenderableObject(RenderableObject* rdFactory, std::string objName);
+	virtual bool createObjectFromFile(std::string filePath);
+	virtual bool createRenderableObject(RenderableObject* rdFactory);
 	virtual void timeStep(float time);
 	virtual void post2Render();
 

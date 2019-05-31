@@ -5,6 +5,7 @@
 
 class InteractionTraction;
 class Drill;
+class ObjectBase;
 class SoftObjectGPU;
 class CollisionRecorder;
 
@@ -18,7 +19,7 @@ public:
 	void processBeforeTimeStep();
 	void processAfterTimeStep();
 
-	void init(Drill *obA, SoftObjectGPU *obB);
+	void init(Drill *obA, ObjectBase *obB);
 
 
 private:

@@ -18,7 +18,7 @@ class Drill : public RigidObject
 	friend class InteractionTraction;
 
 public:
-	Drill(char* fileName = "../assets/models/drill/");
+	Drill(std::string fileName = "../assets/models/drill/");
 	~Drill();
 
 
