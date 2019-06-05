@@ -58,8 +58,8 @@ DeformationModelGPU::DeformationModelGPU()
 	//m_model->stiffness_3 = 0.5;
 	//m_model->stiffness_p = 1000000;
 
-	m_model->gravity = 1.1;
-	m_model->density = 200;
+	m_model->gravity = 0.0;
+	m_model->density = 100;
 
 	//m_model->model = NH_MODEL;
 	//m_model->stiffness_0 = 2000000;	//2000000
@@ -132,7 +132,7 @@ void DeformationModelGPU::Reset_More_Fixed(int select_v, float dir[])
 {
 	if (select_v >= m_model->number) return;
 
-	//m_model->Reset_More_Fixed(select_v);
+	m_model->Reset_More_Fixed(select_v);
 	selectVertex = select_v;
 	vertexDir[0] = dir[0];
 	vertexDir[1] = dir[1];

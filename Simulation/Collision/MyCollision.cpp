@@ -17,6 +17,7 @@
 #include"Object\SoftObjectGPU.h"
 #include"Object\SurfaceMesh.h"
 #include"Object/DfSurfaceMesh.h"
+#include"Object/CntSurfaceMesh.h"
 
 MyCollision::MyCollision(ObjectBase* obj_self)
 {
@@ -39,16 +40,22 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 		std::vector<SurfaceMesh*>& m_mesh = col_obj->getParentObject()->getMesh();
 
 		for each(auto mesh in m_mesh) {
+
+			// do not perform collision detection on CntSurfaceMesh
+			if (typeid(*mesh) == typeid(CntSurfaceMesh)) {
+				continue;
+			}
+
 			float* x_ptr = mesh->getVertices();
 			uint16_t index_offset = 0;
-			if (typeid(mesh) == typeid(DfSurfaceMesh)) {
+			if (typeid(*mesh) == typeid(DfSurfaceMesh)) {
 				index_offset = dynamic_cast<DfSurfaceMesh*>(mesh)->getIndexOffset();
 			}
 			uint16_t* face_ptr = mesh->getFaces();
 			float x_radius = dynamic_cast<MyCollision*>(col_obj)->getRadius();
 
 			for (int i = 0; i < mesh->getNumFaces() * 3; i++) {
-				uint16_t index = face_ptr[i] + index_offset;
+				uint16_t index = face_ptr[i];
 
 				double x = parentObject->getLocalPos().x - x_ptr[index * 3 + 0];
 				double y = parentObject->getLocalPos().y - x_ptr[index * 3 + 1];
@@ -75,7 +82,7 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 
 					// Åö×²¶ÔÏó B
 					recorder->obj_1 = col_obj->getParentObject();
-					recorder->col_X_index_1 = index;
+					recorder->col_X_index_1 = index + index_offset;
 					recorder->col_X_1[0] = x_ptr[index * 3 + 0];
 					recorder->col_X_1[1] = x_ptr[index * 3 + 1];
 					recorder->col_X_1[2] = x_ptr[index * 3 + 2];

@@ -57,6 +57,9 @@
     <ClCompile Include="Object\SftBrainTumor.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="Object\CntSurfaceMesh.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\Drill.h">
@@ -111,6 +114,9 @@
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Object\SftBrainTumor.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CntSurfaceMesh.h">
       <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>

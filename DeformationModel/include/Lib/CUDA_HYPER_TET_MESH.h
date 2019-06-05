@@ -41,7 +41,7 @@
 #define NH_MODEL			1
 #define MR_MODEL			2
 #define	FUNG_MODEL			3
-#define RADIUS_SQUARED		0.5
+#define RADIUS_SQUARED		0.05
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -505,9 +505,9 @@ __global__ void Constraint_1_Kernel(const float* M, const float* X, const float*
 
 	// Get Force
 	float error[3];
-	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] + 30.0*V[i * 3 + 0] * V[i * 3 + 0] * V[i * 3 + 0]) * M[i] + gravity * M[i];
-	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] + 30.0*V[i * 3 + 1] * V[i * 3 + 1] * V[i * 3 + 0]) * M[i];
-	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] + 30.0*V[i * 3 + 2] * V[i * 3 + 2] * V[i * 3 + 0]) * M[i];
+	error[0] = oc*(S[i * 3 + 0] - X[i * 3 + 0]) + (c - oc)*(fixed_X[i * 3 + 0] - X[i * 3 + 0]) + F[i * 3 + 0] - (externalForce[i * 3 + 0] - 0.1*V[i * 3 + 0] * V[i * 3 + 0] * V[i * 3 + 0]) * M[i] + gravity * M[i];
+	error[1] = oc*(S[i * 3 + 1] - X[i * 3 + 1]) + (c - oc)*(fixed_X[i * 3 + 1] - X[i * 3 + 1]) + F[i * 3 + 1] - (externalForce[i * 3 + 1] - 0.1*V[i * 3 + 1] * V[i * 3 + 1] * V[i * 3 + 0]) * M[i];
+	error[2] = oc*(S[i * 3 + 2] - X[i * 3 + 2]) + (c - oc)*(fixed_X[i * 3 + 2] - X[i * 3 + 2]) + F[i * 3 + 2] - (externalForce[i * 3 + 2] - 0.1*V[i * 3 + 2] * V[i * 3 + 2] * V[i * 3 + 0]) * M[i];
 
 	// Update Energy
 	float energy = 0;
@@ -526,7 +526,7 @@ __global__ void Constraint_1_Kernel(const float* M, const float* X, const float*
 	float cz=C[i*9+8]+c+ext_C[i];
 	
 	// Update Gradient
-	G[i]=error[0]*error[0]+error[1]*error[1]+error[2]*error[2];
+	G[i] = error[0] * error[0] + error[1] * error[1] + error[2] * error[2];
 	// Update Force
 	F[i*3+0]=error[0];
 	F[i*3+1]=error[1];

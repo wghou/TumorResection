@@ -53,20 +53,18 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 
 	RenderableObject& objRef = RenderableObject::get(engine, scene);
 
-	//ObjectBase* obj_drill = new Drill();
-	//obj_drill->createRenderableObject(&objRef);
-	//simulator.addRigidObject(obj_drill);
+	ObjectBase* obj_drill = new Drill();
+	obj_drill->createRenderableObject(&objRef);
+	simulator.addRigidObject(obj_drill);
 
 	ObjectBase* obj_brain = new SftBrainTumor("../assets/models/dissection/");
-	//ObjectBase* obj_brain = new SoftObjectGPU();
-	//obj_brain->createObjectFromFile("../assets/models/pulse/brain/");
 	obj_brain->createRenderableObject(&objRef);
 	simulator.addSoftObject(obj_brain);
 
 
-	//InteractionBase* itc_bs = new InteractionTraction();
-	//dynamic_cast<InteractionTraction*>(itc_bs)->init(dynamic_cast<Drill*>(obj_drill), dynamic_cast<SftBrainTumor*>(obj_brain));
-	//simulator.addInteractions(itc_bs);
+	InteractionBase* itc_bs = new InteractionTraction();
+	dynamic_cast<InteractionTraction*>(itc_bs)->init(dynamic_cast<Drill*>(obj_drill), dynamic_cast<SftBrainTumor*>(obj_brain));
+	simulator.addInteractions(itc_bs);
 
 
 	objRef.genLight("light1");

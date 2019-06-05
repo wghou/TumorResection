@@ -23,6 +23,7 @@
     <ClCompile Include="Collision\MyCollision.cpp" />
     <ClCompile Include="Interaction\InteractionTraction.cpp" />
     <ClCompile Include="Interaction\MyInteraction.cpp" />
+    <ClCompile Include="Object\CntSurfaceMesh.cpp" />
     <ClCompile Include="Object\DfSurfaceMesh.cpp" />
     <ClCompile Include="Object\Drill.cpp" />
     <ClCompile Include="Object\Knife.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="Interaction\InteractioBase.h" />
     <ClInclude Include="Interaction\InteractionTraction.h" />
     <ClInclude Include="Interaction\MyInteraction.h" />
+    <ClInclude Include="Object\CntSurfaceMesh.h" />
     <ClInclude Include="Object\DfSurfaceMesh.h" />
     <ClInclude Include="Object\Drill.h" />
     <ClInclude Include="Object\Knife.h" />

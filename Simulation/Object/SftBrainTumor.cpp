@@ -15,6 +15,7 @@
 #include"DeformationModelGPU.h"
 #include"Collision\MyCollision.h"
 #include"Object/DfSurfaceMesh.h"
+#include"Object/CntSurfaceMesh.h"
 
 #include"FilamentWinApp/RenderableObject.h"
 #include"utils/Path.h"
@@ -42,7 +43,7 @@ bool SftBrainTumor::createObjectFromFile(std::string filePath)
 	// material path
 	ElementLoader m_loader_brain;
 	std::string m_mtlPath_brain;
-	// load brain element
+	// load brain element from the file
 	{
 		Path _path(filePath);
 		if (!_path.exists()) {
@@ -94,7 +95,7 @@ bool SftBrainTumor::createObjectFromFile(std::string filePath)
 	// material path
 	std::string m_mtlPath_tumor;
 	ElementLoader m_loader_tumor;
-	// load tumor element
+	// load tumor element from the file
 	{
 		Path _path(filePath);
 		if (!_path.exists()) {
@@ -144,40 +145,100 @@ bool SftBrainTumor::createObjectFromFile(std::string filePath)
 	}
 
 	// generate element of connect
-	uint16_t numVertex_connect = 0;
-	float* mVertices_connect = nullptr;
-	uint16_t numTet_connect = 0;
-	uint16_t* mTet_connect = nullptr;
-	uint16_t numFace_connect = 0;
-	uint16_t* mFace_connect = nullptr;
+	std::string m_mtlPath_membrane;
+	ElementLoader m_loader_membrane;
+	// load tumor element from the file
+	{
+		Path _path(filePath);
+		if (!_path.exists()) {
+			Logger::getMainLogger().log(Logger::Level::Error, "The file " + _path.getName() + " doesnt exist.", "SftBrainTumor::SftBrainTumor");
+			initialized = false;
+			return false;
+		}
+
+		std::string objFilePath = _path.concat("membrane/membrane");
+		std::string jsonFileName = _path.concat("membrane/membrane.json");
+
+		// load .ele .node .obj files
+		m_loader_membrane.loadElement(objFilePath);
+
+		// open json
+		nlohmann::json _json;
+		std::ifstream input_file(jsonFileName);
+		if (input_file.is_open()) {
+
+			float sl = 1.0f;
+			float trans[3] = { 0.0f,0.0f,0.0f };
+
+			try {
+				_json << input_file;
+				json_helper::readVector3f(_json, "trans", trans);
+				json_helper::readValue(_json, "scale", sl);
+				json_helper::readValue(_json, "mtlPath", m_mtlPath_membrane);
+
+				// translate, then scale
+				m_loader_membrane.translate(trans[0], trans[1], trans[2]);
+				m_loader_membrane.scale(sl);
+			}
+			catch (std::exception &ex) {
+				Logger::getMainLogger().log(Logger::Level::Error, "Error when initial json: " + std::string(ex.what()), "SftBrainTumor::SftBrainTumor");
+			}
+		}
+		else {
+			Logger::getMainLogger().log(Logger::Level::Error, "Cannot open config file: " + jsonFileName, "SftBrainTumor::SftBrainTumor");
+		}
+
+
+		if (m_loader_membrane.getNumVertices() == 0 || m_loader_membrane.getNumTets() == 0 || m_loader_membrane.getNumVertices() == 0) {
+			Logger::getMainLogger().log(Logger::Level::Error, "There is no mesh in the eleFile.", "SftBrainTumor::SftBrainTumor");
+			initialized = false;
+			return false;
+		}
+	}
+
 
 	// collect all element buffers
 	float* mVertices_all = nullptr;
 	uint16_t* mTet_all = nullptr;
-
 	// buffer structure:
-	// brain vertex  - tumor vertex - connect vertex
-	mVertices_all = new float[(m_loader_brain.getTetVertNum() + m_loader_tumor.getTetVertNum() + numVertex_connect) * 3];
-	mTet_all = new uint16_t[(m_loader_brain.getNumTets() + m_loader_brain.getNumTets() + numTet_connect) * 4];
+	// brain vertex  - tumor vertex - (there is no new membrane vertex)
+	mVertices_all = new float[(m_loader_brain.getTetVertNum() + m_loader_tumor.getTetVertNum()) * 3];
+	// brain tet - tumor tet - membrane tet
+	mTet_all = new uint16_t[(m_loader_brain.getNumTets() + m_loader_brain.getNumTets() + m_loader_membrane.getNumTets()) * 4];
+
+	// collect all the vertices
 	memcpy(mVertices_all, m_loader_brain.getVertices(), sizeof(float)*m_loader_brain.getTetVertNum() * 3);
 	memcpy(mVertices_all + m_loader_brain.getTetVertNum() * 3, m_loader_tumor.getVertices(), sizeof(float)*m_loader_tumor.getTetVertNum() * 3);
-	//memcpy(mVertices_all + m_loader_brain->getTetVertNum() * 3 + m_loader_tumor->getTetVertNum() * 3, 
-	//	mVertices_connect, sizeof(float)*numVertex_connect * 3);
+
+	// collect all the tetrahedrons
+	// warning: the vertex index in the membrane tet is not correct,it should be revised
 	memcpy(mTet_all, m_loader_brain.getTets(), sizeof(float)*m_loader_brain.getNumTets() * 4);
 	memcpy(mTet_all + m_loader_brain.getNumTets() * 4, m_loader_tumor.getTets(), sizeof(float)*m_loader_tumor.getNumTets() * 4);
 	for (int i = 0; i < m_loader_tumor.getNumTets() * 4; i++) {
 		mTet_all[i + m_loader_brain.getNumTets() * 4] += m_loader_brain.getTetVertNum();
 	}
-	//memcpy(mTet_all + m_loader_brain->getTetVertNum() * 3 + m_loader_tumor->getTetVertNum() * 4, 
-	//	mTet_connect, sizeof(float)*numTet_connect * 4);
 
+
+	// revise the vertex index in the membrane tetrahedron
+	// init connect surface mesh
+	SurfaceMesh* m_mesh_membrane = new CntSurfaceMesh(m_loader_membrane.getNumVertices(), m_loader_membrane.getNumTets() * 4, "membrane");
+	dynamic_cast<CntSurfaceMesh*>(m_mesh_membrane)->initSurfaceMesh(m_loader_membrane.getVertices(), m_loader_membrane.getNumTets(), m_loader_brain.getNumTets() + m_loader_tumor.getNumTets(), m_loader_membrane.getTets());
+	dynamic_cast<CntSurfaceMesh*>(m_mesh_membrane)->updateTetIndex(m_loader_brain.getTetVertNum() + m_loader_tumor.getTetVertNum(), mVertices_all);
+	std::map<uint16_t, uint16_t> &cpy = dynamic_cast<CntSurfaceMesh*>(m_mesh_membrane)->getIndexCpyMap();
+	memcpy(mTet_all + (m_loader_brain.getNumTets() + m_loader_tumor.getNumTets()) * 4,
+		m_loader_membrane.getTets(), sizeof(float)*m_loader_membrane.getNumTets() * 4);
+	for (int i = 0; i < m_loader_membrane.getNumTets() * 4; i++) {
+		uint16_t tv_to = mTet_all[i + (m_loader_brain.getNumTets() + m_loader_tumor.getNumTets()) * 4];
+		mTet_all[i + (m_loader_brain.getNumTets() + m_loader_tumor.getNumTets()) * 4] = cpy[tv_to];
+	}
 
 	// init deformation model
 	DfModel_Config config;
-	config.numVertex = m_loader_brain.getTetVertNum() + m_loader_tumor.getTetVertNum() + numVertex_connect;
+	config.numVertex = m_loader_brain.getTetVertNum() + m_loader_tumor.getTetVertNum();
 	config.mVertices = mVertices_all;
-	config.numTet = m_loader_brain.getNumTets() + m_loader_tumor.getNumTets() + numTet_connect;
+	config.numTet = m_loader_brain.getNumTets() + m_loader_tumor.getNumTets() + m_loader_membrane.getNumTets();
 	config.mTets = mTet_all;
+	config.fixedAxisBt[0] = -0.35;
 
 	// only the brain contain fixed vertices
 	config.fixedVertices.assign(m_loader_brain.getFixed().begin(), m_loader_brain.getFixed().end());
@@ -201,12 +262,9 @@ bool SftBrainTumor::createObjectFromFile(std::string filePath)
 	dynamic_cast<DfSurfaceMesh*>(m_mesh_tumor)->setVertCpys(m_loader_tumor.getTetVertNum(), m_loader_brain.getTetVertNum(), m_deformationModel->getX(), m_loader_tumor.getVertCpys());
 	m_mesh.push_back(m_mesh_tumor);
 
-	// init connect surface mesh
-	SurfaceMesh* m_mesh_connect = new DfSurfaceMesh(numVertex_connect, numFace_connect, "connect");
-	m_mesh_connect->initSurfaceMesh(mVertices_connect, mFace_connect, nullptr, "");
-	//dynamic_cast<DfSurfaceMesh*>(m_mesh_tumor)->setVertCpys(config.numVertex, m_loader_brain->getTetVertNum() + m_loader_tumor->getTetVertNum(), 
-	//	m_deformationModel->getX(), NULL);
-	//m_mesh.push_back(m_mesh_connect);
+	// add surface mesh
+	dynamic_cast<CntSurfaceMesh*>(m_mesh_membrane)->setSrcVertPtr(m_loader_brain.getTetVertNum() + m_loader_tumor.getTetVertNum(), m_deformationModel->getX());
+	m_mesh.push_back(m_mesh_membrane);
 
 
 	// collision

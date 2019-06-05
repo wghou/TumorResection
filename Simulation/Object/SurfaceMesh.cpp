@@ -74,7 +74,7 @@ bool SurfaceMesh::createRenderableObject(RenderableObject* rdFactory)
 		rdFactory->genMaterial(m_mtlPath);
 	}
 	else {
-		Logger::getMainLogger().log(Logger::Level::Warning, "There is no material for object " + m_meshName, "RigidObject::createRenderableObject");
+		Logger::getMainLogger().log(Logger::Level::Warning, "There is no material for object " + m_meshName, "SurfaceMesh::createRenderableObject");
 	}
 
 	// 生成渲染对象
