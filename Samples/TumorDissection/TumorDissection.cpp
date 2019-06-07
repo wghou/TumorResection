@@ -57,7 +57,11 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	obj_drill->createRenderableObject(&objRef);
 	simulator.addRigidObject(obj_drill);
 
-	ObjectBase* obj_brain = new SftBrainTumor("../assets/models/dissection/");
+	ObjectBase* obj_knife = new Knife();
+	obj_knife->createRenderableObject(&objRef);
+	simulator.addRigidObject(obj_knife);
+
+	ObjectBase* obj_brain = new SftBrainTumor("../assets/models/dissection/"); 
 	obj_brain->createRenderableObject(&objRef);
 	simulator.addSoftObject(obj_brain);
 
@@ -65,6 +69,10 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 	InteractionBase* itc_bs = new InteractionTraction();
 	dynamic_cast<InteractionTraction*>(itc_bs)->init(dynamic_cast<Drill*>(obj_drill), dynamic_cast<SftBrainTumor*>(obj_brain));
 	simulator.addInteractions(itc_bs);
+
+	InteractionBase* itc_bs_knife = new InteractionDissect();
+	dynamic_cast<InteractionDissect*>(itc_bs_knife)->init(dynamic_cast<Knife*>(obj_knife), dynamic_cast<SftBrainTumor*>(obj_brain));
+	simulator.addInteractions(itc_bs_knife);
 
 
 	objRef.genLight("light1");

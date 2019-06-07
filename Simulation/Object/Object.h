@@ -24,6 +24,7 @@
 #include"Interaction\InteractioBase.h"
 #include"Interaction\MyInteraction.h"
 #include"Interaction\InteractionTraction.h"
+#include"Interaction/InteractionDissect.h"
 
 
 

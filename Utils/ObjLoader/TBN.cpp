@@ -66,7 +66,11 @@ bool TBN::buildVns(int numFaces, uint16_t* faces, int numVertices, float* vertic
 		float3 e0 = p1 - p0;
 		float3 e1 = p2 - p0;
 
-		float3 normal = normalize(cross(e0, e1));
+		float3 normal;
+		if (e0 != float3{0, 0, 0}) {
+			normal = normalize(cross(e0, e1));
+		}
+
 		TNs.push_back({ normal.x, normal.y, normal.z });
 	}
 

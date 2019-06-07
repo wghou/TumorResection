@@ -1,5 +1,0 @@
-m_mesh.m_localOriant = MyMatrix4f{
-		m_phDevice->getPhantomTransform().m[0][0], m_phDevice->getPhantomTransform().m[1][0], m_phDevice->getPhantomTransform().m[2][0], 0.0f,
-		m_phDevice->getPhantomTransform().m[0][1], m_phDevice->getPhantomTransform().m[1][1], m_phDevice->getPhantomTransform().m[2][1], 0.0f,
-		m_phDevice->getPhantomTransform().m[0][2], m_phDevice->getPhantomTransform().m[1][2], m_phDevice->getPhantomTransform().m[2][2], 0.0f,
-		10 * m_phDevice->getPhantomPostion().x + 0.45,    10 * m_phDevice->getPhantomPostion().y,    10 * m_phDevice->getPhantomPostion().z + 0.6,    1.0f };

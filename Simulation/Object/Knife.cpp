@@ -25,11 +25,14 @@ Knife::Knife(std::string fileName)
 	m_phDevice = new PhantomDevice();
 	if (m_phDevice->checkDeviceOK() == false)
 	{
-		Logger::getMainLogger().log(Logger::Error, "Phantom Device initialize failed.", "Instrument::Instrument");
+		Logger::getMainLogger().log(Logger::Error, "Phantom Device initialize failed.", "Knife::Knife");
 
 		initialized = false;
 		return;
 	}
+
+	// collision
+	m_collision = new MyCollision(this);
 
 	// 初始化成功
 	initialized = true;
@@ -38,6 +41,8 @@ Knife::Knife(std::string fileName)
 Knife::~Knife()
 {
 	if (m_phDevice) delete m_phDevice;
+
+	if (m_collision) delete m_collision;
 }
 
 bool Knife::createRenderableObject(RenderableObject* rdFactory, std::string objName)
@@ -58,9 +63,9 @@ void Knife::timeStep(float time)
 
 	MyMatrix4f ori = m_phDevice->getPhantomTransform();
 	// location
-	ori.m[3][0] = 10 * m_phDevice->getPhantomPostion().x + 0.15;
-	ori.m[3][1] = 10 * m_phDevice->getPhantomPostion().y;
-	ori.m[3][2] = 10 * m_phDevice->getPhantomPostion().z + 0.6;
+	ori.m[3][0] = 15 * m_phDevice->getPhantomPostion().x + 0.15;
+	ori.m[3][1] = 15 * m_phDevice->getPhantomPostion().y;
+	ori.m[3][2] = 15 * m_phDevice->getPhantomPostion().z + 0.6;
 
 	m_localOriant = ori;
 

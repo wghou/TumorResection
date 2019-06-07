@@ -60,6 +60,9 @@
     <ClCompile Include="Object\CntSurfaceMesh.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="Interaction\InteractionDissect.cpp">
+      <Filter>Interaction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\Drill.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="Object\CntSurfaceMesh.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Interaction\InteractionDissect.h">
+      <Filter>Interaction</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -51,6 +51,7 @@ DeformationModelGPU::DeformationModelGPU()
 	m_model->stiffness_3 = 0.5;
 	m_model->stiffness_p = 24000;
 
+
 	//m_model->model = NH_MODEL;
 	//m_model->stiffness_0 = 200000;	//2000000
 	//m_model->stiffness_1 = 2000000;	//2000000
@@ -70,7 +71,6 @@ DeformationModelGPU::DeformationModelGPU()
 
 	m_model->lower_bound = 0.15;
 	m_model->upper_bound = 1000.0;
-
 
 
 	//Mooney
@@ -117,6 +117,14 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 	}
 	//std::cout << config.fixedVertices.size();
 
+	for (int i = 0; i < m_model->tet_number; i++) {
+		m_model->stiffness_0_all[i] = 1000;	//2000000
+		m_model->stiffness_1_all[i] = 50000;	//2000000
+		m_model->stiffness_2_all[i] = 0;	//2000000
+		m_model->stiffness_3_all[i] = 0.5;
+		m_model->stiffness_p_all[i] = 24000;
+	}
+
 	m_model->Initialize(1.0f);
 }
 
@@ -147,8 +155,26 @@ void DeformationModelGPU::SetExternalForce(float* externalForce)
 
 void DeformationModelGPU::setGravity(float g)
 {
-	//m_model->gravity = 0.5*sin(time*0.9)*sin(time*0.9) + 0.05;
 	m_model->gravity = g;
+}
+
+void DeformationModelGPU::setMaterialParam(int start, int end, float stf_0, float stf_1, float stf_2, float stf_3, float stf_p)
+{
+	if (start<0 || start>end || end > m_model->tet_number) return;
+
+	for (int i = start; i < end; i++) {
+		m_model->stiffness_0_all[i] = stf_0;
+		m_model->stiffness_1_all[i] = stf_1;
+		m_model->stiffness_2_all[i] = stf_2;
+		m_model->stiffness_3_all[i] = stf_3;
+		m_model->stiffness_p_all[i] = stf_p;
+	}
+
+	cudaMemcpy(m_model->dev_stiffness_0_all, m_model->stiffness_0_all, sizeof(float)*m_model->tet_number, cudaMemcpyHostToDevice);
+	cudaMemcpy(m_model->dev_stiffness_1_all, m_model->stiffness_1_all, sizeof(float)*m_model->tet_number, cudaMemcpyHostToDevice);
+	cudaMemcpy(m_model->dev_stiffness_2_all, m_model->stiffness_2_all, sizeof(float)*m_model->tet_number, cudaMemcpyHostToDevice);
+	cudaMemcpy(m_model->dev_stiffness_3_all, m_model->stiffness_3_all, sizeof(float)*m_model->tet_number, cudaMemcpyHostToDevice);
+	cudaMemcpy(m_model->dev_stiffness_p_all, m_model->stiffness_p_all, sizeof(float)*m_model->tet_number, cudaMemcpyHostToDevice);
 }
 
 void DeformationModelGPU::removeTet(uint16_t t)

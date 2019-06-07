@@ -6,13 +6,13 @@
 
 CntSurfaceMesh::CntSurfaceMesh(int numV, int numF, std::string meshName) : SurfaceMesh(numV, numF, meshName)
 {
-
 }
 
 
 CntSurfaceMesh::~CntSurfaceMesh()
 {
-	if (m_Tets) delete m_Tets;
+	if (m_Tets) delete[] m_Tets;
+	if (m_rmTets) delete[] m_rmTets;
 }
 
 
@@ -23,25 +23,11 @@ void CntSurfaceMesh::initSurfaceMesh(float* mVt, int numTet, int tetIdxOffset, u
 	m_numTets = numTet;
 	m_Tets = new uint16_t[m_numTets * 4];
 	memcpy(m_Tets, mTet, sizeof(uint16_t)*m_numTets * 4);
+	m_rmTets = new uint16_t[m_numTets];
+	memset(m_rmTets, 0, sizeof(uint16_t)*m_numTets);
 
 	// init faces
-	for (int i = 0; i < m_numTets; i++) {
-		mFaces[i * 12 + 0] = mTet[i * 4 + 0];
-		mFaces[i * 12 + 1] = mTet[i * 4 + 1];
-		mFaces[i * 12 + 2] = mTet[i * 4 + 2];
-
-		mFaces[i * 12 + 3] = mTet[i * 4 + 0];
-		mFaces[i * 12 + 4] = mTet[i * 4 + 2];
-		mFaces[i * 12 + 5] = mTet[i * 4 + 3];
-
-		mFaces[i * 12 + 6] = mTet[i * 4 + 0];
-		mFaces[i * 12 + 7] = mTet[i * 4 + 3];
-		mFaces[i * 12 + 8] = mTet[i * 4 + 1];
-
-		mFaces[i * 12 + 9] = mTet[i * 4 + 1];
-		mFaces[i * 12 + 10] = mTet[i * 4 + 3];
-		mFaces[i * 12 + 11] = mTet[i * 4 + 2];
-	}
+	updateSurfaceMesh();
 
 	// update the TBN
 	TBN::buildVns(numFaces, mFaces, numVertices, mVertices, mNormals);
@@ -69,6 +55,47 @@ void CntSurfaceMesh::updateTetIndex(int srcVtNum, float*srcVtPtr)
 		}
 	}
 	return;
+}
+
+void CntSurfaceMesh::updateSurfaceMesh()
+{
+	// init faces
+	for (int i = 0; i < m_numTets; i++) {
+		if (m_rmTets[i] != 0) {
+			mFaces[i * 12 + 0] = 0;
+			mFaces[i * 12 + 1] = 0;
+			mFaces[i * 12 + 2] = 0;
+
+			mFaces[i * 12 + 3] = 1;
+			mFaces[i * 12 + 4] = 1;
+			mFaces[i * 12 + 5] = 1;
+
+			mFaces[i * 12 + 6] = 2;
+			mFaces[i * 12 + 7] = 2;
+			mFaces[i * 12 + 8] = 2;
+
+			mFaces[i * 12 + 9] = 3;
+			mFaces[i * 12 + 10] = 3;
+			mFaces[i * 12 + 11] = 3;
+		}
+		else {
+			mFaces[i * 12 + 0] = m_Tets[i * 4 + 0];
+			mFaces[i * 12 + 1] = m_Tets[i * 4 + 1];
+			mFaces[i * 12 + 2] = m_Tets[i * 4 + 2];
+
+			mFaces[i * 12 + 3] = m_Tets[i * 4 + 0];
+			mFaces[i * 12 + 4] = m_Tets[i * 4 + 2];
+			mFaces[i * 12 + 5] = m_Tets[i * 4 + 3];
+
+			mFaces[i * 12 + 6] = m_Tets[i * 4 + 0];
+			mFaces[i * 12 + 7] = m_Tets[i * 4 + 3];
+			mFaces[i * 12 + 8] = m_Tets[i * 4 + 1];
+
+			mFaces[i * 12 + 9] = m_Tets[i * 4 + 1];
+			mFaces[i * 12 + 10] = m_Tets[i * 4 + 3];
+			mFaces[i * 12 + 11] = m_Tets[i * 4 + 2];
+		}
+	}
 }
 
 

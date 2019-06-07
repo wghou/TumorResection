@@ -10,13 +10,13 @@
 #include"Object\RigidObject.h"
 
 
-class InteractionTraction;
+class InteractionDissect;
 class PhantomDevice;
 
 
 class Knife : public RigidObject
 {
-	friend class InteractionTraction;
+	friend class InteractionDissect;
 
 public:
 	Knife(std::string fileName = "../assets/models/knife");

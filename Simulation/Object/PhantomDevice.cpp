@@ -19,7 +19,7 @@ PhantomDevice::PhantomDevice()
 		int numHapticDevices = s_handler->getNumDevices();
 		if (numHapticDevices == 0)
 		{
-			Logger::getMainLogger().log(Logger::Warning, "Cannot open phantom device.", "Instrument::Instrument");
+			Logger::getMainLogger().log(Logger::Warning, "Cannot open phantom device.", "PhantomDevice::PhantomDevice");
 			//std::cout << "Cannot open phantom device." << std::endl;
 		}
 
@@ -32,12 +32,12 @@ PhantomDevice::PhantomDevice()
 				
 				if (hapticDevice[i]->open() == false)
 				{
-					Logger::getMainLogger().log(Logger::Warning, "Open Device Failed.", "Instrument::Instrument");
+					Logger::getMainLogger().log(Logger::Warning, "Open Device Failed.", "PhantomDevice::PhantomDevice");
 				}
 
 				if (hapticDevice[i]->calibrate() == false)
 				{
-					Logger::getMainLogger().log(Logger::Warning, "Calibrate device failed.", "Instrument::Instrument");
+					Logger::getMainLogger().log(Logger::Warning, "Calibrate device failed.", "PhantomDevice::PhantomDevice");
 				}
 
 				
@@ -55,7 +55,7 @@ PhantomDevice::PhantomDevice()
 	int num = s_handler->getNumDevices();
 	if (unusedDeviceIndex >= num)
 	{
-		Logger::getMainLogger().log(Logger::Warning, "Did not have enough phantom device.", "Instrument::Instrument");
+		Logger::getMainLogger().log(Logger::Error, "Did not have enough phantom device.", "PhantomDevice::PhantomDevice");
 		deviceOK = false;
 		return;
 	}

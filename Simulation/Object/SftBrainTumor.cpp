@@ -248,6 +248,9 @@ bool SftBrainTumor::createObjectFromFile(std::string filePath)
 
 	delete[] mVertices_all; delete[] mTet_all;
 
+	m_deformationModel->setMaterialParam(m_loader_brain.getNumTets() + m_loader_tumor.getNumTets(), 
+		m_loader_brain.getNumTets() + m_loader_tumor.getNumTets() + m_loader_membrane.getNumTets(), 500, 1000, 0, 0.5, 1200);
+
 
 	// init brain surface mesh
 	SurfaceMesh* m_mesh_brain = new DfSurfaceMesh(m_loader_brain.getNumVertices(), m_loader_brain.getNumFaces(), "brain");

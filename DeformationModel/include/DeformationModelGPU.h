@@ -31,7 +31,7 @@ public:
 	void Reset_More_Fixed(int select_v, float dir[]);
 
 
-
+	void setMaterialParam(int start, int end, float stf_0, float stf_1, float stf_2, float stf_3, float stf_p);
 	void SetExternalForce(float* externalForce);
 	void setGravity(float g);
 	void removeTet(uint16_t t);
