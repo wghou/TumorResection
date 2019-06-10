@@ -65,7 +65,7 @@ void Knife::timeStep(float time)
 	// location
 	ori.m[3][0] = 15 * m_phDevice->getPhantomPostion().x + 0.15;
 	ori.m[3][1] = 15 * m_phDevice->getPhantomPostion().y;
-	ori.m[3][2] = 15 * m_phDevice->getPhantomPostion().z + 0.6;
+	ori.m[3][2] = 15 * m_phDevice->getPhantomPostion().z - 0.2;
 
 	m_localOriant = ori;
 

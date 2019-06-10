@@ -409,6 +409,8 @@ bool RenderableObject::genRenderable(std::string objName, int numVert, float *mV
 	obj.numVert = numVert;
 	obj.mVert = mVert;
 	obj.mTBNs = mTBNs;
+	obj.numFaces = numFaces;
+	obj.mFaces = mFaces;
 	mRenderables[objName] = obj;
 	return true;
 }
@@ -476,4 +478,6 @@ void RenderableObject::updateVertexBuffer(std::string objName)
 	obj.mVertexBuffer->setBufferAt(*mEngine, 1,
 		VertexBuffer::BufferDescriptor(obj.mTBNs, obj.numVert * 4 * sizeof(float), nullptr));
 
+	obj.mIndexBuffer->setBuffer(*mEngine,
+		IndexBuffer::BufferDescriptor(obj.mFaces, obj.numFaces * 3 * sizeof(uint16_t), nullptr));
 }

@@ -136,7 +136,7 @@ bool MyCollision::computeCollision(GenericCollision* col_obj, CollisionRecorder*
 					(parentObject->getLocalPos().y - avg_y) * (parentObject->getLocalPos().y - avg_y) +
 					(parentObject->getLocalPos().z - avg_z) * (parentObject->getLocalPos().z - avg_z);
 
-				if (len < 0.05) {
+				if (len < 0.02) {
 					recorder->col_X_index_1 = i;
 					//rmTets[i] = 1;
 					//dynamic_cast<SftBrainTumor*>(col_obj->getParentObject())->getDeformationModel()->removeTet(i + tetIdxOffset);

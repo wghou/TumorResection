@@ -60,6 +60,8 @@ private:
 		int numVert = 0;
 		float* mVert = nullptr;
 		float* mTBNs = nullptr;
+		int numFaces = 0;
+		uint16_t* mFaces = nullptr;
 		VertexBuffer* mVertexBuffer = nullptr;
 		IndexBuffer* mIndexBuffer = nullptr;
 		MaterialInstance* mtlInstance = nullptr;
