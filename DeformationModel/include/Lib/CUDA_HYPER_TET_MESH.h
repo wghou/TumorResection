@@ -151,7 +151,7 @@ __global__ void Update_2_Kernel(float* X, float* V, const float* prev_V, float* 
 //  Tet Constraint Kernel
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-__global__ void Compute_FM_Kernel(const float* X, const uint16_t* rmTet, const uint16_t* Tet, const float* inv_Dm, const float* Vol, float* lambda, float* Force, float* C, float* ext_C, float *E,
+__global__ void Compute_FM_Kernel(const float* X, const uint16_t* rmTet, const float* dmgV, const uint16_t* Tet, const float* inv_Dm, const float* Vol, float* lambda, float* Force, float* C, float* ext_C, float *E,
 	const int model, float* stiffness_0_all, float* stiffness_1_all, float* stiffness_2_all, float* stiffness_3_all, float* stiffness_p_all, const int tet_number, const float lower_bound, const float upper_bound, const bool update_C=true)
 {
 	int t = blockDim.x * blockIdx.x + threadIdx.x;
@@ -159,11 +159,11 @@ __global__ void Compute_FM_Kernel(const float* X, const uint16_t* rmTet, const u
 
 	if (rmTet[t] != 0) return;
 
-	float stiffness_0 = stiffness_0_all[t];
-	float stiffness_1 = stiffness_1_all[t];
-	float stiffness_2 = stiffness_2_all[t];
-	float stiffness_3 = stiffness_3_all[t];
-	float stiffness_p = stiffness_p_all[t];
+	float stiffness_0 = stiffness_0_all[t] * (1 - dmgV[t]);
+	float stiffness_1 = stiffness_1_all[t] * (1 - dmgV[t]);
+	float stiffness_2 = stiffness_2_all[t] * (1 - dmgV[t]);
+	float stiffness_3 = stiffness_3_all[t] * (1 - dmgV[t]);
+	float stiffness_p = stiffness_p_all[t] * (1 - dmgV[t]);
 
 	stiffness_0=-Vol[t]*stiffness_0;
     stiffness_1=-Vol[t]*stiffness_1;
@@ -623,8 +623,10 @@ public:
 	// external force
 	TYPE*	dev_externalForce;
 	TYPE*	externalForce;
-	uint16_t*	rmTet;
+	uint16_t*	rmTet;			// ÊÇ·ñÒÆ³ý
 	uint16_t*	dev_rmTet;
+	TYPE*	dmgV;			// damage variable
+	TYPE*	dev_dmgV;
 
 	TYPE*	stiffness_0_all;
 	TYPE*	stiffness_1_all;
@@ -675,6 +677,8 @@ public:
 		memset(externalForce, 0, sizeof(TYPE)*max_number * 3);
 		rmTet		= new uint16_t[max_number];
 		memset(rmTet, 0, sizeof(uint16_t)*max_number);
+		dmgV = new TYPE[max_number];
+		memset(dmgV, 0, sizeof(TYPE)*max_number);
 
 		stiffness_0_all = new TYPE[max_number];
 		memset(stiffness_0_all, 0, sizeof(uint16_t)*max_number);
@@ -733,6 +737,7 @@ public:
 		dev_prev_V		= 0;
 		dev_externalForce = 0;
 		dev_rmTet		= 0;
+		dev_dmgV		= 0;
 
 		dev_F			= 0;
 		dev_start_F		= 0;
@@ -774,6 +779,7 @@ public:
 		if(fixed)			delete[] fixed;
 		if(more_fixed)		delete[] more_fixed;
 		if (rmTet)			delete[] rmTet;
+		if (dmgV) delete[] dmgV;
 		if (stiffness_0_all) delete[] stiffness_0_all;
 		if (stiffness_1_all) delete[] stiffness_1_all; 
 		if (stiffness_2_all) delete[] stiffness_2_all; 
@@ -800,6 +806,7 @@ public:
 		if(dev_offset_X)	cudaFree(dev_offset_X);
 		if (dev_externalForce) cudaFree(dev_externalForce);
 		if (dev_rmTet)		cudaFree(dev_rmTet);
+		if (dev_dmgV) cudaFree(dev_dmgV);
 
 		if (dev_stiffness_0_all) cudaFree(dev_stiffness_0_all);
 		if (dev_stiffness_1_all) cudaFree(dev_stiffness_1_all);
@@ -859,6 +866,9 @@ public:
 		cudaMalloc((void**)&dev_externalForce, sizeof(TYPE)*number * 3);
 		cudaMemset(dev_externalForce, 0, sizeof(TYPE)*number * 3);
 		cudaMalloc((void**)&dev_rmTet, sizeof(uint16_t)*tet_number);
+		cudaMalloc((void**)&dev_dmgV, sizeof(TYPE)*tet_number);
+
+
 		cudaMalloc((void**)&dev_stiffness_0_all, sizeof(TYPE)*tet_number);
 		cudaMalloc((void**)&dev_stiffness_1_all, sizeof(TYPE)*tet_number);
 		cudaMalloc((void**)&dev_stiffness_2_all, sizeof(TYPE)*tet_number);
@@ -889,6 +899,7 @@ public:
 
 		cudaMemcpy(dev_fixed_X,		X,			sizeof(TYPE)*3*number,		cudaMemcpyHostToDevice);
 		cudaMemcpy(dev_rmTet, rmTet,			sizeof(uint16_t)*tet_number,	cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_dmgV, dmgV, sizeof(TYPE)*tet_number, cudaMemcpyHostToDevice);
 		cudaMemcpy(dev_stiffness_0_all, stiffness_0_all, sizeof(TYPE)*tet_number, cudaMemcpyHostToDevice);
 		cudaMemcpy(dev_stiffness_1_all, stiffness_1_all, sizeof(TYPE)*tet_number, cudaMemcpyHostToDevice);
 		cudaMemcpy(dev_stiffness_2_all, stiffness_2_all, sizeof(TYPE)*tet_number, cudaMemcpyHostToDevice);
@@ -922,7 +933,7 @@ public:
 		cudaMemset(dev_G,     0, sizeof(TYPE)*number  );
 		cudaMemset(dev_E,     0, sizeof(TYPE)*number  );
 		cudaMemset(dev_P,     0, sizeof(TYPE)*number  );
-		Compute_FM_Kernel << <tet_blocksPerGrid, tet_threadsPerBlock>> >(dev_X, dev_rmTet, dev_Tet, dev_inv_Dm, dev_Vol, dev_lambda, dev_F, dev_C, dev_ext_C, dev_E,
+		Compute_FM_Kernel << <tet_blocksPerGrid, tet_threadsPerBlock>> >(dev_X, dev_rmTet, dev_dmgV, dev_Tet, dev_inv_Dm, dev_Vol, dev_lambda, dev_F, dev_C, dev_ext_C, dev_E,
 			model, dev_stiffness_0_all, dev_stiffness_1_all, dev_stiffness_2_all, dev_stiffness_3_all, dev_stiffness_p_all, tet_number, lower_bound, upper_bound, update_C);
 		Constraint_1_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_M, dev_X, dev_prev_X, dev_V, dev_E, dev_G, dev_P, dev_S, dev_next_X, dev_fixed, 
 			dev_more_fixed, dev_fixed_X, dev_F, dev_C, dev_ext_C, stepping, number, t, 1/t, gravity, dev_externalForce);
@@ -955,6 +966,9 @@ public:
 		cudaMemcpy(dev_externalForce, externalForce, sizeof(TYPE) * 3 * number, cudaMemcpyHostToDevice);
 		// Update S and initialize X
 		cudaMemcpy(dev_S, dev_X, sizeof(TYPE)*3*number, cudaMemcpyDeviceToDevice);
+
+		// update the damage variable
+		cudaMemcpy(dev_dmgV, dmgV, sizeof(TYPE)*tet_number, cudaMemcpyHostToDevice);
 		
 		Update_Kernel << <blocksPerGrid, threadsPerBlock>> >(dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X, t, number, dir[0], dir[1], dir[2]);
 		//Update_2_Kernel << <blocksPerGrid, threadsPerBlock >> > (dev_X, dev_V, dev_prev_V, dev_S, dev_fixed, dev_more_fixed, dev_offset_X, dev_fixed_X,

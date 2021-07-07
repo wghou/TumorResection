@@ -53,11 +53,11 @@ static void setup(Engine* engine, View* view, Scene* scene) {
 
 	RenderableObject& objRef = RenderableObject::get(engine, scene);
 
-	ObjectBase* obj_drill = new Drill();
+	ObjectBase* obj_drill = new Drill("../assets/models/gasper/");
 	obj_drill->createRenderableObject(&objRef);
 	simulator.addRigidObject(obj_drill);
 
-	ObjectBase* obj_knife = new Knife();
+	ObjectBase* obj_knife = new Knife("../assets/models/drill/");
 	obj_knife->createRenderableObject(&objRef);
 	simulator.addRigidObject(obj_knife);
 
@@ -84,15 +84,29 @@ static void preRender(filament::Engine*, filament::View* view, filament::Scene*,
 
 }
 
-static void animate(Engine* engine, View* view, double deltaTime)
+static void animate(Engine* engine, View* view, Scene* scene, double deltaTime)
 {
 	simulator.stepSimulation(deltaTime);
 	simulator.post2RenderBuffer();
+
+	return;
+
+	RenderableObject& objRef = RenderableObject::get(engine, scene);
+
+	objRef.updateObjectOriant("brain",mat4f {
+		mat3f(g_config.scale), float3(0.0f, 0.0f, 0.0f)
+	});
+	objRef.updateObjectOriant("membrane", mat4f{
+		mat3f(g_config.scale), float3(0.0f, 0.0f, 0.0f)
+		});
+	objRef.updateObjectOriant("tumor", mat4f{
+		mat3f(g_config.scale), float3(0.0f, 0.0f, 0.0f)
+		});
 }
 
 int main(int argc, char *argv[]) {
 
-	g_config.scale = 1.0f;
+	g_config.scale = 2.0f;
 	g_config.title = "Brain Tumor Dissection";
 	g_config.iblDirectory = "../envs/pillars";
 

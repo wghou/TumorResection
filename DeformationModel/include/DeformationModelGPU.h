@@ -35,6 +35,7 @@ public:
 	void SetExternalForce(float* externalForce);
 	void setGravity(float g);
 	void removeTet(uint16_t t);
+	void updateDamageV(float *dmg, int begin, int length);
 
 
 public:

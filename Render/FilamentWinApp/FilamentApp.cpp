@@ -160,7 +160,7 @@ void FilamentApp::run(const Config& config, SetupCallback setupCallback,
         if (mAnimation) {
             double now = (double) SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
 			
-            mAnimation(mEngine, window->mMainView->getView(), now);
+            mAnimation(mEngine, window->mMainView->getView(), mScene, now);
 			last = now;
         }
 
@@ -181,7 +181,7 @@ void FilamentApp::run(const Config& config, SetupCallback setupCallback,
 					mClosed = true;
 				}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_M) {
-					if(mAnimationStep) mAnimationStep(mEngine, window->mMainView->getView(), 1.0f/30.0f);
+					if(mAnimationStep) mAnimationStep(mEngine, window->mMainView->getView(), mScene, 1.0f/30.0f);
 				}
 				break;
 			case SDL_MOUSEWHEEL:

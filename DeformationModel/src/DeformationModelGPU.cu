@@ -123,6 +123,8 @@ void DeformationModelGPU::Initialize(DfModel_Config & config)
 		m_model->stiffness_2_all[i] = 0;	//2000000
 		m_model->stiffness_3_all[i] = 0.5;
 		m_model->stiffness_p_all[i] = 24000;
+
+		m_model->dmgV[i] = 0.0f;
 	}
 
 	m_model->Initialize(1.0f);
@@ -183,6 +185,15 @@ void DeformationModelGPU::removeTet(uint16_t t)
 
 	m_model->rmTet[t] = 1;
 	cudaMemcpy(m_model->dev_rmTet, m_model->rmTet, sizeof(uint16_t)*m_model->tet_number, cudaMemcpyHostToDevice);
+}
+
+void DeformationModelGPU::updateDamageV(float *dmg, int begin, int length)
+{
+	if (begin < 0 || length > m_model->tet_number) return;
+	
+	for (int i = 0; i < length; i++) {
+		m_model->dmgV[i + begin] = dmg[i];
+	}
 }
 
 

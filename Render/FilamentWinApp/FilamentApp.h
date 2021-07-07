@@ -56,7 +56,7 @@ public:
     using PostRenderCallback = std::function<void(filament::Engine*, filament::View*,
             filament::Scene*, filament::Renderer*)>;
     using ImGuiCallback = std::function<void(filament::Engine*, filament::View*)>;
-    using AnimCallback = std::function<void(filament::Engine*, filament::View*, double now)>;
+    using AnimCallback = std::function<void(filament::Engine*, filament::View*, filament::Scene*, double now)>;
 
     static FilamentApp& get();
 
